@@ -19,9 +19,7 @@
       --shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -261,7 +259,7 @@
       </div>
       <div id="lessonsList" class="lessons-list"></div>
       <div class="hint" style="margin-top:8px;">
-        Для редактирования существующего урока нажмите «Загрузить», измените условия в форме и затем нажмите «Обновить урок».
+        Для редактирования урока нажмите «Загрузить», измените условия и нажмите «Обновить урок».
         Для сортировки используйте стрелки ▲ ▼.
       </div>
     </div>
@@ -397,6 +395,7 @@
 
     const SCENARIOS = {
       preflop: [
+        { value: 'first_to_act', label: 'Hero первый (нет предыдущих действий)' },
         { value: 'open_call', label: 'Hero raise, Villain call' },
         { value: 'open_3bet_call', label: 'Hero raise, Villain 3bet, Hero call' },
         { value: 'limp_check', label: 'Hero limp, Villain check' },
@@ -404,6 +403,7 @@
         { value: '3bet_call', label: 'Villain raise, Hero 3bet, Villain call' }
       ],
       flop: [
+        { value: 'first_to_act', label: 'Hero первый (нет предыдущих действий)' },
         { value: 'bet_call', label: 'Hero bet, Villain call' },
         { value: 'check_bet_call', label: 'Hero check, Villain bet, Hero call' },
         { value: 'check_check', label: 'Hero check, Villain check' },
@@ -411,6 +411,7 @@
         { value: 'check_bet_raise_call', label: 'Hero check, Villain bet, Hero raise, Villain call' }
       ],
       turn: [
+        { value: 'first_to_act', label: 'Hero первый (нет предыдущих действий)' },
         { value: 'bet_call', label: 'Hero bet, Villain call' },
         { value: 'check_bet_call', label: 'Hero check, Villain bet, Hero call' },
         { value: 'check_check', label: 'Hero check, Villain check' },
@@ -418,6 +419,7 @@
         { value: 'check_bet_raise_call', label: 'Hero check, Villain bet, Hero raise, Villain call' }
       ],
       river: [
+        { value: 'first_to_act', label: 'Hero первый (нет предыдущих действий)' },
         { value: 'bet_call', label: 'Hero bet, Villain call' },
         { value: 'check_bet_call', label: 'Hero check, Villain bet, Hero call' },
         { value: 'check_check', label: 'Hero check, Villain check' },
@@ -459,7 +461,7 @@
         bank_min: 5,
         bank_max: 50,
         streets: { preflop: true, flop: true, turn: true, river: true },
-        scenarios: { preflop: 'open_call', flop: 'bet_call', turn: 'bet_call', river: 'bet_call' },
+        scenarios: { preflop: 'first_to_act', flop: 'first_to_act', turn: 'first_to_act', river: 'first_to_act' },
         flopGroups: [],
         turnTypes: [],
         riverTypes: [],
@@ -838,7 +840,6 @@
       document.getElementById('stack_max').addEventListener('input', autoSaveConditions);
       document.getElementById('bank_min').addEventListener('input', autoSaveConditions);
       document.getElementById('bank_max').addEventListener('input', autoSaveConditions);
-      // Чекбоксы улиц также должны обновлять видимость секций
       ['street_preflop', 'street_flop', 'street_turn', 'street_river'].forEach(id => {
         document.getElementById(id).addEventListener('change', () => {
           autoSaveConditions();
