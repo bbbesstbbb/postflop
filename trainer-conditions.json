@@ -1,0 +1,37 @@
+{
+  "players": 2,
+  "position": "SB",
+  "stack_min": 15,
+  "stack_max": 25,
+  "streets": {
+    "preflop": true,
+    "flop": true,
+    "turn": false,
+    "river": false
+  },
+  "scenarios": {
+    "preflop": "limp_check",
+    "flop": "bet_call",
+    "turn": "bet_call",
+    "river": "bet_call"
+  },
+  "flopGroups": [
+    "c_red",
+    "c_orange",
+    "c_yellow",
+    "c_green",
+    "c_blue",
+    "c_purple",
+    "c_pink"
+  ],
+  "turnTypes": [
+    "over"
+  ],
+  "riverTypes": [
+    "nopair"
+  ],
+  "handCategories": [
+    "garbage",
+    "gutshot"
+  ]
+}

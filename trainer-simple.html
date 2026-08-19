@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тренажер (простой)</title>
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --panel: #16213e;
+      --border: #0f3460;
+      --text: #e0e0e0;
+      --accent: #e94560;
+      --gold: #ffd700;
+      --green: #00b894;
+      --red: #d63031;
+      --blue: #0984e3;
+      --orange: #e67e22;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: #0f0f1a;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      z-index: 20;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      color: #ffffff;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #333;
+      color: #ffffff;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: #444; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn.success { background: var(--green); }
+    .btn.success:hover { background: #009f7f; }
+    .btn.primary { background: var(--accent); }
+    .btn.primary:hover { background: #c0392b; }
+
+    .container {
+      flex: 1;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* Стол */
+    .poker-table {
+      background: #2d3a4f;
+      border-radius: 50%;
+      width: 100%;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 40px;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .table-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .player-seat {
+      position: absolute;
+      width: 100px;
+      text-align: center;
+      color: #fff;
+      font-weight: 700;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      z-index: 5;
+    }
+
+    .hero-cards {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin-bottom: 4px;
+      min-height: 72px;
+    }
+
+    .mini-card {
+      width: 52px;
+      height: 72px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      background: #4a5568;
+      border-radius: 50%;
+      margin: 0 auto 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      position: relative;
+    }
+
+    .dealer-btn {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ffd700;
+      color: #1a1a2e;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    }
+
+    .player-position {
+      background: rgba(0,0,0,0.6);
+      border-radius: 8px;
+      padding: 2px 6px;
+      font-size: 12px;
+      display: inline-block;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    .player-name {
+      font-size: 14px;
+      margin-top: 2px;
+    }
+
+    .player-stack {
+      background: rgba(0,0,0,0.6);
+      border-radius: 8px;
+      padding: 2px 8px;
+      font-size: 13px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .player-bet {
+      color: #ffd700;
+      font-size: 13px;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .player-action {
+      background: #e94560;
+      border-radius: 8px;
+      padding: 2px 8px;
+      font-size: 13px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .board-cards {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    .card {
+      width: 80px;
+      height: 112px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 38px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .suit-spades { background-color: #2d3436; color: #ffffff; }
+    .suit-hearts { background-color: #d63031; color: #ffffff; }
+    .suit-diamonds { background-color: #0984e3; color: #ffffff; }
+    .suit-clubs { background-color: #00b894; color: #ffffff; }
+
+    .pot-display {
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      color: #ffd700;
+      font-weight: 800;
+      font-size: 18px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      z-index: 6;
+    }
+
+    /* Кнопки действий */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .action-buttons .btn {
+      min-width: 100px;
+      font-size: 16px;
+      padding: 12px 20px;
+      border: 2px solid rgba(255,255,255,0.2);
+      transition: all 0.2s;
+    }
+
+    .action-buttons .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .btn-fold { background: #d63031; color: #fff; }
+    .btn-fold:hover { background: #ff4d4d; }
+    .btn-check { background: #0984e3; color: #fff; }
+    .btn-check:hover { background: #3498db; }
+    .btn-call { background: #00b894; color: #fff; }
+    .btn-call:hover { background: #00d2a0; }
+    .btn-bet { background: #6c5ce7; color: #fff; }
+    .btn-bet:hover { background: #7d6ff0; }
+    .btn-raise { background: #e67e22; color: #fff; }
+    .btn-raise:hover { background: #f39c12; }
+    .btn-allin { background: #e94560; color: #fff; }
+    .btn-allin:hover { background: #ff6b81; }
+
+    /* Инфо */
+    .info-spoiler {
+      max-width: 700px;
+      margin: 20px auto 0;
+      background: #0f0f1a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 15px;
+      cursor: pointer;
+    }
+
+    .info-spoiler summary {
+      color: #ffd700;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .info-panel {
+      padding: 10px;
+      color: #ddd;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 15px;
+    }
+
+    .result.correct { color: #00b894; }
+    .result.incorrect { color: #e94560; }
+
+    @media (max-width: 600px) {
+      .card { width: 56px; height: 78px; font-size: 24px; }
+      .mini-card { width: 36px; height: 50px; font-size: 18px; }
+      .player-seat { width: 70px; }
+      .avatar { width: 40px; height: 40px; font-size: 18px; }
+      .hero-cards { min-height: 50px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🃏 Тренажер (простой)</h1>
+    <div class="toolbar">
+      <button id="newHandBtn" class="btn success">🔄 Новая раздача</button>
+      <button id="reloadDataBtn" class="btn primary">🔄 Перечитать данные</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="errorMessage" style="color:#ff6b81; text-align:center; margin:20px 0;"></div>
+
+    <div class="poker-table">
+      <div class="table-inner">
+        <div class="pot-display" id="potDisplay"></div>
+        <div id="playersContainer"></div>
+        <div class="board-cards" id="boardCards"></div>
+      </div>
+    </div>
+
+    <div class="action-buttons" id="actionButtons">
+      <button class="btn btn-fold" data-action="Фолд">Фолд</button>
+      <button class="btn btn-check" data-action="Чек">Чек</button>
+      <button class="btn btn-call" data-action="Колл">Колл</button>
+      <button class="btn btn-bet" data-action="Бет">Бет</button>
+      <button class="btn btn-raise" data-action="Рейз">Рейз</button>
+      <button class="btn btn-allin" data-action="Аллын">Аллын</button>
+    </div>
+
+    <div id="resultMessage" class="result"></div>
+
+    <details class="info-spoiler">
+      <summary>📋 Информация о раздаче</summary>
+      <div class="info-panel" id="situationInfo"></div>
+    </details>
+  </div>
+
+  <script>
+    // ==================== КОНСТАНТЫ ====================
+    const MATRIX_STORAGE_KEY = 'flopMatrixState_v1';
+    const FLOP_ACTIONS_KEY = 'flopActionsState_v3';
+    const TURN_ACTIONS_KEY = 'turnActionsState_v1';
+    const RIVER_ACTIONS_KEY = 'riverActionsState_v1';
+
+    const HAND_CATEGORIES = [
+      { value: 'garbage', label: 'Мусор' },
+      { value: 'gutshot', label: 'Гатшот' },
+      { value: 'draw', label: 'Дро' },
+      { value: 'low', label: 'Лоу' },
+      { value: 'middle', label: 'Мидл' },
+      { value: 'top', label: 'Топ' },
+      { value: 'twopair_plus', label: 'Две пары+' }
+    ];
+
+    const SUITS = [
+      { symbol: '♠', className: 'suit-spades' },
+      { symbol: '♥', className: 'suit-hearts' },
+      { symbol: '♦', className: 'suit-diamonds' },
+      { symbol: '♣', className: 'suit-clubs' }
+    ];
+
+    function getPositionsForPlayers(numPlayers) {
+      const allPositions = ['UTG', 'MP', 'CO', 'BTN', 'SB', 'BB'];
+      if (numPlayers === 2) return ['SB', 'BB'];
+      if (numPlayers === 3) return ['BTN', 'SB', 'BB'];
+      if (numPlayers === 4) return ['CO', 'BTN', 'SB', 'BB'];
+      if (numPlayers === 5) return ['MP', 'CO', 'BTN', 'SB', 'BB'];
+      return allPositions.slice(0, numPlayers);
+    }
+
+    // ==================== СОСТОЯНИЕ ====================
+    let currentSituation = null;
+    let correctAction = null;
+    let userAnswered = false;
+
+    // ==================== УТИЛИТЫ ====================
+    function loadJSON(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : null;
+      } catch (e) {
+        console.warn(`Ошибка чтения ${key}:`, e);
+        return null;
+      }
+    }
+
+    function getRandomItem(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+    function getSuitClass(suitSymbol) {
+      const suit = SUITS.find(s => s.symbol === suitSymbol);
+      return suit ? suit.className : '';
+    }
+
+    // ==================== ГЕНЕРАЦИЯ СИТУАЦИИ ====================
+    function generateSituation() {
+      // Получаем группы флопов
+      const matrixData = loadJSON(MATRIX_STORAGE_KEY);
+      const groups = (matrixData && matrixData.colors && Array.isArray(matrixData.colors)) 
+                      ? matrixData.colors.map(c => ({ id: String(c.id), name: String(c.name || 'Без названия') }))
+                      : [];
+
+      if (groups.length === 0) {
+        return { error: 'Нет групп флопов. Сначала откройте редактор флопов и создайте группы (цвета).' };
+      }
+
+      // Случайная улица (префлоп не рассматриваем)
+      const streets = ['flop', 'turn', 'river'];
+      const street = getRandomItem(streets);
+
+      // Случайная группа флопа
+      const flopGroup = getRandomItem(groups);
+
+      // Случайная категория руки
+      const handCategory = getRandomItem(HAND_CATEGORIES);
+
+      // Для терна и ривера — случайный тип
+      let turnType = null;
+      let riverType = null;
+      if (street === 'turn') {
+        turnType = getRandomItem(['over', 'under', 'pair']);
+      } else if (street === 'river') {
+        riverType = getRandomItem(['nopair', 'paired']);
+      }
+
+      // Ищем правильное действие
+      const action = getCorrectAction(street, flopGroup.id, handCategory.value, turnType, riverType);
+
+      return {
+        street,
+        flopGroup,
+        handCategory,
+        turnType,
+        riverType,
+        correctAction: action
+      };
+    }
+
+    function getCorrectAction(street, groupId, handCategoryValue, turnType, riverType) {
+      if (street === 'flop') {
+        const data = loadJSON(FLOP_ACTIONS_KEY);
+        if (!data || !data.actions) return null;
+        const key = `${groupId}|${handCategoryValue}`;
+        return data.actions[key] || null;
+      } else if (street === 'turn') {
+        const data = loadJSON(TURN_ACTIONS_KEY);
+        if (!data || !data.actions) return null;
+        const key = `${turnType}|${groupId}|${handCategoryValue}`;
+        return data.actions[key] || null;
+      } else if (street === 'river') {
+        const data = loadJSON(RIVER_ACTIONS_KEY);
+        if (!data || !data.actions) return null;
+        const key = `${riverType}|${groupId}|${handCategoryValue}`;
+        return data.actions[key] || null;
+      }
+      return null;
+    }
+
+    // ==================== ОТОБРАЖЕНИЕ ====================
+    function renderTable(situation) {
+      const container = document.getElementById('playersContainer');
+      container.innerHTML = '';
+
+      // Простая фиксированная расстановка: Hero снизу, два Villain'а сверху
+      const players = 3; // для простоты
+      const heroStack = 100;
+      const villainStack = 100;
+      const potSize = 10;
+
+      const positions = getPositionsForPlayers(players);
+      let heroIndex = 0; // Hero всегда внизу
+
+      const bets = [0, 5, 5]; // например, один оппонент поставил 5
+      const dealerIndex = 2; // BTN
+
+      const angleStep = 360 / players;
+      const radius = 35;
+
+      for (let i = 0; i < players; i++) {
+        const seat = document.createElement('div');
+        seat.className = 'player-seat';
+        const angle = (i * angleStep + 90) * (Math.PI / 180);
+        const x = 50 + radius * Math.cos(angle);
+        const y = 50 + radius * Math.sin(angle);
+        seat.style.left = `calc(${x}% - 50px)`;
+        seat.style.top = `calc(${y}% - 40px)`;
+
+        const isHero = (i === heroIndex);
+        const name = isHero ? 'Hero' : `Villain ${i}`;
+        const stack = isHero ? heroStack : villainStack;
+        const positionLabel = positions[i] || '';
+        const bet = bets[i];
+        const isDealer = (i === dealerIndex);
+        const actionText = isHero ? 'Ход' : '';
+
+        let heroCardsHTML = '';
+        if (isHero) {
+          const suits = ['♠', '♥', '♦', '♣'];
+          const ranks = ['A','2','3','4','5','6','7','8','9','T','J','Q','K'];
+          const card1Rank = getRandomItem(ranks);
+          const card1Suit = getRandomItem(suits);
+          const card2Rank = getRandomItem(ranks);
+          const card2Suit = getRandomItem(suits);
+          const class1 = getSuitClass(card1Suit);
+          const class2 = getSuitClass(card2Suit);
+          heroCardsHTML = `<div class="hero-cards">
+            <div class="mini-card ${class1}">${card1Rank}</div>
+            <div class="mini-card ${class2}">${card2Rank}</div>
+          </div>`;
+        }
+
+        seat.innerHTML = `
+          ${heroCardsHTML}
+          <div class="avatar">${isHero ? '🦸' : '👤'}${isDealer ? '<div class="dealer-btn">D</div>' : ''}</div>
+          <div class="player-position">${positionLabel}</div>
+          <div class="player-name">${name}</div>
+          <div class="player-stack">${stack} BB</div>
+          ${bet > 0 ? `<div class="player-bet">Ставка: ${bet} BB</div>` : ''}
+          ${actionText ? `<div class="player-action">${actionText}</div>` : ''}
+        `;
+        container.appendChild(seat);
+      }
+
+      document.getElementById('potDisplay').textContent = `Банк: ${potSize} BB`;
+
+      // Карты доски
+      const boardCards = document.getElementById('boardCards');
+      boardCards.innerHTML = '';
+      const cardCount = situation.street === 'flop' ? 3 :
+                        situation.street === 'turn' ? 4 :
+                        situation.street === 'river' ? 5 : 5;
+      const suits = ['♠', '♥', '♦', '♣'];
+      const ranks = ['A','2','3','4','5','6','7','8','9','T','J','Q','K'];
+      for (let i = 0; i < cardCount; i++) {
+        const card = document.createElement('div');
+        const rank = getRandomItem(ranks);
+        const suit = getRandomItem(suits);
+        const suitClass = getSuitClass(suit);
+        card.className = `card ${suitClass}`;
+        card.textContent = rank;
+        boardCards.appendChild(card);
+      }
+    }
+
+    function renderInfo(situation) {
+      const infoDiv = document.getElementById('situationInfo');
+      let text = `<strong>Улица:</strong> ${situation.street}<br>`;
+      text += `<strong>Группа флопа:</strong> ${situation.flopGroup.name}<br>`;
+      if (situation.turnType) text += `<strong>Тип терна:</strong> ${situation.turnType}<br>`;
+      if (situation.riverType) text += `<strong>Тип ривера:</strong> ${situation.riverType}<br>`;
+      text += `<strong>Категория руки:</strong> ${situation.handCategory.label}<br>`;
+      if (situation.correctAction) {
+        text += `<strong>Правильное действие (для проверки):</strong> ${situation.correctAction}<br>`;
+      } else {
+        text += `<strong>Правильное действие:</strong> НЕ НАЙДЕНО<br>`;
+      }
+      infoDiv.innerHTML = text;
+    }
+
+    function resetResult() {
+      userAnswered = false;
+      document.getElementById('resultMessage').textContent = '';
+      document.getElementById('resultMessage').className = 'result';
+    }
+
+    function checkAnswer(action) {
+      const resultDiv = document.getElementById('resultMessage');
+      if (currentSituation.correctAction === null) {
+        resultDiv.textContent = '⚠️ Нет данных о правильном действии для этой ситуации.';
+        resultDiv.className = 'result';
+        return;
+      }
+      if (action === currentSituation.correctAction) {
+        resultDiv.textContent = '✅ Правильно!';
+        resultDiv.className = 'result correct';
+      } else {
+        resultDiv.textContent = `❌ Неправильно. Правильное действие: ${currentSituation.correctAction}`;
+        resultDiv.className = 'result incorrect';
+      }
+    }
+
+    // ==================== УПРАВЛЕНИЕ ====================
+    function newHand() {
+      const situation = generateSituation();
+      if (situation.error) {
+        document.getElementById('errorMessage').textContent = situation.error;
+        return;
+      }
+      document.getElementById('errorMessage').textContent = '';
+      currentSituation = situation;
+      correctAction = situation.correctAction;
+      renderTable(situation);
+      renderInfo(situation);
+      resetResult();
+    }
+
+    function reloadData() {
+      newHand();
+    }
+
+    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('newHandBtn').addEventListener('click', newHand);
+      document.getElementById('reloadDataBtn').addEventListener('click', reloadData);
+      // Навешиваем обработчики на кнопки действий
+      const actionButtons = document.querySelectorAll('#actionButtons .btn');
+      actionButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (userAnswered) return;
+          const action = btn.dataset.action;
+          userAnswered = true;
+          checkAnswer(action);
+        });
+      });
+      // Первая раздача
+      newHand();
+    });
+  </script>
+</body>
+</html>

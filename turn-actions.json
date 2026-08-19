@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "groups": [
+    {
+      "id": "c_red",
+      "name": "Спаренная Высокая"
+    },
+    {
+      "id": "c_orange",
+      "name": "Готовая"
+    },
+    {
+      "id": "c_yellow",
+      "name": "Мокрая"
+    },
+    {
+      "id": "c_green",
+      "name": "Сухая 2верх1низ"
+    },
+    {
+      "id": "c_blue",
+      "name": "Сухая 1верх2низ"
+    },
+    {
+      "id": "c_purple",
+      "name": "Спаренная Низкая"
+    },
+    {
+      "id": "c_pink",
+      "name": "Низкая"
+    }
+  ],
+  "actions": {
+    "over|c_pink|Мусор": "Бет",
+    "over|c_purple|Мусор": "Бет",
+    "over|c_blue|Мусор": "Бет",
+    "over|c_green|Мусор": "Бет",
+    "over|c_yellow|Мусор": "Бет",
+    "over|c_orange|Мусор": "Бет",
+    "over|c_red|Мусор": "Чек",
+    "over|c_red|Гатшот": "Чек",
+    "over|c_orange|Гатшот": "Бет",
+    "over|c_yellow|Гатшот": "Бет",
+    "over|c_green|Гатшот": "Бет",
+    "over|c_blue|Гатшот": "Бет",
+    "over|c_purple|Гатшот": "Бет",
+    "over|c_pink|Гатшот": "Бет",
+    "under|c_red|Мусор": "Чек",
+    "under|c_red|Гатшот": "Чек",
+    "under|c_orange|Мусор": "Бет",
+    "under|c_orange|Гатшот": "Бет",
+    "under|c_yellow|Мусор": "Бет",
+    "under|c_yellow|Гатшот": "Бет",
+    "under|c_green|Мусор": "Чек",
+    "under|c_green|Гатшот": "Чек",
+    "under|c_blue|Мусор": "Бет",
+    "under|c_blue|Гатшот": "Бет",
+    "under|c_purple|Мусор": "Бет",
+    "under|c_purple|Гатшот": "Бет",
+    "under|c_pink|Мусор": "Бет",
+    "under|c_pink|Гатшот": "Бет",
+    "pair|c_red|Мусор": "Чек",
+    "pair|c_red|Гатшот": "Чек",
+    "pair|c_orange|Мусор": "Чек",
+    "pair|c_orange|Гатшот": "Чек",
+    "pair|c_yellow|Мусор": "Чек",
+    "pair|c_yellow|Гатшот": "Чек",
+    "pair|c_green|Мусор": "Чек",
+    "pair|c_green|Гатшот": "Чек",
+    "pair|c_blue|Мусор": "Чек",
+    "pair|c_blue|Гатшот": "Чек",
+    "pair|c_purple|Мусор": "Бет",
+    "pair|c_purple|Гатшот": "Бет",
+    "pair|c_pink|Мусор": "Бет",
+    "pair|c_pink|Гатшот": "Бет"
+  }
+}
