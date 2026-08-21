@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Покерный тренажёр — флоп, терн, ривер</title>
+  <style>
+    :root {
+      --bg: #f1f2f6;
+      --panel: #ffffff;
+      --border: #dfe4ea;
+      --text: #1e272e;
+      --accent: #2d3436;
+      --blue: #0984e3;
+      --green: #00b894;
+      --red: #d63031;
+      --purple: #6c5ce7;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 40px;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 12px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+    header h1 { font-size: 20px; margin: 0; font-weight: 800; }
+    .status-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600;
+      background: #f8f9fa; border: 1px solid var(--border);
+      border-radius: 20px; padding: 5px 12px;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #a4b0be; }
+    .status-dot.ok { background: var(--green); }
+    .status-dot.warn { background: #f39c12; }
+    .main-layout {
+      display: flex;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 16px 18px;
+    }
+    .sidebar {
+      flex: 0 0 280px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      height: fit-content;
+      position: sticky;
+      top: 68px;
+    }
+    .sidebar h2 { margin: 0 0 12px; font-size: 17px; font-weight: 700; }
+    .lesson-checkbox-item {
+      display: flex; align-items: center; gap: 8px; padding: 8px;
+      border-bottom: 1px solid #f0f0f0; cursor: pointer;
+    }
+    .lesson-checkbox-item:hover { background: #f8f9fa; }
+    .lesson-checkbox-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
+    .lesson-checkbox-item label { cursor: pointer; font-size: 14px; font-weight: 500; }
+    .btn {
+      border: none; border-radius: 8px; padding: 9px 14px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      background: var(--accent); color: #fff;
+      transition: background 0.15s, transform 0.1s; white-space: nowrap;
+    }
+    .btn:hover { background: #3d4348; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--blue); }
+    .btn-primary:hover { background: #0873c4; }
+    .btn-success { background: var(--green); }
+    .btn-success:hover { background: #009f7f; }
+    .btn-reports { background: var(--purple); }
+    .btn-reports:hover { background: #5b4bc4; }
+    .btn-block { width: 100%; margin-top: 8px; }
+    .table-area { flex: 1; min-width: 0; }
+    .poker-table {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 12px; padding: 20px; box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .poker-table h2 { margin: 0 0 16px; font-size: 18px; text-align: center; }
+    .board-cards { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+    .hand-cards { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+    .card {
+      width: 70px; height: 100px; background: #fff;
+      border: 2px solid #ced4da; border-radius: 10px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 800;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); user-select: none;
+    }
+    .card.red { color: var(--red); }
+    .card.black { color: #1e272e; }
+    .info-row {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 16px;
+    }
+    .info-chip {
+      background: #f8f9fa; border: 1px solid var(--border); border-radius: 20px;
+      padding: 6px 14px; font-size: 13px; font-weight: 600;
+    }
+    .action-history {
+      text-align: center; font-size: 14px; background: #f8f9fa;
+      border-radius: 8px; padding: 10px; border: 1px solid var(--border); margin-bottom: 20px;
+    }
+    .choice-area {
+      background: #f8f9fa; border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px; margin-top: 20px;
+    }
+    .choice-area h3 { margin: 0 0 12px; font-size: 16px; font-weight: 700; }
+    .hand-category-display {
+      font-size: 15px; font-weight: 700; margin-bottom: 12px;
+      background: #fff; border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 12px; display: inline-block;
+    }
+    .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+    .action-btn {
+      padding: 8px 16px; border: 2px solid transparent; border-radius: 8px;
+      font-size: 14px; font-weight: 700; cursor: pointer; color: #fff;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .action-btn.selected { border-color: #2d3436; box-shadow: 0 0 0 2px #fff inset; }
+    .action-btn.hidden { display: none; }
+    .action-btn[data-action="Фолд"] { background: #95a5a6; }
+    .action-btn[data-action="Чек"] { background: #3498db; }
+    .action-btn[data-action="Колл"] { background: #2ecc71; }
+    .action-btn[data-action="Бет"] { background: #f39c12; }
+    .action-btn[data-action="Рейз"] { background: #e67e22; }
+    .action-btn[data-action="Аллын"] { background: #e74c3c; }
+    .result-box {
+      margin-top: 16px; padding: 12px; border-radius: 8px;
+      font-weight: 600; display: none;
+    }
+    .result-box.correct { background: #d4f4e8; border: 1px solid #00b894; color: #006b54; display: block; }
+    .result-box.wrong { background: #ffe3e3; border: 1px solid #d63031; color: #a01212; display: block; }
+    .result-box.info { background: #e3f0ff; border: 1px solid #0984e3; color: #064d8a; display: block; }
+    .stats {
+      display: flex; justify-content: space-around; margin-top: 20px;
+      padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid var(--border);
+    }
+    .stat-item { text-align: center; }
+    .stat-value { font-size: 22px; font-weight: 800; }
+    .hint {
+      font-size: 13px; color: #57606f; background: #f8f9fa;
+      border-radius: 8px; padding: 10px 14px; border: 1px solid var(--border); margin-top: 8px;
+    }
+    @media (max-width: 900px) {
+      .main-layout { flex-direction: column; }
+      .sidebar { position: static; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎯 Покерный тренажёр (флоп, терн, ривер)</h1>
+    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+      <button id="reportsBtn" class="btn btn-reports" title="Открыть отчёты">📊 Отчёты</button>
+      <div class="status-badge" id="dataStatus">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Загрузка данных...</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <aside class="sidebar">
+      <h2>📚 Выбор уроков</h2>
+      <div id="lessonsCheckboxes"></div>
+      <button id="refreshLessonsBtn" class="btn" style="background: var(--purple); width: 100%; margin-top: 8px;">🔄 Обновить уроки</button>
+      <div id="lessonInfo" class="hint"></div>
+    </aside>
+
+    <div class="table-area">
+      <div class="poker-table" id="tableDisplay">
+        <h2>🃏 Текущая раздача</h2>
+        <div class="info-row" id="infoRow"></div>
+        <div class="board-cards" id="boardCards"></div>
+        <div class="hand-cards" id="heroCards"></div>
+        <div class="action-history" id="actionHistory"></div>
+
+        <div class="choice-area">
+          <h3>📋 Ваш выбор</h3>
+          <button id="generateBtn" class="btn btn-primary">🎲 Новая раздача</button>
+          <div class="hand-category-display" id="handCategoryDisplay">Категория: ...</div>
+          <div class="action-buttons" id="actionButtons">
+            <button class="action-btn" data-action="Фолд">Фолд</button>
+            <button class="action-btn" data-action="Чек">Чек</button>
+            <button class="action-btn" data-action="Колл">Колл</button>
+            <button class="action-btn" data-action="Бет">Бет</button>
+            <button class="action-btn" data-action="Рейз">Рейз</button>
+            <button class="action-btn" data-action="Аллын">Аллын</button>
+          </div>
+          <div class="result-box" id="resultBox"></div>
+        </div>
+
+        <div class="stats">
+          <div class="stat-item">
+            <div class="stat-value" id="totalChecks">0</div>
+            <div>всего проверок</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="correctChecks">0</div>
+            <div>правильных</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="accuracy">0%</div>
+            <div>точность</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== КОНСТАНТЫ ====================
+    const MATRIX_STORAGE_KEY = 'flopMatrixState_v1';
+    const ACTIONS_FLOP_KEY = 'flopActionsState_v3';
+    const ACTIONS_TURN_KEY = 'turnActionsState_v1';
+    const ACTIONS_RIVER_KEY = 'riverActionsState_v1';
+    const ACTIONS_RIVER_BXB_KEY = 'riverActionsState_v1_bxb';
+    const LESSONS_STORAGE_KEY = 'pokerSessionLessons_v1';
+    const HISTORY_STORAGE_KEY = 'pokerTrainerHistory_v1';
+
+    const HAND_CATEGORIES = ['Мусор', 'Гатшот', 'Дро', 'Лоу', 'Мидл', 'Топ', 'Две пары+'];
+    const ACTIONS_LIST = ['Фолд', 'Чек', 'Колл', 'Бет', 'Рейз', 'Аллын'];
+    const TURN_TYPE_LABELS = { over: 'Оверкарта', under: 'Андеркарта', pair: 'Спарка' };
+    const RIVER_TYPE_LABELS = { nopair: 'Не спарилась', paired: 'Спарилась' };
+
+    const RANKS_DESC = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+    const SUITS = [
+      { value: 's', symbol: '♠', isRed: false },
+      { value: 'h', symbol: '♥', isRed: true },
+      { value: 'd', symbol: '♦', isRed: true },
+      { value: 'c', symbol: '♣', isRed: false }
+    ];
+
+    // ==================== АВТОЗАГРУЗКА ДАННЫХ С GITHUB ====================
+    const BASE_URL = 'https://raw.githubusercontent.com/bbbesstbbb/postflop/main/';
+    const DEFAULT_DATA_URLS = {
+      [MATRIX_STORAGE_KEY]: BASE_URL + 'flop-matrix-colors.json',
+      [ACTIONS_FLOP_KEY]: BASE_URL + 'flop-actions-by-groups.json',
+      [ACTIONS_TURN_KEY]: BASE_URL + 'turn-actions.json',
+      [ACTIONS_RIVER_KEY]: BASE_URL + 'river-actions.json',
+      [ACTIONS_RIVER_BXB_KEY]: BASE_URL + 'river-actions-bxb.json',
+      [LESSONS_STORAGE_KEY]: BASE_URL + 'poker-session-lessons.json'
+    };
+
+    async function loadDefaultDataIfNeeded() {
+      let needReload = false;
+      for (const [key, url] of Object.entries(DEFAULT_DATA_URLS)) {
+        if (!localStorage.getItem(key) && url) {
+          try {
+            const response = await fetch(url);
+            if (response.ok) {
+              let data = await response.json();
+              if (key === LESSONS_STORAGE_KEY && !Array.isArray(data)) {
+                data = [{
+                  id: 'lesson_default',
+                  name: 'Урок по умолчанию',
+                  config: data
+                }];
+              }
+              localStorage.setItem(key, JSON.stringify(data));
+              console.log(`Данные для ${key} загружены с сервера.`);
+              needReload = true;
+            } else {
+              console.warn(`Не удалось загрузить ${key}: ${response.status}`);
+            }
+          } catch (error) {
+            console.warn(`Ошибка загрузки ${key}:`, error);
+          }
+        }
+      }
+      return needReload;
+    }
+
+    // ==================== СОСТОЯНИЕ ====================
+    let matrixData = null;
+    let actionsFlop = {};
+    let actionsTurn = {};
+    let actionsRiver = {};
+    let actionsRiverBxB = {};
+    let groupsMap = new Map();
+    let lessons = [];
+    let selectedLessonIds = new Set();
+    let currentLesson = null;
+    let currentHand = null;
+    let selectedAction = null;
+    let totalChecks = 0;
+    let correctChecks = 0;
+
+    // ==================== DOM ЭЛЕМЕНТЫ ====================
+    const $ = (id) => document.getElementById(id);
+    const els = {
+      statusDot: $('statusDot'),
+      statusText: $('statusText'),
+      lessonsCheckboxes: $('lessonsCheckboxes'),
+      refreshLessonsBtn: $('refreshLessonsBtn'),
+      lessonInfo: $('lessonInfo'),
+      infoRow: $('infoRow'),
+      heroCards: $('heroCards'),
+      boardCards: $('boardCards'),
+      actionHistory: $('actionHistory'),
+      handCategoryDisplay: $('handCategoryDisplay'),
+      actionButtons: $('actionButtons'),
+      generateBtn: $('generateBtn'),
+      resultBox: $('resultBox'),
+      totalChecks: $('totalChecks'),
+      correctChecks: $('correctChecks'),
+      accuracy: $('accuracy'),
+      reportsBtn: $('reportsBtn')
+    };
+
+    // ==================== ЗАГРУЗКА ДАННЫХ ИЗ LOCALSTORAGE ====================
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(MATRIX_STORAGE_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data && data.colors && data.assignments) {
+            matrixData = data;
+            groupsMap.clear();
+            matrixData.colors.forEach(c => groupsMap.set(String(c.id), { name: c.name, color: c.color }));
+          }
+        }
+      } catch (e) { console.warn('Ошибка загрузки матрицы:', e); }
+
+      try {
+        const raw = localStorage.getItem(ACTIONS_FLOP_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data && data.actions && typeof data.actions === 'object') actionsFlop = data.actions;
+        }
+      } catch (e) { console.warn('Ошибка загрузки действий флопа:', e); }
+
+      try {
+        const raw = localStorage.getItem(ACTIONS_TURN_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data && data.actions && typeof data.actions === 'object') actionsTurn = data.actions;
+        }
+      } catch (e) { console.warn('Ошибка загрузки действий терна:', e); }
+
+      try {
+        const raw = localStorage.getItem(ACTIONS_RIVER_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data && data.actions && typeof data.actions === 'object') actionsRiver = data.actions;
+        }
+      } catch (e) { console.warn('Ошибка загрузки действий ривера:', e); }
+
+      try {
+        const raw = localStorage.getItem(ACTIONS_RIVER_BXB_KEY);
+        if (raw) {
+          const data = JSON.parse(raw);
+          if (data && data.actions && typeof data.actions === 'object') actionsRiverBxB = data.actions;
+        }
+      } catch (e) { console.warn('Ошибка загрузки действий ривера BxB:', e); }
+
+      try {
+        const raw = localStorage.getItem(LESSONS_STORAGE_KEY);
+        if (raw) {
+          lessons = JSON.parse(raw);
+          if (!Array.isArray(lessons)) lessons = [];
+        }
+      } catch (e) { console.warn('Ошибка загрузки уроков:', e); }
+
+      updateStatusBadge();
+    }
+
+    function updateStatusBadge() {
+      const hasMatrix = !!matrixData;
+      const hasFlop = Object.keys(actionsFlop).length > 0;
+      const hasTurn = Object.keys(actionsTurn).length > 0;
+      const hasRiver = Object.keys(actionsRiver).length > 0;
+      const hasRiverBxB = Object.keys(actionsRiverBxB).length > 0;
+      const hasLessons = lessons.length > 0;
+      if (hasMatrix && hasFlop && hasTurn && (hasRiver || hasRiverBxB) && hasLessons) {
+        els.statusDot.className = 'status-dot ok';
+        els.statusText.textContent = `Данные загружены: групп ${matrixData.colors.length}, флоп: ${Object.keys(actionsFlop).length}, терн: ${Object.keys(actionsTurn).length}, ривер: ${Object.keys(actionsRiver).length}${hasRiverBxB ? ', ривер BxB: ' + Object.keys(actionsRiverBxB).length : ''}, уроков: ${lessons.length}`;
+      } else {
+        els.statusDot.className = 'status-dot warn';
+        let msg = 'Не хватает данных: ';
+        if (!hasMatrix) msg += 'матрица; ';
+        if (!hasFlop) msg += 'действия флопа; ';
+        if (!hasTurn) msg += 'действия терна; ';
+        if (!hasRiver && !hasRiverBxB) msg += 'действия ривера; ';
+        if (!hasLessons) msg += 'уроки; ';
+        els.statusText.textContent = msg;
+      }
+    }
+
+    // ==================== ОТОБРАЖЕНИЕ УРОКОВ ====================
+    function renderLessonsCheckboxes() {
+      els.lessonsCheckboxes.innerHTML = '';
+      if (lessons.length === 0) {
+        els.lessonsCheckboxes.innerHTML = '<div class="hint">Нет сохранённых уроков. Откройте конфигуратор и создайте уроки.</div>';
+        return;
+      }
+      lessons.forEach(lesson => {
+        const item = document.createElement('div');
+        item.className = 'lesson-checkbox-item';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `lesson_${lesson.id}`;
+        checkbox.value = lesson.id;
+        checkbox.checked = selectedLessonIds.has(lesson.id);
+        const label = document.createElement('label');
+        label.htmlFor = checkbox.id;
+        label.textContent = lesson.name;
+        item.appendChild(checkbox);
+        item.appendChild(label);
+        els.lessonsCheckboxes.appendChild(item);
+        checkbox.addEventListener('change', () => {
+          if (checkbox.checked) selectedLessonIds.add(lesson.id);
+          else selectedLessonIds.delete(lesson.id);
+          updateLessonInfo();
+        });
+      });
+      updateLessonInfo();
+    }
+
+    function updateLessonInfo() {
+      if (selectedLessonIds.size === 0) {
+        els.lessonInfo.textContent = 'Выберите уроки для тренировки (можно несколько).';
+      } else {
+        const names = lessons.filter(l => selectedLessonIds.has(l.id)).map(l => l.name);
+        els.lessonInfo.innerHTML = `<strong>Выбрано уроков: ${selectedLessonIds.size}</strong><br>${names.join(', ')}`;
+      }
+    }
+
+    // ==================== РАБОТА С КНОПКАМИ ДЕЙСТВИЙ ====================
+    function setupActionButtons() {
+      const buttons = els.actionButtons.querySelectorAll('.action-btn');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedAction = btn.dataset.action;
+          processAction();
+        });
+      });
+    }
+
+    function clearActionSelection() {
+      const buttons = els.actionButtons.querySelectorAll('.action-btn');
+      buttons.forEach(b => b.classList.remove('selected'));
+      selectedAction = null;
+    }
+
+    function updateActionButtonsVisibility() {
+      if (!currentLesson || !currentLesson.config) return;
+      const cfg = currentLesson.config;
+      const firstActor = cfg.postflopFirstActor || 'hero';
+      const firstAction = cfg.postflopFirstAction || 'check';
+
+      const buttons = els.actionButtons.querySelectorAll('.action-btn');
+      buttons.forEach(btn => {
+        const action = btn.dataset.action;
+        let show = true;
+
+        if (firstActor === 'hero') {
+          if (action === 'Фолд' || action === 'Колл' || action === 'Рейз') show = false;
+        } else {
+          if (firstAction === 'bet') {
+            if (action === 'Чек' || action === 'Бет') show = false;
+          } else if (firstAction === 'check') {
+            if (action === 'Фолд' || action === 'Колл' || action === 'Рейз') show = false;
+          } else if (firstAction === 'check-raise') {
+            if (action === 'Чек' || action === 'Бет') show = false;
+          }
+        }
+
+        if (show) btn.classList.remove('hidden');
+        else btn.classList.add('hidden');
+      });
+    }
+
+    // ==================== ОЦЕНКА КАТЕГОРИИ РУКИ ====================
+    function rankToValue(rank) {
+      const map = { '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':11, 'Q':12, 'K':13, 'A':14 };
+      return map[rank] || 0;
+    }
+
+    function getUniqueSortedRanks(cards) {
+      const values = cards.map(c => rankToValue(c.rank));
+      return [...new Set(values)].sort((a,b) => b - a);
+    }
+
+    function isFlush(cards) {
+      return cards.every(c => c.suit === cards[0].suit);
+    }
+
+    function isStraight(cards) {
+      const values = getUniqueSortedRanks(cards);
+      if (values.length !== 5) return false;
+      if (values[0] - values[4] === 4 && new Set(values).size === 5) return true;
+      const wheel = [14, 2, 3, 4, 5];
+      return values.length === 5 && wheel.every(v => values.includes(v));
+    }
+
+    function countRanks(cards) {
+      const counts = {};
+      cards.forEach(c => {
+        const v = rankToValue(c.rank);
+        counts[v] = (counts[v] || 0) + 1;
+      });
+      return counts;
+    }
+
+    function evaluateCombination(cards) {
+      const flush = isFlush(cards);
+      const straight = isStraight(cards);
+      if (flush && straight) return 'straightflush';
+      const counts = countRanks(cards);
+      const values = Object.values(counts).sort((a,b) => b - a);
+      if (values[0] === 4) return 'quads';
+      if (values[0] === 3 && values[1] === 2) return 'fullhouse';
+      if (flush) return 'flush';
+      if (straight) return 'straight';
+      if (values[0] === 3) return 'trips';
+      if (values[0] === 2 && values[1] === 2) return 'twopair';
+      if (values[0] === 2) return 'pair';
+      return 'high';
+    }
+
+    function hasFlushDraw(cards) {
+      const suits = {};
+      cards.forEach(c => { suits[c.suit] = (suits[c.suit] || 0) + 1; });
+      return Object.values(suits).some(count => count === 4);
+    }
+
+    function getStraightDrawType(cards) {
+      const values = getUniqueSortedRanks(cards);
+      if (values.length < 4) return null;
+      const straightPatterns = [];
+      for (let start = 2; start <= 10; start++) {
+        straightPatterns.push([start, start+1, start+2, start+3, start+4]);
+      }
+      straightPatterns.push([14, 2, 3, 4, 5]);
+      let qualifyingPatterns = 0;
+      for (const pattern of straightPatterns) {
+        const intersection = pattern.filter(v => values.includes(v)).length;
+        if (intersection >= 4) qualifyingPatterns++;
+      }
+      if (qualifyingPatterns === 0) return null;
+      return qualifyingPatterns >= 2 ? 'OESD' : 'gutshot';
+    }
+
+    function evaluateHandCategory(heroCards, boardCards) {
+      const allCards = [...heroCards, ...boardCards];
+      const comb = evaluateCombination(allCards);
+
+      if (['twopair', 'trips', 'straight', 'flush', 'fullhouse', 'quads', 'straightflush'].includes(comb)) {
+        return 'Две пары+';
+      }
+
+      if (comb === 'pair') {
+        const counts = countRanks(allCards);
+        let pairRank = null;
+        for (const [valueStr, count] of Object.entries(counts)) {
+          if (count === 2) {
+            pairRank = parseInt(valueStr);
+            break;
+          }
+        }
+
+        const heroHasPairRank = heroCards.some(c => rankToValue(c.rank) === pairRank);
+        if (!heroHasPairRank) {
+          return evaluateHighCardCategory(heroCards, boardCards);
+        }
+
+        const boardRanks = getUniqueSortedRanks(boardCards);
+        const high = boardRanks[0] || 0;
+        const mid = boardRanks[1] || high;
+        const low = boardRanks[2] || mid;
+
+        if (pairRank >= high) return 'Топ';
+        if (pairRank >= mid) return 'Мидл';
+        return 'Лоу';
+      }
+
+      if (comb === 'high') {
+        return evaluateHighCardCategory(heroCards, boardCards);
+      }
+
+      return 'Мусор';
+    }
+
+    function evaluateHighCardCategory(heroCards, boardCards) {
+      const allCards = [...heroCards, ...boardCards];
+      const flushDraw = hasFlushDraw(allCards);
+      const straightDrawType = getStraightDrawType(allCards);
+
+      if (flushDraw && straightDrawType === 'OESD') return 'Дро';
+      if (flushDraw || straightDrawType === 'OESD') return 'Дро';
+      if (straightDrawType === 'gutshot') return 'Гатшот';
+      return 'Мусор';
+    }
+
+    // ==================== ГЕНЕРАЦИЯ КАРТ ====================
+    function createDeck() {
+      const deck = [];
+      RANKS_DESC.forEach(rank => SUITS.forEach(suit => deck.push({ rank, suit: suit.value })));
+      return deck;
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function getFlopKeyFromCards(cards) {
+      const ranks = cards.map(c => c.rank);
+      ranks.sort((a, b) => RANKS_DESC.indexOf(a) - RANKS_DESC.indexOf(b));
+      return ranks.join('');
+    }
+
+    function getRandomFlopForLesson(lessonConfig) {
+      if (lessonConfig.selectedGroups && lessonConfig.selectedGroups.length > 0 && matrixData && matrixData.assignments) {
+        const validGroupIds = new Set(lessonConfig.selectedGroups);
+        const flopsInSelectedGroups = [];
+        for (const [flopKey, colorId] of Object.entries(matrixData.assignments)) {
+          if (validGroupIds.has(String(colorId))) flopsInSelectedGroups.push(flopKey);
+        }
+        if (flopsInSelectedGroups.length > 0) {
+          const randomKey = flopsInSelectedGroups[Math.floor(Math.random() * flopsInSelectedGroups.length)];
+          const cards = parseFlopKey(randomKey);
+          if (cards) return cards;
+        }
+      }
+      if (matrixData && Object.keys(matrixData.assignments).length > 0) {
+        const keys = Object.keys(matrixData.assignments);
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        const cards = parseFlopKey(randomKey);
+        if (cards) return cards;
+      }
+      const deck = shuffleArray(createDeck());
+      return [deck[0], deck[1], deck[2]];
+    }
+
+    function parseFlopKey(flopKey) {
+      if (flopKey.length !== 3) return null;
+      return flopKey.split('').map(rank => {
+        const suitObj = SUITS[Math.floor(Math.random() * SUITS.length)];
+        return { rank, suit: suitObj.value };
+      });
+    }
+
+    function determineTurnType(flopCards, turnCard) {
+      const flopRanks = getUniqueSortedRanks(flopCards);
+      const turnRank = rankToValue(turnCard.rank);
+      if (flopRanks.includes(turnRank)) return 'pair';
+      if (turnRank > flopRanks[0]) return 'over';
+      return 'under';
+    }
+
+    function determineRiverType(flopCards, turnCard, riverCard) {
+      const boardRanks = [...flopCards, turnCard, riverCard].map(c => rankToValue(c.rank));
+      const counts = {};
+      boardRanks.forEach(v => counts[v] = (counts[v] || 0) + 1);
+      const hasPair = Object.values(counts).some(count => count >= 2);
+      return hasPair ? 'paired' : 'nopair';
+    }
+
+    function generateRandomHand() {
+      if (selectedLessonIds.size === 0) {
+        alert('Выберите хотя бы один урок для тренировки.');
+        return null;
+      }
+      const selectedIdsArray = Array.from(selectedLessonIds);
+      const randomLessonId = selectedIdsArray[Math.floor(Math.random() * selectedIdsArray.length)];
+      currentLesson = lessons.find(l => l.id === randomLessonId);
+      if (!currentLesson) return null;
+
+      const cfg = currentLesson.config;
+
+      const stages = [];
+      if (cfg.selectedGroups && cfg.selectedGroups.length > 0) stages.push('flop');
+      if (cfg.selectedTurnTypes && cfg.selectedTurnTypes.length > 0) stages.push('turn');
+      if ((cfg.selectedRiverTypes && cfg.selectedRiverTypes.length > 0)) stages.push('river');
+      if (stages.length === 0) stages.push('flop');
+
+      const stage = stages[Math.floor(Math.random() * stages.length)];
+
+      const deck = shuffleArray(createDeck());
+      let heroCards, flopCards, turnCard = null, riverCard = null, boardCards;
+
+      flopCards = getRandomFlopForLesson(cfg);
+
+      if (stage === 'flop') {
+        heroCards = [deck[0], deck[1]];
+        boardCards = flopCards;
+      } else if (stage === 'turn') {
+        heroCards = [deck[0], deck[1]];
+        const remaining = deck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
+        turnCard = remaining[Math.floor(Math.random() * remaining.length)];
+        boardCards = [...flopCards, turnCard];
+      } else if (stage === 'river') {
+        heroCards = [deck[0], deck[1]];
+        const remaining = deck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
+        turnCard = remaining[Math.floor(Math.random() * remaining.length)];
+        const remaining2 = remaining.filter(c => c !== turnCard);
+        riverCard = remaining2[Math.floor(Math.random() * remaining2.length)];
+        boardCards = [...flopCards, turnCard, riverCard];
+      }
+
+      const allowedCategories = stage === 'flop' ? cfg.selectedCategories :
+                               stage === 'turn' ? cfg.selectedTurnCategories :
+                               cfg.selectedRiverCategories;
+
+      const maxAttempts = 500;
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const currentAttemptHand = {
+          heroCards,
+          boardCards,
+          stage,
+          flopCards,
+          turnCard,
+          riverCard,
+          category: evaluateHandCategory(heroCards, boardCards)
+        };
+        if (!allowedCategories || allowedCategories.length === 0 || allowedCategories.includes(currentAttemptHand.category)) {
+          clearActionSelection();
+          return {
+            ...currentAttemptHand,
+            lesson: currentLesson,
+            heroPosition: cfg.heroPosition || 'BTN',
+            villainPosition: cfg.villainPosition || 'BB',
+            heroStack: cfg.heroStack || 100,
+            villainStack: cfg.villainStack || 100,
+            preflopAggressor: cfg.preflopAggressor || 'villain',
+            heroPreflopAction: cfg.heroPreflopResponse || 'call'
+          };
+        }
+        const newDeck = shuffleArray(createDeck());
+        heroCards = [newDeck[0], newDeck[1]];
+        flopCards = getRandomFlopForLesson(cfg);
+        if (stage === 'flop') boardCards = flopCards;
+        else if (stage === 'turn') {
+          const remaining = newDeck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
+          turnCard = remaining[Math.floor(Math.random() * remaining.length)];
+          boardCards = [...flopCards, turnCard];
+        } else {
+          const remaining = newDeck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
+          turnCard = remaining[Math.floor(Math.random() * remaining.length)];
+          const remaining2 = remaining.filter(c => c !== turnCard);
+          riverCard = remaining2[Math.floor(Math.random() * remaining2.length)];
+          boardCards = [...flopCards, turnCard, riverCard];
+        }
+      }
+
+      clearActionSelection();
+      return {
+        heroCards,
+        boardCards,
+        stage,
+        flopCards,
+        turnCard,
+        riverCard,
+        category: evaluateHandCategory(heroCards, boardCards),
+        lesson: currentLesson,
+        heroPosition: cfg.heroPosition || 'BTN',
+        villainPosition: cfg.villainPosition || 'BB',
+        heroStack: cfg.heroStack || 100,
+        villainStack: cfg.villainStack || 100,
+        preflopAggressor: cfg.preflopAggressor || 'villain',
+        heroPreflopAction: cfg.heroPreflopResponse || 'call'
+      };
+    }
+
+    function renderHand(hand) {
+      currentHand = hand;
+
+      let stageLabel = '';
+      if (hand.stage === 'flop') stageLabel = 'Флоп';
+      else if (hand.stage === 'turn') stageLabel = 'Терн';
+      else stageLabel = 'Ривер';
+
+      els.infoRow.innerHTML = `
+        <span class="info-chip">Урок: ${hand.lesson.name}</span>
+        <span class="info-chip">Стадия: ${stageLabel}</span>
+        <span class="info-chip">Позиция героя: ${hand.heroPosition}</span>
+        <span class="info-chip">Позиция оппонента: ${hand.villainPosition}</span>
+        <span class="info-chip">Стек героя: ${hand.heroStack} BB</span>
+        <span class="info-chip">Стек оппонента: ${hand.villainStack} BB</span>
+      `;
+
+      els.boardCards.innerHTML = hand.boardCards.map(card => {
+        const suitObj = SUITS.find(s => s.value === card.suit);
+        return `<div class="card ${suitObj.isRed ? 'red' : 'black'}">${card.rank}${suitObj.symbol}</div>`;
+      }).join('');
+
+      els.heroCards.innerHTML = hand.heroCards.map(card => {
+        const suitObj = SUITS.find(s => s.value === card.suit);
+        return `<div class="card ${suitObj.isRed ? 'red' : 'black'}">${card.rank}${suitObj.symbol}</div>`;
+      }).join('');
+
+      let preflopText = '';
+      if (hand.preflopAggressor === 'hero') {
+        preflopText = `Герой сделал рейз, оппонент колл.`;
+      } else {
+        preflopText = `Оппонент сделал рейз, герой ${hand.heroPreflopAction === 'call' ? 'колл' : '3-бет'}.`;
+      }
+      if (hand.stage === 'flop') {
+        preflopText += ` Флоп.`;
+      } else if (hand.stage === 'turn') {
+        preflopText += ` Флоп, терн.`;
+      } else {
+        preflopText += ` Флоп, терн, ривер.`;
+      }
+      els.actionHistory.textContent = preflopText;
+
+      const category = hand.category || evaluateHandCategory(hand.heroCards, hand.boardCards);
+      els.handCategoryDisplay.textContent = `Категория: ${category}`;
+      currentHand.category = category;
+
+      if (hand.stage === 'turn' && hand.turnCard) {
+        const turnType = determineTurnType(hand.flopCards, hand.turnCard);
+        els.handCategoryDisplay.textContent += ` | Тип терна: ${TURN_TYPE_LABELS[turnType] || turnType}`;
+      } else if (hand.stage === 'river' && hand.riverCard) {
+        const riverType = determineRiverType(hand.flopCards, hand.turnCard, hand.riverCard);
+        els.handCategoryDisplay.textContent += ` | Тип ривера: ${RIVER_TYPE_LABELS[riverType] || riverType}`;
+      }
+
+      els.resultBox.className = 'result-box';
+      els.resultBox.textContent = '';
+
+      updateActionButtonsVisibility();
+    }
+
+    // ==================== СОХРАНЕНИЕ ИСТОРИИ ====================
+    function saveHistoryRecord(record) {
+      try {
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        const history = raw ? JSON.parse(raw) : [];
+        history.push(record);
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(history));
+      } catch (e) {
+        console.warn('Ошибка сохранения истории:', e);
+      }
+    }
+
+    // ==================== ПРОВЕРКА И ОБРАБОТКА ДЕЙСТВИЯ ====================
+    function processAction() {
+      if (!currentHand) {
+        alert('Сначала сгенерируйте раздачу.');
+        return;
+      }
+      if (!selectedAction) return;
+      if (!matrixData || !matrixData.assignments) {
+        showResult('info', 'Матрица флопов не загружена.');
+        return;
+      }
+
+      const stage = currentHand.stage;
+      let correctAction = null;
+      let groupId = null;
+      let groupName = 'Неизвестно';
+      let actionKey = '';
+
+      const flopKey = getFlopKeyFromCards(currentHand.flopCards || currentHand.boardCards.slice(0,3));
+      groupId = matrixData.assignments[flopKey];
+      if (!groupId) {
+        showResult('info', `Флоп ${flopKey} не относится ни к одной группе.`);
+        return;
+      }
+      const group = groupsMap.get(String(groupId));
+      groupName = group ? group.name : 'Неизвестно';
+
+      if (stage === 'flop') {
+        if (Object.keys(actionsFlop).length === 0) {
+          showResult('info', 'Таблица действий флопа не загружена.');
+          return;
+        }
+        actionKey = `${groupId}|${currentHand.category}`;
+        correctAction = actionsFlop[actionKey];
+      } else if (stage === 'turn') {
+        if (Object.keys(actionsTurn).length === 0) {
+          showResult('info', 'Таблица действий терна не загружена.');
+          return;
+        }
+        const turnType = determineTurnType(currentHand.flopCards, currentHand.turnCard);
+        actionKey = `${turnType}|${groupId}|${currentHand.category}`;
+        correctAction = actionsTurn[actionKey];
+      } else if (stage === 'river') {
+        const riverLine = currentLesson.config.selectedRiverLine || 'default';
+        let riverActions;
+        if (riverLine === 'bxb') {
+          riverActions = actionsRiverBxB;
+        } else {
+          riverActions = actionsRiver;
+        }
+        if (Object.keys(riverActions).length === 0) {
+          showResult('info', `Таблица действий ривера (${riverLine === 'bxb' ? 'BxB' : 'обычная'}) не загружена.`);
+          return;
+        }
+        const riverType = determineRiverType(currentHand.flopCards, currentHand.turnCard, currentHand.riverCard);
+        actionKey = `${riverType}|${groupId}|${currentHand.category}`;
+        correctAction = riverActions[actionKey];
+      }
+
+      totalChecks++;
+      els.totalChecks.textContent = totalChecks;
+
+      if (!correctAction) {
+        showResult('info', `Для группы "${groupName}" и категории "${currentHand.category}" действие не задано.`);
+        return;
+      }
+
+      const userAction = selectedAction;
+      const isCorrect = userAction === correctAction;
+
+      saveHistoryRecord({
+        lessonId: currentLesson.id,
+        stage: currentHand.stage,
+        groupId: groupId,
+        category: currentHand.category,
+        action: userAction,
+        correctAction: correctAction,
+        isCorrect: isCorrect,
+        timestamp: Date.now()
+      });
+
+      if (isCorrect) {
+        correctChecks++;
+        els.correctChecks.textContent = correctChecks;
+        const accuracy = totalChecks > 0 ? Math.round((correctChecks / totalChecks) * 100) : 0;
+        els.accuracy.textContent = accuracy + '%';
+        showResult('correct', `✅ Правильно! Действие: ${correctAction}`);
+        setTimeout(() => {
+          const newHand = generateRandomHand();
+          if (newHand) renderHand(newHand);
+        }, 500);
+      } else {
+        const accuracy = totalChecks > 0 ? Math.round((correctChecks / totalChecks) * 100) : 0;
+        els.accuracy.textContent = accuracy + '%';
+        showResult('wrong', `❌ Неправильно. Вы выбрали: ${userAction}. Правильное: ${correctAction}. Группа флопа: ${groupName}`);
+      }
+    }
+
+    function showResult(type, message) {
+      els.resultBox.className = `result-box ${type}`;
+      els.resultBox.textContent = message;
+    }
+
+    // ==================== ОБРАБОТЧИКИ ====================
+    els.generateBtn.addEventListener('click', () => {
+      const hand = generateRandomHand();
+      if (hand) renderHand(hand);
+    });
+
+    els.refreshLessonsBtn.addEventListener('click', () => {
+      loadData();
+      renderLessonsCheckboxes();
+    });
+
+    els.reportsBtn.addEventListener('click', () => {
+      window.open('poker-reports.html', '_blank');
+    });
+
+    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+    function initApp() {
+      loadData();
+      renderLessonsCheckboxes();
+      setupActionButtons();
+      if (lessons.length > 0) {
+        selectedLessonIds = new Set(lessons.map(l => l.id));
+        renderLessonsCheckboxes();
+        const hand = generateRandomHand();
+        if (hand) renderHand(hand);
+      } else {
+        els.lessonInfo.textContent = 'Нет доступных уроков. Создайте их в конфигураторе.';
+      }
+    }
+
+    // ==================== ЗАПУСК С АВТОЗАГРУЗКОЙ ====================
+    async function startApp() {
+      const reloaded = await loadDefaultDataIfNeeded();
+      if (reloaded) {
+        location.reload();
+        return;
+      }
+      initApp();
+    }
+
+    startApp();
+  </script>
+</body>
+</html>

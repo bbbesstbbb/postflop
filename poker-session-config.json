@@ -1,0 +1,59 @@
+{
+  "playersCount": 2,
+  "sb": 0.5,
+  "bb": 1,
+  "ante": 0,
+  "heroPosition": "SB",
+  "heroStack": 25,
+  "villainPosition": "BB",
+  "villainStack": 25,
+  "preflopAggressor": "hero",
+  "preflopFirstAction": "raise",
+  "preflopRaiseSize": 2,
+  "heroPreflopResponse": "call",
+  "hero3betSize": 8,
+  "preflopRaises": 1,
+  "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+  "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+  "flopType": "texture",
+  "flopCards": [
+    {
+      "rank": "4",
+      "suit": "h"
+    },
+    {
+      "rank": "A",
+      "suit": "s"
+    },
+    {
+      "rank": "Q",
+      "suit": "c"
+    }
+  ],
+  "textureHighCard": "8",
+  "textureConnectedness": "disconnected",
+  "textureSuitedness": "rainbow",
+  "postflopFirstActor": "hero",
+  "betSizePercent": 33,
+  "postflopFirstAction": "check",
+  "cbetSizePercent": 50,
+  "postflopSecondAction": "fold",
+  "selectedGroups": [
+    "c_red",
+    "c_orange",
+    "c_yellow",
+    "c_green",
+    "c_blue",
+    "c_purple",
+    "c_pink"
+  ],
+  "selectedCategories": [
+    "Мусор",
+    "Гатшот"
+  ],
+  "selectedTurnTypes": [],
+  "selectedRiverTypes": [],
+  "selectedTurnCategories": [],
+  "selectedRiverCategories": [],
+  "selectedRiverLine": "default"
+}

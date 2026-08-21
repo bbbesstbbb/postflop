@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "groups": [
+    {
+      "id": "c_red",
+      "name": "Спаренная Высокая"
+    },
+    {
+      "id": "c_orange",
+      "name": "Готовая"
+    },
+    {
+      "id": "c_yellow",
+      "name": "Мокрая"
+    },
+    {
+      "id": "c_green",
+      "name": "Сухая 2верх1низ"
+    },
+    {
+      "id": "c_blue",
+      "name": "Сухая 1верх2низ"
+    },
+    {
+      "id": "c_purple",
+      "name": "Спаренная Низкая"
+    },
+    {
+      "id": "c_pink",
+      "name": "Низкая"
+    }
+  ],
+  "actions": {
+    "nopair|c_red|Мусор": "Бет",
+    "nopair|c_orange|Мусор": "Бет",
+    "nopair|c_yellow|Мусор": "Бет",
+    "nopair|c_green|Мусор": "Бет",
+    "nopair|c_blue|Мусор": "Бет",
+    "nopair|c_purple|Мусор": "Бет",
+    "nopair|c_pink|Мусор": "Бет",
+    "nopair|c_red|Гатшот": "Бет",
+    "nopair|c_orange|Гатшот": "Бет",
+    "nopair|c_yellow|Гатшот": "Бет",
+    "nopair|c_green|Гатшот": "Бет",
+    "nopair|c_blue|Гатшот": "Бет",
+    "nopair|c_purple|Гатшот": "Бет",
+    "nopair|c_pink|Гатшот": "Бет",
+    "paired|c_red|Мусор": "Бет",
+    "paired|c_orange|Мусор": "Бет",
+    "paired|c_yellow|Мусор": "Бет",
+    "paired|c_green|Мусор": "Бет",
+    "paired|c_blue|Мусор": "Бет",
+    "paired|c_purple|Мусор": "Бет",
+    "paired|c_pink|Мусор": "Бет",
+    "paired|c_red|Гатшот": "Бет",
+    "paired|c_orange|Гатшот": "Бет",
+    "paired|c_yellow|Гатшот": "Бет",
+    "paired|c_green|Гатшот": "Бет",
+    "paired|c_blue|Гатшот": "Бет",
+    "paired|c_purple|Гатшот": "Бет",
+    "paired|c_pink|Гатшот": "Бет"
+  }
+}
