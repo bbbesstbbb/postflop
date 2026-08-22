@@ -17,7 +17,9 @@
       --purple: #6c5ce7;
       --shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -25,6 +27,7 @@
       color: var(--text);
       padding-bottom: 40px;
     }
+
     header {
       position: sticky;
       top: 0;
@@ -39,16 +42,20 @@
       border-bottom: 1px solid var(--border);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
+
     header h1 { font-size: 20px; margin: 0; font-weight: 800; }
+
     .status-badge {
       display: flex; align-items: center; gap: 6px;
       font-size: 13px; font-weight: 600;
       background: #f8f9fa; border: 1px solid var(--border);
       border-radius: 20px; padding: 5px 12px;
     }
+
     .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #a4b0be; }
     .status-dot.ok { background: var(--green); }
     .status-dot.warn { background: #f39c12; }
+
     .main-layout {
       display: flex;
       gap: 20px;
@@ -56,6 +63,7 @@
       margin: 0 auto;
       padding: 16px 18px;
     }
+
     .sidebar {
       flex: 0 0 280px;
       background: var(--panel);
@@ -67,20 +75,26 @@
       position: sticky;
       top: 68px;
     }
+
     .sidebar h2 { margin: 0 0 12px; font-size: 17px; font-weight: 700; }
+
     .lesson-checkbox-item {
       display: flex; align-items: center; gap: 8px; padding: 8px;
       border-bottom: 1px solid #f0f0f0; cursor: pointer;
     }
+
     .lesson-checkbox-item:hover { background: #f8f9fa; }
+
     .lesson-checkbox-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; }
     .lesson-checkbox-item label { cursor: pointer; font-size: 14px; font-weight: 500; }
+
     .btn {
       border: none; border-radius: 8px; padding: 9px 14px;
       font-size: 14px; font-weight: 600; cursor: pointer;
       background: var(--accent); color: #fff;
       transition: background 0.15s, transform 0.1s; white-space: nowrap;
     }
+
     .btn:hover { background: #3d4348; }
     .btn:active { transform: scale(0.97); }
     .btn-primary { background: var(--blue); }
@@ -89,77 +103,146 @@
     .btn-success:hover { background: #009f7f; }
     .btn-reports { background: var(--purple); }
     .btn-reports:hover { background: #5b4bc4; }
+
     .btn-block { width: 100%; margin-top: 8px; }
+
     .table-area { flex: 1; min-width: 0; }
+
     .poker-table {
       background: var(--panel); border: 1px solid var(--border);
       border-radius: 12px; padding: 20px; box-shadow: var(--shadow);
       margin-bottom: 20px;
     }
+
     .poker-table h2 { margin: 0 0 16px; font-size: 18px; text-align: center; }
+
     .board-cards { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
     .hand-cards { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
-    .card {
-      width: 70px; height: 100px; background: #fff;
-      border: 2px solid #ced4da; border-radius: 10px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-size: 28px; font-weight: 800;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1); user-select: none;
+
+    .hero-action-line, .villain-action-line {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #2d3436;
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2px;
     }
-    .card.red { color: var(--red); }
-    .card.black { color: #1e272e; }
+
+    .card {
+      width: 70px; height: 100px;
+      border-radius: 10px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 36px; font-weight: 900;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      user-select: none;
+    }
+
+    .card.spades { background: #1e272e; }
+    .card.hearts { background: #e74c3c; }
+    .card.diamonds { background: #2980b9; }
+    .card.clubs { background: #27ae60; }
+
     .info-row {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 16px;
     }
+
     .info-chip {
       background: #f8f9fa; border: 1px solid var(--border); border-radius: 20px;
       padding: 6px 14px; font-size: 13px; font-weight: 600;
     }
+
     .action-history {
       text-align: center; font-size: 14px; background: #f8f9fa;
       border-radius: 8px; padding: 10px; border: 1px solid var(--border); margin-bottom: 20px;
     }
+
     .choice-area {
       background: #f8f9fa; border: 1px solid var(--border); border-radius: 10px;
       padding: 16px; margin-top: 20px;
     }
+
     .choice-area h3 { margin: 0 0 12px; font-size: 16px; font-weight: 700; }
+
     .hand-category-display {
       font-size: 15px; font-weight: 700; margin-bottom: 12px;
       background: #fff; border: 1px solid var(--border); border-radius: 8px;
       padding: 8px 12px; display: inline-block;
     }
-    .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+
+    .action-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; justify-content: center; }
+
     .action-btn {
       padding: 8px 16px; border: 2px solid transparent; border-radius: 8px;
       font-size: 14px; font-weight: 700; cursor: pointer; color: #fff;
       transition: all 0.15s; white-space: nowrap;
     }
+
     .action-btn.selected { border-color: #2d3436; box-shadow: 0 0 0 2px #fff inset; }
     .action-btn.hidden { display: none; }
+
     .action-btn[data-action="Фолд"] { background: #95a5a6; }
     .action-btn[data-action="Чек"] { background: #3498db; }
     .action-btn[data-action="Колл"] { background: #2ecc71; }
     .action-btn[data-action="Бет"] { background: #f39c12; }
     .action-btn[data-action="Рейз"] { background: #e67e22; }
     .action-btn[data-action="Аллын"] { background: #e74c3c; }
+
     .result-box {
       margin-top: 16px; padding: 12px; border-radius: 8px;
       font-weight: 600; display: none;
     }
+
     .result-box.correct { background: #d4f4e8; border: 1px solid #00b894; color: #006b54; display: block; }
     .result-box.wrong { background: #ffe3e3; border: 1px solid #d63031; color: #a01212; display: block; }
     .result-box.info { background: #e3f0ff; border: 1px solid #0984e3; color: #064d8a; display: block; }
+
     .stats {
       display: flex; justify-content: space-around; margin-top: 20px;
       padding: 12px; background: #f8f9fa; border-radius: 8px; border: 1px solid var(--border);
     }
+
     .stat-item { text-align: center; }
     .stat-value { font-size: 22px; font-weight: 800; }
+
     .hint {
       font-size: 13px; color: #57606f; background: #f8f9fa;
       border-radius: 8px; padding: 10px 14px; border: 1px solid var(--border); margin-top: 8px;
     }
+
+    .action-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      margin: 0 2px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+    .street-divider {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0 4px;
+      color: #2d3436;
+      line-height: 1;
+    }
+    .badge-check { background: #95a5a6; }
+    .badge-limp { background: #74b9ff; }
+    .badge-call { background: #2ecc71; }
+    .badge-raise { background: #f39c12; }
+    .badge-open-raise { background: #e67e22; }
+    .badge-bet { background: #d35400; }
+    .badge-cbet { background: #c0a080; }
+    .badge-allin { background: #9b59b6; }
+    .badge-fold { background: #e74c3c; }
+    .badge-default { background: #bdc3c7; }
+
     @media (max-width: 900px) {
       .main-layout { flex-direction: column; }
       .sidebar { position: static; width: 100%; }
@@ -190,22 +273,26 @@
       <div class="poker-table" id="tableDisplay">
         <h2>🃏 Текущая раздача</h2>
         <div class="info-row" id="infoRow"></div>
+        <div class="villain-action-line" id="villainActionLine"></div>
         <div class="board-cards" id="boardCards"></div>
+        <div class="hero-action-line" id="heroActionLine"></div>
         <div class="hand-cards" id="heroCards"></div>
+
+        <div class="action-buttons" id="actionButtons">
+          <button class="action-btn" data-action="Фолд">Фолд</button>
+          <button class="action-btn" data-action="Чек">Чек</button>
+          <button class="action-btn" data-action="Колл">Колл</button>
+          <button class="action-btn" data-action="Бет">Бет</button>
+          <button class="action-btn" data-action="Рейз">Рейз</button>
+          <button class="action-btn" data-action="Аллын">Аллын</button>
+        </div>
+
         <div class="action-history" id="actionHistory"></div>
 
         <div class="choice-area">
           <h3>📋 Ваш выбор</h3>
           <button id="generateBtn" class="btn btn-primary">🎲 Новая раздача</button>
           <div class="hand-category-display" id="handCategoryDisplay">Категория: ...</div>
-          <div class="action-buttons" id="actionButtons">
-            <button class="action-btn" data-action="Фолд">Фолд</button>
-            <button class="action-btn" data-action="Чек">Чек</button>
-            <button class="action-btn" data-action="Колл">Колл</button>
-            <button class="action-btn" data-action="Бет">Бет</button>
-            <button class="action-btn" data-action="Рейз">Рейз</button>
-            <button class="action-btn" data-action="Аллын">Аллын</button>
-          </div>
           <div class="result-box" id="resultBox"></div>
         </div>
 
@@ -244,11 +331,25 @@
 
     const RANKS_DESC = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
     const SUITS = [
-      { value: 's', symbol: '♠', isRed: false },
-      { value: 'h', symbol: '♥', isRed: true },
-      { value: 'd', symbol: '♦', isRed: true },
-      { value: 'c', symbol: '♣', isRed: false }
+      { value: 's', symbol: '♠', isRed: false, cssClass: 'spades' },
+      { value: 'h', symbol: '♥', isRed: true, cssClass: 'hearts' },
+      { value: 'd', symbol: '♦', isRed: true, cssClass: 'diamonds' },
+      { value: 'c', symbol: '♣', isRed: false, cssClass: 'clubs' }
     ];
+
+    const ACTION_COLOR_CLASSES = {
+      'X': 'badge-check',
+      'L': 'badge-limp',
+      'C': 'badge-call',
+      'R': 'badge-raise',
+      'OR': 'badge-open-raise',
+      'B': 'badge-bet',
+      'CB': 'badge-cbet',
+      'All': 'badge-allin',
+      'F': 'badge-fold',
+      'A': 'badge-allin',
+      '3B': 'badge-cbet',
+    };
 
     // ==================== АВТОЗАГРУЗКА ДАННЫХ С GITHUB ====================
     const BASE_URL = 'https://raw.githubusercontent.com/bbbesstbbb/postflop/main/';
@@ -270,11 +371,7 @@
             if (response.ok) {
               let data = await response.json();
               if (key === LESSONS_STORAGE_KEY && !Array.isArray(data)) {
-                data = [{
-                  id: 'lesson_default',
-                  name: 'Урок по умолчанию',
-                  config: data
-                }];
+                data = [{ id: 'lesson_default', name: 'Урок по умолчанию', config: data }];
               }
               localStorage.setItem(key, JSON.stringify(data));
               console.log(`Данные для ${key} загружены с сервера.`);
@@ -304,6 +401,7 @@
     let selectedAction = null;
     let totalChecks = 0;
     let correctChecks = 0;
+    let handStartTime = null;
 
     // ==================== DOM ЭЛЕМЕНТЫ ====================
     const $ = (id) => document.getElementById(id);
@@ -324,7 +422,9 @@
       totalChecks: $('totalChecks'),
       correctChecks: $('correctChecks'),
       accuracy: $('accuracy'),
-      reportsBtn: $('reportsBtn')
+      reportsBtn: $('reportsBtn'),
+      heroActionLine: $('heroActionLine'),
+      villainActionLine: $('villainActionLine')
     };
 
     // ==================== ЗАГРУЗКА ДАННЫХ ИЗ LOCALSTORAGE ====================
@@ -504,15 +604,24 @@
     }
 
     function isFlush(cards) {
-      return cards.every(c => c.suit === cards[0].suit);
+      const suits = {};
+      cards.forEach(c => { suits[c.suit] = (suits[c.suit] || 0) + 1; });
+      return Object.values(suits).some(count => count >= 5);
     }
 
     function isStraight(cards) {
       const values = getUniqueSortedRanks(cards);
-      if (values.length !== 5) return false;
-      if (values[0] - values[4] === 4 && new Set(values).size === 5) return true;
+      if (values.length < 5) return false;
+      for (let start = 14; start >= 5; start--) {
+        let count = 0;
+        for (let v = start; v > start - 5; v--) {
+          if (values.includes(v)) count++;
+          else break;
+        }
+        if (count === 5) return true;
+      }
       const wheel = [14, 2, 3, 4, 5];
-      return values.length === 5 && wheel.every(v => values.includes(v));
+      return wheel.every(v => values.includes(v));
     }
 
     function countRanks(cards) {
@@ -524,20 +633,90 @@
       return counts;
     }
 
-    function evaluateCombination(cards) {
+    function evaluateCombinationOnFive(cards) {
       const flush = isFlush(cards);
       const straight = isStraight(cards);
-      if (flush && straight) return 'straightflush';
+      if (flush && straight) return { type: 'straightflush', pairRank: null };
       const counts = countRanks(cards);
       const values = Object.values(counts).sort((a,b) => b - a);
-      if (values[0] === 4) return 'quads';
-      if (values[0] === 3 && values[1] === 2) return 'fullhouse';
-      if (flush) return 'flush';
-      if (straight) return 'straight';
-      if (values[0] === 3) return 'trips';
-      if (values[0] === 2 && values[1] === 2) return 'twopair';
-      if (values[0] === 2) return 'pair';
-      return 'high';
+      if (values[0] === 4) return { type: 'quads', pairRank: null };
+      if (values[0] === 3 && values[1] === 2) return { type: 'fullhouse', pairRank: null };
+      if (flush) return { type: 'flush', pairRank: null };
+      if (straight) return { type: 'straight', pairRank: null };
+      if (values[0] === 3) return { type: 'trips', pairRank: null };
+      if (values[0] === 2 && values[1] === 2) {
+        let highPairRank = 0;
+        for (const [valStr, cnt] of Object.entries(counts)) {
+          if (cnt === 2) {
+            const rank = parseInt(valStr);
+            if (rank > highPairRank) highPairRank = rank;
+          }
+        }
+        return { type: 'twopair', pairRank: highPairRank };
+      }
+      if (values[0] === 2) {
+        let pairRank = null;
+        for (const [valStr, cnt] of Object.entries(counts)) {
+          if (cnt === 2) {
+            pairRank = parseInt(valStr);
+            break;
+          }
+        }
+        return { type: 'pair', pairRank: pairRank };
+      }
+      return { type: 'high', pairRank: null };
+    }
+
+    function getBestCombination(cards) {
+      const n = cards.length;
+      if (n <= 5) return evaluateCombinationOnFive(cards);
+      const typeRank = { 'high':0, 'pair':1, 'twopair':2, 'trips':3, 'straight':4, 'flush':5, 'fullhouse':6, 'quads':7, 'straightflush':8 };
+      let best = null;
+
+      function combine(start, current) {
+        if (current.length === 5) {
+          const result = evaluateCombinationOnFive(current.map(i => cards[i]));
+          if (!best || typeRank[result.type] > typeRank[best.type] ||
+              (typeRank[result.type] === typeRank[best.type] && result.type === 'pair' && result.pairRank > best.pairRank) ||
+              (typeRank[result.type] === typeRank[best.type] && result.type === 'twopair' && result.pairRank > best.pairRank)) {
+            best = result;
+          }
+          return;
+        }
+        for (let i = start; i < n; i++) {
+          current.push(i);
+          combine(i + 1, current);
+          current.pop();
+        }
+      }
+      combine(0, []);
+      return best;
+    }
+
+    function evaluateHandCategory(heroCards, boardCards) {
+      const allCards = [...heroCards, ...boardCards];
+      const best = getBestCombination(allCards);
+
+      if (['twopair', 'trips', 'straight', 'flush', 'fullhouse', 'quads', 'straightflush'].includes(best.type)) {
+        return 'Две пары+';
+      }
+
+      if (best.type === 'pair') {
+        const pairRank = best.pairRank;
+        const heroHasPairRank = heroCards.some(c => rankToValue(c.rank) === pairRank);
+        if (!heroHasPairRank) {
+          return evaluateHighCardCategory(heroCards, boardCards);
+        }
+        const boardRanks = getUniqueSortedRanks(boardCards);
+        const high = boardRanks[0] || 0;
+        const mid = boardRanks[1] || high;
+        const low = boardRanks[2] || mid;
+        if (pairRank >= high) return 'Топ';
+        if (pairRank >= mid) return 'Мидл';
+        return 'Лоу';
+      }
+
+      return evaluateHighCardCategory(heroCards, boardCards);
     }
 
     function hasFlushDraw(cards) {
@@ -563,58 +742,17 @@
       return qualifyingPatterns >= 2 ? 'OESD' : 'gutshot';
     }
 
-    function evaluateHandCategory(heroCards, boardCards) {
-      const allCards = [...heroCards, ...boardCards];
-      const comb = evaluateCombination(allCards);
-
-      if (['twopair', 'trips', 'straight', 'flush', 'fullhouse', 'quads', 'straightflush'].includes(comb)) {
-        return 'Две пары+';
-      }
-
-      if (comb === 'pair') {
-        const counts = countRanks(allCards);
-        let pairRank = null;
-        for (const [valueStr, count] of Object.entries(counts)) {
-          if (count === 2) {
-            pairRank = parseInt(valueStr);
-            break;
-          }
-        }
-
-        const heroHasPairRank = heroCards.some(c => rankToValue(c.rank) === pairRank);
-        if (!heroHasPairRank) {
-          return evaluateHighCardCategory(heroCards, boardCards);
-        }
-
-        const boardRanks = getUniqueSortedRanks(boardCards);
-        const high = boardRanks[0] || 0;
-        const mid = boardRanks[1] || high;
-        const low = boardRanks[2] || mid;
-
-        if (pairRank >= high) return 'Топ';
-        if (pairRank >= mid) return 'Мидл';
-        return 'Лоу';
-      }
-
-      if (comb === 'high') {
-        return evaluateHighCardCategory(heroCards, boardCards);
-      }
-
-      return 'Мусор';
-    }
-
     function evaluateHighCardCategory(heroCards, boardCards) {
       const allCards = [...heroCards, ...boardCards];
       const flushDraw = hasFlushDraw(allCards);
       const straightDrawType = getStraightDrawType(allCards);
-
       if (flushDraw && straightDrawType === 'OESD') return 'Дро';
       if (flushDraw || straightDrawType === 'OESD') return 'Дро';
       if (straightDrawType === 'gutshot') return 'Гатшот';
       return 'Мусор';
     }
 
-    // ==================== ГЕНЕРАЦИЯ КАРТ ====================
+    // ==================== ГЕНЕРАЦИЯ КАРТ (обновлённая фильтрация) ====================
     function createDeck() {
       const deck = [];
       RANKS_DESC.forEach(rank => SUITS.forEach(suit => deck.push({ rank, suit: suit.value })));
@@ -635,7 +773,18 @@
       return ranks.join('');
     }
 
-    function getRandomFlopForLesson(lessonConfig) {
+    function drawCardFromDeck(deck, rank = null) {
+      if (rank) {
+        const idx = deck.findIndex(c => c.rank === rank);
+        if (idx !== -1) return deck.splice(idx, 1)[0];
+        return null;
+      } else {
+        return deck.shift();
+      }
+    }
+
+    function generateFlopFromLesson(lessonConfig, deck) {
+      const flopCards = [];
       if (lessonConfig.selectedGroups && lessonConfig.selectedGroups.length > 0 && matrixData && matrixData.assignments) {
         const validGroupIds = new Set(lessonConfig.selectedGroups);
         const flopsInSelectedGroups = [];
@@ -644,26 +793,16 @@
         }
         if (flopsInSelectedGroups.length > 0) {
           const randomKey = flopsInSelectedGroups[Math.floor(Math.random() * flopsInSelectedGroups.length)];
-          const cards = parseFlopKey(randomKey);
-          if (cards) return cards;
+          const ranks = randomKey.split('');
+          for (const r of ranks) {
+            const card = drawCardFromDeck(deck, r);
+            if (card) flopCards.push(card);
+            else break;
+          }
+          if (flopCards.length === 3) return flopCards;
         }
       }
-      if (matrixData && Object.keys(matrixData.assignments).length > 0) {
-        const keys = Object.keys(matrixData.assignments);
-        const randomKey = keys[Math.floor(Math.random() * keys.length)];
-        const cards = parseFlopKey(randomKey);
-        if (cards) return cards;
-      }
-      const deck = shuffleArray(createDeck());
-      return [deck[0], deck[1], deck[2]];
-    }
-
-    function parseFlopKey(flopKey) {
-      if (flopKey.length !== 3) return null;
-      return flopKey.split('').map(rank => {
-        const suitObj = SUITS[Math.floor(Math.random() * SUITS.length)];
-        return { rank, suit: suitObj.value };
-      });
+      return [deck.shift(), deck.shift(), deck.shift()];
     }
 
     function determineTurnType(flopCards, turnCard) {
@@ -697,52 +836,142 @@
       const stages = [];
       if (cfg.selectedGroups && cfg.selectedGroups.length > 0) stages.push('flop');
       if (cfg.selectedTurnTypes && cfg.selectedTurnTypes.length > 0) stages.push('turn');
-      if ((cfg.selectedRiverTypes && cfg.selectedRiverTypes.length > 0)) stages.push('river');
+      if (cfg.selectedRiverTypes && cfg.selectedRiverTypes.length > 0) stages.push('river');
       if (stages.length === 0) stages.push('flop');
 
       const stage = stages[Math.floor(Math.random() * stages.length)];
+      const riverLine = cfg.selectedRiverLine || 'default';
 
-      const deck = shuffleArray(createDeck());
-      let heroCards, flopCards, turnCard = null, riverCard = null, boardCards;
-
-      flopCards = getRandomFlopForLesson(cfg);
-
-      if (stage === 'flop') {
-        heroCards = [deck[0], deck[1]];
-        boardCards = flopCards;
-      } else if (stage === 'turn') {
-        heroCards = [deck[0], deck[1]];
-        const remaining = deck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
-        turnCard = remaining[Math.floor(Math.random() * remaining.length)];
-        boardCards = [...flopCards, turnCard];
-      } else if (stage === 'river') {
-        heroCards = [deck[0], deck[1]];
-        const remaining = deck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
-        turnCard = remaining[Math.floor(Math.random() * remaining.length)];
-        const remaining2 = remaining.filter(c => c !== turnCard);
-        riverCard = remaining2[Math.floor(Math.random() * remaining2.length)];
-        boardCards = [...flopCards, turnCard, riverCard];
-      }
-
-      const allowedCategories = stage === 'flop' ? cfg.selectedCategories :
-                               stage === 'turn' ? cfg.selectedTurnCategories :
-                               cfg.selectedRiverCategories;
-
-      const maxAttempts = 500;
+      const maxAttempts = 1000;
       for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        const currentAttemptHand = {
-          heroCards,
-          boardCards,
-          stage,
-          flopCards,
-          turnCard,
-          riverCard,
-          category: evaluateHandCategory(heroCards, boardCards)
-        };
-        if (!allowedCategories || allowedCategories.length === 0 || allowedCategories.includes(currentAttemptHand.category)) {
+        const deck = shuffleArray(createDeck());
+        const heroCards = [deck.shift(), deck.shift()];
+        const flopCards = generateFlopFromLesson(cfg, deck);
+
+        let turnCard = null;
+        let riverCard = null;
+        let boardCards = [...flopCards];
+
+        if (stage === 'turn' || stage === 'river') {
+          const turnTypes = cfg.selectedTurnTypes || [];
+          let turnType = null;
+          if (turnTypes.length > 0) {
+            turnType = turnTypes[Math.floor(Math.random() * turnTypes.length)];
+          }
+          if (turnType === 'pair') {
+            const flopRanks = new Set(flopCards.map(c => c.rank));
+            const candidates = deck.filter(c => flopRanks.has(c.rank));
+            if (candidates.length > 0) {
+              turnCard = candidates[Math.floor(Math.random() * candidates.length)];
+              const idx = deck.indexOf(turnCard);
+              if (idx !== -1) deck.splice(idx, 1);
+            } else {
+              turnCard = deck.shift();
+            }
+          } else if (turnType === 'over') {
+            const high = Math.max(...flopCards.map(c => rankToValue(c.rank)));
+            const candidates = deck.filter(c => rankToValue(c.rank) > high);
+            if (candidates.length > 0) {
+              turnCard = candidates[Math.floor(Math.random() * candidates.length)];
+              const idx = deck.indexOf(turnCard);
+              if (idx !== -1) deck.splice(idx, 1);
+            } else {
+              turnCard = deck.shift();
+            }
+          } else if (turnType === 'under') {
+            const low = Math.min(...flopCards.map(c => rankToValue(c.rank)));
+            const candidates = deck.filter(c => rankToValue(c.rank) < low);
+            if (candidates.length > 0) {
+              turnCard = candidates[Math.floor(Math.random() * candidates.length)];
+              const idx = deck.indexOf(turnCard);
+              if (idx !== -1) deck.splice(idx, 1);
+            } else {
+              turnCard = deck.shift();
+            }
+          } else {
+            turnCard = deck.shift();
+          }
+          boardCards.push(turnCard);
+        }
+
+        if (stage === 'river') {
+          const riverTypes = cfg.selectedRiverTypes || [];
+          let riverType = null;
+          if (riverTypes.length > 0) {
+            riverType = riverTypes[Math.floor(Math.random() * riverTypes.length)];
+          }
+          if (riverType === 'paired') {
+            const boardRanks = new Set([...flopCards, turnCard].map(c => c.rank));
+            const candidates = deck.filter(c => boardRanks.has(c.rank));
+            if (candidates.length > 0) {
+              riverCard = candidates[Math.floor(Math.random() * candidates.length)];
+              const idx = deck.indexOf(riverCard);
+              if (idx !== -1) deck.splice(idx, 1);
+            } else {
+              riverCard = deck.shift();
+            }
+          } else if (riverType === 'nopair') {
+            const boardRanks = new Set([...flopCards, turnCard].map(c => c.rank));
+            const candidates = deck.filter(c => !boardRanks.has(c.rank));
+            if (candidates.length > 0) {
+              riverCard = candidates[Math.floor(Math.random() * candidates.length)];
+              const idx = deck.indexOf(riverCard);
+              if (idx !== -1) deck.splice(idx, 1);
+            } else {
+              riverCard = deck.shift();
+            }
+          } else {
+            riverCard = deck.shift();
+          }
+          boardCards.push(riverCard);
+        }
+
+        const category = evaluateHandCategory(heroCards, boardCards);
+        const flopKey = getFlopKeyFromCards(flopCards);
+        const groupId = matrixData.assignments[flopKey];
+        if (!groupId) continue;
+
+        const flopAction = actionsFlop[`${groupId}|${category}`];
+        let turnAction = null;
+        let turnType = null;
+        if (stage === 'turn' || stage === 'river') {
+          turnType = determineTurnType(flopCards, turnCard);
+          turnAction = actionsTurn[`${turnType}|${groupId}|${category}`];
+        }
+
+        // Фильтрация по линии
+        let passesLineCheck = true;
+        if (stage === 'flop') {
+          // Флоп: все флопы подходят
+          passesLineCheck = true;
+        } else if (stage === 'turn') {
+          // Терн: нужен только флоп с действием Бет
+          if (flopAction !== 'Бет') passesLineCheck = false;
+          // turnAction не проверяем, может быть любым
+        } else if (stage === 'river') {
+          if (flopAction !== 'Бет') passesLineCheck = false;
+          else if (riverLine === 'default') {
+            if (turnAction !== 'Бет') passesLineCheck = false;
+          } else if (riverLine === 'bxb') {
+            if (turnAction !== 'Чек') passesLineCheck = false;
+          }
+        }
+
+        const allowedCategories = stage === 'flop' ? cfg.selectedCategories :
+                                 stage === 'turn' ? cfg.selectedTurnCategories :
+                                 cfg.selectedRiverCategories;
+        const categoryOk = !allowedCategories || allowedCategories.length === 0 || allowedCategories.includes(category);
+
+        if (passesLineCheck && categoryOk) {
           clearActionSelection();
           return {
-            ...currentAttemptHand,
+            heroCards,
+            boardCards,
+            stage,
+            flopCards,
+            turnCard,
+            riverCard,
+            category,
             lesson: currentLesson,
             heroPosition: cfg.heroPosition || 'BTN',
             villainPosition: cfg.villainPosition || 'BB',
@@ -752,44 +981,37 @@
             heroPreflopAction: cfg.heroPreflopResponse || 'call'
           };
         }
-        const newDeck = shuffleArray(createDeck());
-        heroCards = [newDeck[0], newDeck[1]];
-        flopCards = getRandomFlopForLesson(cfg);
-        if (stage === 'flop') boardCards = flopCards;
-        else if (stage === 'turn') {
-          const remaining = newDeck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
-          turnCard = remaining[Math.floor(Math.random() * remaining.length)];
-          boardCards = [...flopCards, turnCard];
-        } else {
-          const remaining = newDeck.filter(c => !heroCards.includes(c) && !flopCards.includes(c));
-          turnCard = remaining[Math.floor(Math.random() * remaining.length)];
-          const remaining2 = remaining.filter(c => c !== turnCard);
-          riverCard = remaining2[Math.floor(Math.random() * remaining2.length)];
-          boardCards = [...flopCards, turnCard, riverCard];
-        }
       }
 
-      clearActionSelection();
-      return {
-        heroCards,
-        boardCards,
-        stage,
-        flopCards,
-        turnCard,
-        riverCard,
-        category: evaluateHandCategory(heroCards, boardCards),
-        lesson: currentLesson,
-        heroPosition: cfg.heroPosition || 'BTN',
-        villainPosition: cfg.villainPosition || 'BB',
-        heroStack: cfg.heroStack || 100,
-        villainStack: cfg.villainStack || 100,
-        preflopAggressor: cfg.preflopAggressor || 'villain',
-        heroPreflopAction: cfg.heroPreflopResponse || 'call'
-      };
+      alert('Не удалось сгенерировать подходящую раздачу. Проверьте настройки урока и таблицы действий.');
+      return null;
+    }
+
+    // ==================== ОТОБРАЖЕНИЕ ====================
+    function formatActionLine(actionsByStreet, currentStage) {
+      const streetOrder = ['preflop', 'flop', 'turn', 'river'];
+      const currentIndex = streetOrder.indexOf(currentStage);
+      let html = '';
+
+      for (let i = 0; i <= currentIndex; i++) {
+        const street = streetOrder[i];
+        const actions = actionsByStreet[street] || [];
+        if (actions.length > 0) {
+          actions.forEach(a => {
+            const cls = ACTION_COLOR_CLASSES[a] || 'badge-default';
+            html += `<span class="action-badge ${cls}">${a}</span>`;
+          });
+          if (i < currentIndex) {
+            html += '<span class="street-divider">|</span>';
+          }
+        }
+      }
+      return html;
     }
 
     function renderHand(hand) {
       currentHand = hand;
+      handStartTime = Date.now();
 
       let stageLabel = '';
       if (hand.stage === 'flop') stageLabel = 'Флоп';
@@ -807,13 +1029,51 @@
 
       els.boardCards.innerHTML = hand.boardCards.map(card => {
         const suitObj = SUITS.find(s => s.value === card.suit);
-        return `<div class="card ${suitObj.isRed ? 'red' : 'black'}">${card.rank}${suitObj.symbol}</div>`;
+        return `<div class="card ${suitObj.cssClass}">${card.rank}</div>`;
       }).join('');
 
       els.heroCards.innerHTML = hand.heroCards.map(card => {
         const suitObj = SUITS.find(s => s.value === card.suit);
-        return `<div class="card ${suitObj.isRed ? 'red' : 'black'}">${card.rank}${suitObj.symbol}</div>`;
+        return `<div class="card ${suitObj.cssClass}">${card.rank}</div>`;
       }).join('');
+
+      const cfg = hand.lesson.config;
+      const streetOrder = ['preflop', 'flop', 'turn', 'river'];
+      const heroActionsByStreet = { preflop: [], flop: [], turn: [], river: [] };
+      const villainActionsByStreet = { preflop: [], flop: [], turn: [], river: [] };
+
+      if (cfg.actionTree && (cfg.actionTree.preflop.length || cfg.actionTree.flop.length || cfg.actionTree.turn.length || cfg.actionTree.river.length)) {
+        streetOrder.forEach(street => {
+          (cfg.actionTree[street] || []).forEach(act => {
+            if (act.actor === 'hero') heroActionsByStreet[street].push(act.action);
+            else villainActionsByStreet[street].push(act.action);
+          });
+        });
+      } else {
+        if (cfg.preflopAggressor === 'hero') {
+          heroActionsByStreet.preflop.push(cfg.preflopFirstAction === 'raise' ? 'B' : cfg.preflopFirstAction === 'limp' ? 'L' : 'C');
+          villainActionsByStreet.preflop.push('C');
+        } else {
+          villainActionsByStreet.preflop.push(cfg.preflopFirstAction === 'raise' ? 'B' : cfg.preflopFirstAction === 'limp' ? 'L' : 'C');
+          heroActionsByStreet.preflop.push(cfg.heroPreflopResponse === 'call' ? 'C' : cfg.heroPreflopResponse === 'raise' ? 'B' : 'F');
+        }
+
+        if (hand.stage !== 'preflop') {
+          if (cfg.postflopFirstActor === 'hero') {
+            heroActionsByStreet.flop.push(cfg.postflopFirstAction === 'check' ? 'X' : 'B');
+            villainActionsByStreet.flop.push(cfg.postflopSecondAction === 'fold' ? 'F' : cfg.postflopSecondAction === 'call' ? 'C' : 'R');
+          } else {
+            villainActionsByStreet.flop.push(cfg.postflopFirstAction === 'check' ? 'X' : 'B');
+            heroActionsByStreet.flop.push(cfg.postflopSecondAction === 'fold' ? 'F' : cfg.postflopSecondAction === 'call' ? 'C' : 'R');
+          }
+        }
+      }
+
+      const heroLineHtml = formatActionLine(heroActionsByStreet, hand.stage);
+      const villainLineHtml = formatActionLine(villainActionsByStreet, hand.stage);
+
+      els.heroActionLine.innerHTML = 'Герой: ' + heroLineHtml;
+      els.villainActionLine.innerHTML = 'Оппонент: ' + villainLineHtml;
 
       let preflopText = '';
       if (hand.preflopAggressor === 'hero') {
@@ -848,7 +1108,6 @@
       updateActionButtonsVisibility();
     }
 
-    // ==================== СОХРАНЕНИЕ ИСТОРИИ ====================
     function saveHistoryRecord(record) {
       try {
         const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
@@ -860,7 +1119,6 @@
       }
     }
 
-    // ==================== ПРОВЕРКА И ОБРАБОТКА ДЕЙСТВИЯ ====================
     function processAction() {
       if (!currentHand) {
         alert('Сначала сгенерируйте раздачу.');
@@ -871,6 +1129,8 @@
         showResult('info', 'Матрица флопов не загружена.');
         return;
       }
+
+      const elapsed = ((Date.now() - handStartTime) / 1000).toFixed(1);
 
       const stage = currentHand.stage;
       let correctAction = null;
@@ -938,7 +1198,8 @@
         action: userAction,
         correctAction: correctAction,
         isCorrect: isCorrect,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        elapsed: parseFloat(elapsed)
       });
 
       if (isCorrect) {
@@ -946,7 +1207,7 @@
         els.correctChecks.textContent = correctChecks;
         const accuracy = totalChecks > 0 ? Math.round((correctChecks / totalChecks) * 100) : 0;
         els.accuracy.textContent = accuracy + '%';
-        showResult('correct', `✅ Правильно! Действие: ${correctAction}`);
+        showResult('correct', `✅ Правильно! Действие: ${correctAction} (${elapsed} с)`);
         setTimeout(() => {
           const newHand = generateRandomHand();
           if (newHand) renderHand(newHand);
@@ -954,7 +1215,7 @@
       } else {
         const accuracy = totalChecks > 0 ? Math.round((correctChecks / totalChecks) * 100) : 0;
         els.accuracy.textContent = accuracy + '%';
-        showResult('wrong', `❌ Неправильно. Вы выбрали: ${userAction}. Правильное: ${correctAction}. Группа флопа: ${groupName}`);
+        showResult('wrong', `❌ Неправильно. Вы выбрали: ${userAction}. Правильное: ${correctAction}. Группа флопа: ${groupName} (${elapsed} с)`);
       }
     }
 
@@ -963,7 +1224,6 @@
       els.resultBox.textContent = message;
     }
 
-    // ==================== ОБРАБОТЧИКИ ====================
     els.generateBtn.addEventListener('click', () => {
       const hand = generateRandomHand();
       if (hand) renderHand(hand);
@@ -978,7 +1238,6 @@
       window.open('poker-reports.html', '_blank');
     });
 
-    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
     function initApp() {
       loadData();
       renderLessonsCheckboxes();
@@ -993,7 +1252,6 @@
       }
     }
 
-    // ==================== ЗАПУСК С АВТОЗАГРУЗКОЙ ====================
     async function startApp() {
       const reloaded = await loadDefaultDataIfNeeded();
       if (reloaded) {

@@ -17,7 +17,9 @@
       --purple: #6c5ce7;
       --shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -25,6 +27,7 @@
       color: var(--text);
       padding-bottom: 40px;
     }
+
     header {
       position: sticky;
       top: 0;
@@ -39,7 +42,9 @@
       border-bottom: 1px solid var(--border);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
+
     header h1 { font-size: 20px; margin: 0; font-weight: 800; }
+
     .btn {
       border: none;
       border-radius: 8px;
@@ -52,23 +57,27 @@
       transition: background 0.15s, transform 0.1s;
       white-space: nowrap;
     }
+
     .btn:hover { background: #3d4348; }
     .btn:active { transform: scale(0.97); }
     .btn-danger { background: var(--red); }
     .btn-danger:hover { background: #b02318; }
     .btn-back { background: var(--purple); }
     .btn-back:hover { background: #5b4bc4; }
+
     .main-container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 16px 18px;
     }
+
     .summary {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
       margin-bottom: 20px;
     }
+
     .summary-card {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -79,9 +88,12 @@
       min-width: 180px;
       text-align: center;
     }
+
     .summary-card .label { font-size: 13px; color: #57606f; font-weight: 600; }
     .summary-card .value { font-size: 28px; font-weight: 800; margin-top: 4px; }
+
     .lesson-list { display: flex; flex-direction: column; gap: 12px; }
+
     .lesson-item {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -89,6 +101,7 @@
       box-shadow: var(--shadow);
       overflow: hidden;
     }
+
     .lesson-header {
       display: flex;
       justify-content: space-between;
@@ -100,16 +113,22 @@
       transition: background 0.15s;
     }
     .lesson-header:hover { background: #eef1f4; }
+
     .lesson-name { font-size: 16px; font-weight: 700; }
     .lesson-stats { display: flex; gap: 20px; align-items: center; font-size: 14px; }
+
     .lesson-details { padding: 16px; }
     .lesson-details.hidden { display: none; }
+
     .detail-section { margin-bottom: 20px; }
     .detail-section h3 { font-size: 15px; font-weight: 700; margin: 0 0 10px; color: #2d3436; }
+
     .stats-table { width: 100%; border-collapse: collapse; font-size: 14px; }
     .stats-table th, .stats-table td { border: 1px solid #e1e5eb; padding: 6px 8px; text-align: center; }
     .stats-table th { background: #f8f9fa; font-weight: 700; }
+
     .clickable { cursor: pointer; color: var(--blue); text-decoration: underline; }
+
     .error-list { margin-top: 8px; padding-left: 20px; font-size: 13px; }
     .error-item {
       background: #fff3f3;
@@ -118,6 +137,7 @@
       margin-bottom: 4px;
       border-radius: 4px;
     }
+
     .empty {
       text-align: center;
       padding: 40px;
@@ -126,6 +146,7 @@
       border-radius: 12px;
       border: 1px solid var(--border);
     }
+
     .stage-tabs {
       display: flex;
       gap: 8px;
@@ -143,6 +164,7 @@
       user-select: none;
     }
     .stage-tab.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
     @media (max-width: 600px) {
       .main-container { padding: 10px; }
       .summary { flex-direction: column; }
@@ -175,42 +197,6 @@
     const HAND_CATEGORIES = ['Мусор', 'Гатшот', 'Дро', 'Лоу', 'Мидл', 'Топ', 'Две пары+'];
     const TURN_TYPE_LABELS = { over: 'Оверкарта', under: 'Андеркарта', pair: 'Спарка' };
     const RIVER_TYPE_LABELS = { nopair: 'Не спарилась', paired: 'Спарилась' };
-
-    // ==================== АВТОЗАГРУЗКА ДАННЫХ С GITHUB ====================
-    const BASE_URL = 'https://raw.githubusercontent.com/bbbesstbbb/postflop/main/';
-    const DEFAULT_DATA_URLS = {
-      [MATRIX_STORAGE_KEY]: BASE_URL + 'flop-matrix-colors.json',
-      [LESSONS_STORAGE_KEY]: BASE_URL + 'poker-session-lessons.json'
-    };
-
-    async function loadDefaultDataIfNeeded() {
-      let needReload = false;
-      for (const [key, url] of Object.entries(DEFAULT_DATA_URLS)) {
-        if (!localStorage.getItem(key) && url) {
-          try {
-            const response = await fetch(url);
-            if (response.ok) {
-              let data = await response.json();
-              if (key === LESSONS_STORAGE_KEY && !Array.isArray(data)) {
-                data = [{
-                  id: 'lesson_default',
-                  name: 'Урок по умолчанию',
-                  config: data
-                }];
-              }
-              localStorage.setItem(key, JSON.stringify(data));
-              console.log(`Данные для ${key} загружены с сервера.`);
-              needReload = true;
-            } else {
-              console.warn(`Не удалось загрузить ${key}: ${response.status}`);
-            }
-          } catch (error) {
-            console.warn(`Ошибка загрузки ${key}:`, error);
-          }
-        }
-      }
-      return needReload;
-    }
 
     // ==================== ЗАГРУЗКА ДАННЫХ ====================
     function loadLessons() {
@@ -247,6 +233,7 @@
         if (!byLesson[record.lessonId]) {
           byLesson[record.lessonId] = {
             total: 0, correct: 0,
+            totalTime: 0,
             byStage: { flop: {}, turn: {}, river: {} },
             errors: []
           };
@@ -256,36 +243,52 @@
         if (record.isCorrect) lessonStats.correct++;
         else lessonStats.errors.push(record);
 
+        // Время
+        const elapsed = typeof record.elapsed === 'number' ? record.elapsed : 0;
+        lessonStats.totalTime += elapsed;
+
         const stage = record.stage;
         const stageStats = lessonStats.byStage[stage] || (lessonStats.byStage[stage] = {});
         if (!stageStats[record.groupId]) {
-          stageStats[record.groupId] = { total: 0, correct: 0, byCategory: {}, errors: [] };
+          stageStats[record.groupId] = { total: 0, correct: 0, totalTime: 0, byCategory: {}, errors: [] };
         }
         const groupStats = stageStats[record.groupId];
         groupStats.total++;
         if (record.isCorrect) groupStats.correct++;
         else groupStats.errors.push(record);
+        groupStats.totalTime += elapsed;
 
         const cat = record.category;
         if (!groupStats.byCategory[cat]) {
-          groupStats.byCategory[cat] = { total: 0, correct: 0, errors: [] };
+          groupStats.byCategory[cat] = { total: 0, correct: 0, totalTime: 0, errors: [] };
         }
         const catStats = groupStats.byCategory[cat];
         catStats.total++;
         if (record.isCorrect) catStats.correct++;
         else catStats.errors.push(record);
+        catStats.totalTime += elapsed;
       });
       return byLesson;
+    }
+
+    function formatTime(seconds) {
+      if (!seconds || isNaN(seconds)) return '—';
+      if (seconds < 1) return seconds.toFixed(1) + ' с';
+      return seconds.toFixed(1) + ' с';
     }
 
     function renderSummary(byLesson) {
       const totalAll = Object.values(byLesson).reduce((s, l) => s + l.total, 0);
       const correctAll = Object.values(byLesson).reduce((s, l) => s + l.correct, 0);
       const acc = totalAll > 0 ? Math.round((correctAll / totalAll) * 100) : 0;
+      const totalTimeAll = Object.values(byLesson).reduce((s, l) => s + l.totalTime, 0);
+      const avgTimeAll = totalAll > 0 ? (totalTimeAll / totalAll).toFixed(1) : '—';
+
       document.getElementById('summary').innerHTML = `
         <div class="summary-card"><div class="label">Всего ответов</div><div class="value">${totalAll}</div></div>
         <div class="summary-card"><div class="label">Правильных</div><div class="value">${correctAll}</div></div>
         <div class="summary-card"><div class="label">Точность</div><div class="value">${acc}%</div></div>
+        <div class="summary-card"><div class="label">Среднее время</div><div class="value">${avgTimeAll} с</div></div>
       `;
     }
 
@@ -303,6 +306,8 @@
         if (!lessonStats) return;
 
         const accuracy = lessonStats.total > 0 ? Math.round((lessonStats.correct / lessonStats.total) * 100) : 0;
+        const avgTime = lessonStats.total > 0 ? (lessonStats.totalTime / lessonStats.total).toFixed(1) : '—';
+
         const item = document.createElement('div');
         item.className = 'lesson-item';
 
@@ -313,6 +318,7 @@
           <span class="lesson-stats">
             <span>${lessonStats.correct}/${lessonStats.total}</span>
             <span>${accuracy}%</span>
+            <span>⏱ ${avgTime} с</span>
           </span>
         `;
 
@@ -352,7 +358,7 @@
           lessonStats.errors.slice(-10).forEach(err => {
             const li = document.createElement('li');
             li.className = 'error-item';
-            li.textContent = `${err.stage === 'flop' ? 'Флоп' : err.stage === 'turn' ? 'Терн' : 'Ривер'}: категория ${err.category}, ваше действие: ${err.action}, правильно: ${err.correctAction}`;
+            li.textContent = `${err.stage === 'flop' ? 'Флоп' : err.stage === 'turn' ? 'Терн' : 'Ривер'}: категория ${err.category}, ваше действие: ${err.action}, правильно: ${err.correctAction} (⏱ ${formatTime(err.elapsed)})`;
             ul.appendChild(li);
           });
           errorSection.appendChild(ul);
@@ -380,15 +386,17 @@
         return;
       }
 
-      let html = '<div class="detail-section"><h3>Статистика по группам флопов</h3><table class="stats-table"><tr><th>Группа флопа</th><th>Всего</th><th>Правильных</th><th>Точность</th><th>Ошибки</th></tr>';
+      let html = '<div class="detail-section"><h3>Статистика по группам флопов</h3><table class="stats-table"><tr><th>Группа флопа</th><th>Всего</th><th>Правильных</th><th>Точность</th><th>Ср. время</th><th>Ошибки</th></tr>';
       Object.entries(stageStats).forEach(([groupId, groupStats]) => {
         const groupName = window.groupNames && window.groupNames[groupId] ? window.groupNames[groupId] : groupId;
         const groupAcc = groupStats.total > 0 ? Math.round((groupStats.correct / groupStats.total) * 100) : 0;
+        const avgTime = groupStats.total > 0 ? (groupStats.totalTime / groupStats.total).toFixed(1) : '—';
         html += `<tr>
           <td>${groupName}</td>
           <td>${groupStats.total}</td>
           <td>${groupStats.correct}</td>
           <td>${groupAcc}%</td>
+          <td>${avgTime} с</td>
           <td><span class="clickable" data-group="${groupId}">${groupStats.errors.length} шт.</span></td>
         </tr>`;
       });
@@ -410,14 +418,16 @@
       if (!groupStats) return;
       const catDiv = document.createElement('div');
       catDiv.className = 'detail-section';
-      let html = '<h3>Категории рук</h3><table class="stats-table"><tr><th>Категория</th><th>Всего</th><th>Правильных</th><th>Точность</th><th>Ошибки</th></tr>';
+      let html = '<h3>Категории рук</h3><table class="stats-table"><tr><th>Категория</th><th>Всего</th><th>Правильных</th><th>Точность</th><th>Ср. время</th><th>Ошибки</th></tr>';
       Object.entries(groupStats.byCategory).forEach(([cat, catStats]) => {
         const acc = catStats.total > 0 ? Math.round((catStats.correct / catStats.total) * 100) : 0;
+        const avgTime = catStats.total > 0 ? (catStats.totalTime / catStats.total).toFixed(1) : '—';
         html += `<tr>
           <td>${cat}</td>
           <td>${catStats.total}</td>
           <td>${catStats.correct}</td>
           <td>${acc}%</td>
+          <td>${avgTime} с</td>
           <td><button class="btn" data-category="${cat}">Показать ошибки (${catStats.errors.length})</button></td>
         </tr>`;
       });
@@ -432,7 +442,7 @@
           sublist.className = 'error-sublist';
           let errorsHtml = '<ul class="error-list">';
           errors.slice(-20).forEach(err => {
-            errorsHtml += `<li class="error-item">${new Date(err.timestamp).toLocaleString()}: вы выбрали ${err.action}, правильно ${err.correctAction}</li>`;
+            errorsHtml += `<li class="error-item">${new Date(err.timestamp).toLocaleString()}: вы выбрали ${err.action}, правильно ${err.correctAction} (⏱ ${formatTime(err.elapsed)})</li>`;
           });
           errorsHtml += '</ul>';
           sublist.innerHTML = errorsHtml;
@@ -477,17 +487,7 @@
       renderLessonList(byLesson, lessons);
     }
 
-    // ==================== ЗАПУСК С АВТОЗАГРУЗКОЙ ====================
-    async function startApp() {
-      const reloaded = await loadDefaultDataIfNeeded();
-      if (reloaded) {
-        location.reload();
-        return;
-      }
-      initApp();
-    }
-
-    startApp();
+    initApp();
   </script>
 </body>
 </html>

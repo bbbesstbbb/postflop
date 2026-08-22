@@ -58,7 +58,23 @@
       "selectedTurnTypes": [],
       "selectedRiverTypes": [],
       "selectedTurnCategories": [],
-      "selectedRiverCategories": []
+      "selectedRiverCategories": [],
+      "selectedRiverLine": "default",
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      }
     }
   },
   {
@@ -116,7 +132,32 @@
         "Мусор",
         "Гатшот"
       ],
-      "selectedRiverCategories": []
+      "selectedRiverCategories": [],
+      "selectedRiverLine": "default",
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [
+          {
+            "actor": "hero",
+            "action": "B"
+          },
+          {
+            "actor": "villain",
+            "action": "C"
+          }
+        ],
+        "turn": [],
+        "river": []
+      }
     }
   },
   {
@@ -173,12 +214,46 @@
       "selectedRiverCategories": [
         "Мусор",
         "Гатшот"
-      ]
+      ],
+      "selectedRiverLine": "default",
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [
+          {
+            "actor": "hero",
+            "action": "B"
+          },
+          {
+            "actor": "villain",
+            "action": "C"
+          }
+        ],
+        "turn": [
+          {
+            "actor": "hero",
+            "action": "B"
+          },
+          {
+            "actor": "villain",
+            "action": "C"
+          }
+        ],
+        "river": []
+      }
     }
   },
   {
-    "id": "lesson_1787311663272",
-    "name": "BxB Мусор",
+    "id": "lesson_1787321950414",
+    "name": "BxB мусор",
     "config": {
       "playersCount": 2,
       "sb": 0.5,
@@ -231,7 +306,40 @@
         "Мусор",
         "Гатшот"
       ],
-      "selectedRiverLine": "bxb"
+      "selectedRiverLine": "bxb",
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [
+          {
+            "actor": "hero",
+            "action": "B"
+          },
+          {
+            "actor": "villain",
+            "action": "C"
+          }
+        ],
+        "turn": [
+          {
+            "actor": "hero",
+            "action": "X"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "river": []
+      }
     }
   }
 ]

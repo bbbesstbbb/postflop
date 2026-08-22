@@ -135,6 +135,45 @@
     .checkbox-item label { cursor: pointer; font-size: 13px; font-weight: 500; }
     .select-all-btns { display: flex; gap: 8px; margin-bottom: 8px; }
     .select-all-btns .btn { padding: 5px 10px; font-size: 12px; }
+
+    /* Стили для дерева действий */
+    .street-block {
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      background: #fafbfc;
+    }
+    .street-block h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .action-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .action-item select {
+      flex: 1;
+      min-width: 100px;
+    }
+    .action-item .btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      background: var(--red);
+    }
+    .add-action-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .add-action-btns .btn {
+      font-size: 12px;
+      padding: 5px 10px;
+    }
+
     @media (max-width: 600px) {
       .main-container { padding: 10px; }
       .section { padding: 12px; }
@@ -163,6 +202,7 @@
         <select id="lessonSelect" title="Выберите урок"></select>
         <button id="loadLessonBtn" class="btn" style="background: var(--blue);">📂 Загрузить</button>
         <button id="saveLessonBtn" class="btn" style="background: var(--green);">💾 Сохранить текущие настройки</button>
+        <button id="newLessonBtn" class="btn" style="background: var(--blue);">➕ Новый урок</button>
         <button id="renameLessonBtn" class="btn" style="background: var(--purple);">✏️ Переименовать</button>
         <button id="deleteLessonBtn" class="btn" style="background: var(--red);">🗑 Удалить</button>
       </div>
@@ -171,8 +211,7 @@
         <button id="importLessonsBtn" class="btn" style="background: var(--green);">⬆️ Импорт уроков</button>
       </div>
       <div class="hint" style="margin-top: 10px;">
-        💡 Сохраните текущую конфигурацию как урок, чтобы быстро возвращаться к ней. Уроки хранятся в вашем браузере.<br>
-        Для переноса всех уроков используйте кнопки «Экспорт уроков» и «Импорт уроков».
+        💡 Если выбран урок, кнопка «Сохранить текущие настройки» обновит его. Кнопка «Новый урок» всегда создаёт новый.
       </div>
     </section>
 
@@ -282,6 +321,55 @@
           <label>Количество доборов (рейзов) на префлопе</label>
           <input type="number" id="preflopRaises" value="1" min="0" max="5" step="1">
         </div>
+      </div>
+      <div class="hint">
+        ⚠️ Эти параметры используются, если дерево действий пусто. Заполните дерево ниже для точной истории.
+      </div>
+    </section>
+
+    <!-- Дерево действий -->
+    <section class="section">
+      <h2>🌳 Дерево действий по улицам</h2>
+      <div id="actionTreeContainer">
+        <!-- Префлоп -->
+        <div class="street-block">
+          <h3>Префлоп</h3>
+          <div class="action-list" id="preflopActions"></div>
+          <div class="add-action-btns">
+            <button class="btn add-hero-action" data-street="preflop">➕ Hero</button>
+            <button class="btn add-villain-action" data-street="preflop">➕ Villain</button>
+          </div>
+        </div>
+        <!-- Флоп -->
+        <div class="street-block">
+          <h3>Флоп</h3>
+          <div class="action-list" id="flopActions"></div>
+          <div class="add-action-btns">
+            <button class="btn add-hero-action" data-street="flop">➕ Hero</button>
+            <button class="btn add-villain-action" data-street="flop">➕ Villain</button>
+          </div>
+        </div>
+        <!-- Терн -->
+        <div class="street-block">
+          <h3>Терн</h3>
+          <div class="action-list" id="turnActions"></div>
+          <div class="add-action-btns">
+            <button class="btn add-hero-action" data-street="turn">➕ Hero</button>
+            <button class="btn add-villain-action" data-street="turn">➕ Villain</button>
+          </div>
+        </div>
+        <!-- Ривер -->
+        <div class="street-block">
+          <h3>Ривер</h3>
+          <div class="action-list" id="riverActions"></div>
+          <div class="add-action-btns">
+            <button class="btn add-hero-action" data-street="river">➕ Hero</button>
+            <button class="btn add-villain-action" data-street="river">➕ Villain</button>
+          </div>
+        </div>
+      </div>
+      <div class="hint">
+        <strong>Действия:</strong> F — фолд, X — чек, C — колл, B — бет, R — рейз, A — аллын, L — лимп, 3B — 3-бет.
       </div>
     </section>
 
@@ -489,6 +577,9 @@
           </select>
         </div>
       </div>
+      <div class="hint">
+        ⚠️ Эти параметры используются, если дерево действий пусто. Для точной истории заполните дерево выше.
+      </div>
     </section>
 
     <div class="hint" style="text-align: center; margin-top: 20px;">
@@ -509,6 +600,10 @@
     const TURN_TYPE_LABELS = { over: 'Оверкарта', under: 'Андеркарта', pair: 'Спарка' };
     const RIVER_TYPES = ['nopair', 'paired'];
     const RIVER_TYPE_LABELS = { nopair: 'Не спарилась', paired: 'Спарилась' };
+    const ACTION_LABELS = {
+      'F': 'Фолд', 'X': 'Чек', 'C': 'Колл', 'B': 'Бет', 'R': 'Рейз', 'A': 'Аллын', 'L': 'Лимп', '3B': '3-бет'
+    };
+    const ACTION_KEYS = Object.keys(ACTION_LABELS);
 
     const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
     const SUITS = [
@@ -556,7 +651,13 @@
       selectedRiverTypes: [...RIVER_TYPES],
       selectedTurnCategories: [...HAND_CATEGORIES],
       selectedRiverCategories: [...HAND_CATEGORIES],
-      selectedRiverLine: 'default'
+      selectedRiverLine: 'default',
+      actionTree: {
+        preflop: [],
+        flop: [],
+        turn: [],
+        river: []
+      }
     };
 
     let config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
@@ -610,6 +711,7 @@
       lessonSelect: $('lessonSelect'),
       loadLessonBtn: $('loadLessonBtn'),
       saveLessonBtn: $('saveLessonBtn'),
+      newLessonBtn: $('newLessonBtn'),
       renameLessonBtn: $('renameLessonBtn'),
       deleteLessonBtn: $('deleteLessonBtn'),
       exportLessonsBtn: $('exportLessonsBtn'),
@@ -634,7 +736,8 @@
       selectAllRiverTypesBtn: $('selectAllRiverTypesBtn'),
       clearAllRiverTypesBtn: $('clearAllRiverTypesBtn'),
       selectAllRiverCategoriesBtn: $('selectAllRiverCategoriesBtn'),
-      clearAllRiverCategoriesBtn: $('clearAllRiverCategoriesBtn')
+      clearAllRiverCategoriesBtn: $('clearAllRiverCategoriesBtn'),
+      actionTreeContainer: $('actionTreeContainer')
     };
 
     // ==================== ИНИЦИАЛИЗАЦИЯ СЕЛЕКТОВ КАРТ ====================
@@ -728,6 +831,56 @@
       renderCheckboxGroup(elements.riverCategoriesCheckboxes, HAND_CATEGORIES, config.selectedRiverCategories, (cat) => cat);
     }
 
+    // ==================== ДЕРЕВО ДЕЙСТВИЙ ====================
+    function renderActionTree() {
+      const streets = ['preflop', 'flop', 'turn', 'river'];
+      streets.forEach(street => {
+        const list = document.getElementById(`${street}Actions`);
+        list.innerHTML = '';
+        if (!config.actionTree) config.actionTree = { preflop: [], flop: [], turn: [], river: [] };
+        const actions = config.actionTree[street] || [];
+        actions.forEach((action, index) => {
+          const item = document.createElement('div');
+          item.className = 'action-item';
+          const select = document.createElement('select');
+          ACTION_KEYS.forEach(key => {
+            const opt = document.createElement('option');
+            opt.value = key;
+            opt.textContent = ACTION_LABELS[key];
+            select.appendChild(opt);
+          });
+          select.value = action.action;
+          select.addEventListener('change', () => {
+            config.actionTree[street][index].action = select.value;
+            saveToLocalStorage();
+          });
+          const actorLabel = document.createElement('span');
+          actorLabel.textContent = action.actor === 'hero' ? 'Герой:' : 'Опп:';
+          actorLabel.style.fontWeight = '600';
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'btn';
+          deleteBtn.textContent = '✕';
+          deleteBtn.addEventListener('click', () => {
+            config.actionTree[street].splice(index, 1);
+            renderActionTree();
+            saveToLocalStorage();
+          });
+          item.appendChild(actorLabel);
+          item.appendChild(select);
+          item.appendChild(deleteBtn);
+          list.appendChild(item);
+        });
+      });
+    }
+
+    function addAction(street, actor) {
+      if (!config.actionTree) config.actionTree = { preflop: [], flop: [], turn: [], river: [] };
+      const action = 'C'; // По умолчанию колл
+      config.actionTree[street].push({ actor, action });
+      renderActionTree();
+      saveToLocalStorage();
+    }
+
     // ==================== ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ИЗ СОСТОЯНИЯ ====================
     function updateUIFromConfig() {
       elements.playersCount.value = config.playersCount;
@@ -770,6 +923,7 @@
       elements.riverLine.value = config.selectedRiverLine || 'default';
 
       renderAllCheckboxes();
+      renderActionTree();
     }
 
     // ==================== ЧТЕНИЕ СОСТОЯНИЯ ИЗ ФОРМЫ ====================
@@ -849,6 +1003,7 @@
             if (!Array.isArray(config.selectedTurnCategories)) config.selectedTurnCategories = [...HAND_CATEGORIES];
             if (!Array.isArray(config.selectedRiverCategories)) config.selectedRiverCategories = [...HAND_CATEGORIES];
             if (!config.selectedRiverLine) config.selectedRiverLine = 'default';
+            if (!config.actionTree) config.actionTree = { preflop: [], flop: [], turn: [], river: [] };
             return true;
           }
         }
@@ -891,6 +1046,7 @@
             if (!Array.isArray(config.selectedTurnCategories)) config.selectedTurnCategories = [...HAND_CATEGORIES];
             if (!Array.isArray(config.selectedRiverCategories)) config.selectedRiverCategories = [...HAND_CATEGORIES];
             if (!config.selectedRiverLine) config.selectedRiverLine = 'default';
+            if (!config.actionTree) config.actionTree = { preflop: [], flop: [], turn: [], river: [] };
             updateUIFromConfig();
             saveToLocalStorage();
             alert('Конфигурация загружена успешно.');
@@ -970,6 +1126,7 @@
       config.cbetSizePercent = [33, 50, 66, 75, 100][getRandomInt(0, 4)];
       config.postflopSecondAction = ['fold', 'call', 'raise'][getRandomInt(0, 2)];
       config.selectedRiverLine = Math.random() < 0.5 ? 'default' : 'bxb';
+      config.actionTree = { preflop: [], flop: [], turn: [], river: [] };
 
       updateUIFromConfig();
       saveToLocalStorage();
@@ -1016,9 +1173,10 @@
       });
     }
 
-    function saveCurrentAsLesson() {
+    // Функция создания нового урока (независимо от выбранного)
+    function createNewLesson() {
       readConfigFromUI();
-      const name = prompt('Введите название урока:', 'Урок ' + (lessons.length + 1));
+      const name = prompt('Введите название нового урока:', 'Урок ' + (lessons.length + 1));
       if (!name || name.trim() === '') {
         alert('Название не может быть пустым.');
         return;
@@ -1032,7 +1190,23 @@
       saveLessonsToStorage();
       renderLessons();
       elements.lessonSelect.value = newLesson.id;
-      alert('Урок сохранён: ' + newLesson.name);
+      alert('Новый урок создан: ' + newLesson.name);
+    }
+
+    // Функция сохранения текущих настроек: если выбран урок, обновляет его, иначе создаёт новый
+    function saveCurrentAsLesson() {
+      readConfigFromUI();
+      const selectedLessonId = elements.lessonSelect.value;
+      if (selectedLessonId && lessons.find(l => l.id === selectedLessonId)) {
+        const lesson = lessons.find(l => l.id === selectedLessonId);
+        if (confirm(`Обновить урок "${lesson.name}" текущими настройками?`)) {
+          lesson.config = JSON.parse(JSON.stringify(config));
+          saveLessonsToStorage();
+          alert('Урок обновлён: ' + lesson.name);
+        }
+      } else {
+        createNewLesson();
+      }
     }
 
     function loadSelectedLesson() {
@@ -1057,6 +1231,7 @@
       if (!Array.isArray(config.selectedTurnCategories)) config.selectedTurnCategories = [...HAND_CATEGORIES];
       if (!Array.isArray(config.selectedRiverCategories)) config.selectedRiverCategories = [...HAND_CATEGORIES];
       if (!config.selectedRiverLine) config.selectedRiverLine = 'default';
+      if (!config.actionTree) config.actionTree = { preflop: [], flop: [], turn: [], river: [] };
       updateUIFromConfig();
       saveToLocalStorage();
       alert('Урок загружен: ' + lesson.name);
@@ -1174,12 +1349,21 @@
       elements.generateRandomFlopBtn.addEventListener('click', generateRandomFlop);
 
       elements.saveLessonBtn.addEventListener('click', saveCurrentAsLesson);
+      elements.newLessonBtn.addEventListener('click', createNewLesson);
       elements.loadLessonBtn.addEventListener('click', loadSelectedLesson);
       elements.renameLessonBtn.addEventListener('click', renameSelectedLesson);
       elements.deleteLessonBtn.addEventListener('click', deleteSelectedLesson);
       elements.exportLessonsBtn.addEventListener('click', exportLessons);
       elements.importLessonsBtn.addEventListener('click', () => elements.lessonsFileInput.click());
       elements.lessonsFileInput.addEventListener('change', importLessons);
+
+      // Обработчики для кнопок дерева действий
+      document.querySelectorAll('.add-hero-action').forEach(btn => {
+        btn.addEventListener('click', () => addAction(btn.dataset.street, 'hero'));
+      });
+      document.querySelectorAll('.add-villain-action').forEach(btn => {
+        btn.addEventListener('click', () => addAction(btn.dataset.street, 'villain'));
+      });
 
       // Кнопки выбора групп и категорий
       const bindSelectAll = (btn, container, selectedArray) => {
@@ -1231,6 +1415,7 @@
         config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
       }
       renderAllCheckboxes();
+      renderActionTree();
       updateUIFromConfig();
       attachEventListeners();
     }

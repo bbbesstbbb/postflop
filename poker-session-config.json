@@ -38,22 +38,50 @@
   "postflopFirstAction": "check",
   "cbetSizePercent": 50,
   "postflopSecondAction": "fold",
-  "selectedGroups": [
-    "c_red",
-    "c_orange",
-    "c_yellow",
-    "c_green",
-    "c_blue",
-    "c_purple",
-    "c_pink"
+  "selectedGroups": [],
+  "selectedCategories": [],
+  "selectedTurnTypes": [],
+  "selectedRiverTypes": [
+    "nopair",
+    "paired"
   ],
-  "selectedCategories": [
+  "selectedTurnCategories": [],
+  "selectedRiverCategories": [
     "Мусор",
     "Гатшот"
   ],
-  "selectedTurnTypes": [],
-  "selectedRiverTypes": [],
-  "selectedTurnCategories": [],
-  "selectedRiverCategories": [],
-  "selectedRiverLine": "default"
+  "selectedRiverLine": "bxb",
+  "actionTree": {
+    "preflop": [
+      {
+        "actor": "hero",
+        "action": "L"
+      },
+      {
+        "actor": "villain",
+        "action": "X"
+      }
+    ],
+    "flop": [
+      {
+        "actor": "hero",
+        "action": "B"
+      },
+      {
+        "actor": "villain",
+        "action": "C"
+      }
+    ],
+    "turn": [
+      {
+        "actor": "hero",
+        "action": "X"
+      },
+      {
+        "actor": "villain",
+        "action": "X"
+      }
+    ],
+    "river": []
+  }
 }
