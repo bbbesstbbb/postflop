@@ -1,0 +1,817 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&#9824; Постфлоп тренажёр</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b2e;--panel2:#1e2540;--border:#2a3050;--text:#e4e8f5;--muted:#6b7494;--blue:#4a90d9;--green:#00c97a;--red:#ff3d57;--orange:#f59d00;--purple:#a855f7;--shadow:0 4px 24px rgba(0,0,0,.5);--r:12px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.btn{border:none;border-radius:9px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;color:#fff;transition:transform .12s,filter .12s;white-space:nowrap}
+.btn:hover{filter:brightness(1.13);transform:translateY(-1px)}.btn:active{transform:scale(.97)}
+.b-blue{background:#1a5cb5}.b-green{background:#00955a}.b-red{background:#c0182d}.b-muted{background:#2a3050}.b-purple{background:#7c3aed}
+.b-sm{padding:6px 13px;font-size:13px}
+.screen{display:none;flex-direction:column;flex:1}.screen.active{display:flex}
+#s-load{align-items:center;justify-content:center;padding:40px 16px}
+.load-box{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:36px 44px;text-align:center;max-width:500px;width:100%;box-shadow:var(--shadow)}
+.load-box .ico{font-size:54px;margin-bottom:14px}.load-box h1{font-size:24px;margin-bottom:8px}
+.load-box p{color:var(--muted);font-size:14px;line-height:1.65;margin-bottom:22px}
+.flist{text-align:left;background:var(--panel2);border-radius:8px;padding:11px 15px;margin-bottom:18px}
+.flist li{font-size:12px;color:var(--muted);padding:2px 0;list-style:none}.flist li::before{content:"📄 "}
+.flist li.ok{color:var(--green)}.flist li.ok::before{content:"✅ "}
+#lprog{font-size:13px;color:var(--muted);margin-top:10px;min-height:18px}
+.spin{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#s-sel{padding:0}
+.sel-hdr{padding:18px 26px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.sel-hdr h1{font-size:20px;font-weight:800}
+.sel-tbr{display:flex;gap:8px;flex-wrap:wrap}
+.sel-body{flex:1;padding:22px 26px;overflow-y:auto}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.lcard{background:var(--panel);border:2px solid var(--border);border-radius:var(--r);padding:15px 17px;cursor:pointer;transition:border-color .15s,transform .12s;user-select:none;display:flex;gap:12px;align-items:flex-start}
+.lcard:hover{border-color:var(--blue);transform:translateY(-2px)}.lcard.sel{border-color:var(--blue);background:#14243d}
+.lcard input[type=checkbox]{width:19px;height:19px;accent-color:var(--blue);flex-shrink:0;margin-top:2px;cursor:pointer}
+.lcard .info{flex:1}.lcard .nm{font-size:15px;font-weight:700;margin-bottom:6px}.lcard .bgs{display:flex;flex-wrap:wrap;gap:5px}
+.bdg{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.bf{background:#0d2e1a;color:#00c97a}.bt{background:#0d1e34;color:#4a90d9}.br{background:#1e0d34;color:#a855f7}
+.bg{background:var(--panel2);color:var(--muted)}.bc{background:#2a1c08;color:#f59d00}.bl{background:#1a2212;color:#6dbf4e}
+.sel-ftr{padding:14px 26px;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sel-ftr .cnt{color:var(--muted);font-size:14px}.sel-ftr .btn{font-size:15px;padding:12px 26px}
+#s-tr{padding:0}
+.tr-hdr{padding:13px 22px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.prog-wrap{display:flex;align-items:center;gap:12px}
+.pbar{width:150px;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.pfill{height:100%;background:var(--blue);border-radius:3px;transition:width .35s}
+.ptxt{font-size:13px;color:var(--muted)}
+.sc{display:flex;gap:12px;font-size:15px;font-weight:700}.sc-ok{color:var(--green)}.sc-err{color:var(--red)}
+.tr-body{flex:1;padding:18px 22px;display:flex;flex-direction:column;align-items:center;gap:14px;overflow-y:auto}
+.hand-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:18px 22px;width:100%;max-width:760px;box-shadow:var(--shadow)}
+/* PLAYING CARDS - чёткое разделение по мастям */
+.playing-card{display:inline-flex;align-items:center;justify-content:center;width:68px;height:96px;border-radius:10px;font-size:32px;font-weight:900;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.65);flex-shrink:0;letter-spacing:-1px;border:2px solid transparent}
+/* Spades - очень тёмный почти чёрный */
+.cs{background:#0f1322;border-color:#1e2a4a}
+/* Hearts - красный */
+.ch{background:#6b1010;border-color:#9b1818}
+/* Diamonds - яркий насыщенный синий (явно светлее пик) */
+.cd{background:#0d44a0;border-color:#1a68e8}
+/* Clubs - тёмно-зелёный */
+.cc{background:#0a3820;border-color:#135630}
+.board-display{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 0 10px}
+.board-group{display:flex;gap:8px;align-items:center}
+.board-sep{font-size:24px;font-weight:700;color:#3a4470;padding:0 3px;flex-shrink:0;line-height:1}
+.hist-row{display:flex;align-items:center;flex-wrap:wrap;gap:4px;padding:6px 0;min-height:30px}
+.hist-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-right:6px;flex-shrink:0;min-width:34px;padding:3px 0}
+.hist-group{display:flex;gap:3px;align-items:center}
+.hist-sep{font-size:20px;font-weight:700;color:#2e3a5a;padding:0 3px;line-height:1}
+.hist-now{font-size:11px;font-weight:700;color:var(--orange);padding:2px 8px;border-radius:10px;background:#2a1e08;border:1px solid #5a3a08;margin-left:3px}
+.hist-dash{color:#3a4470;font-size:13px;padding:0 1px}
+.achip{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:24px;border-radius:5px;font-size:11px;font-weight:800;padding:0 5px;letter-spacing:.2px}
+.hero-row{display:flex;align-items:center;gap:10px;padding:10px 0 8px}
+.hero-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-right:4px}
+.hcards{display:flex;gap:8px}
+.hline{height:1px;background:var(--border);margin:4px 0}
+.info-spoiler{margin-top:8px}
+.info-spoiler summary{font-size:12px;color:var(--muted);cursor:pointer;user-select:none;padding:5px 0;list-style:none;display:flex;align-items:center;gap:6px}
+.info-spoiler summary::-webkit-details-marker{display:none}
+.info-spoiler summary::before{content:"▶";font-size:10px;transition:transform .15s;display:inline-block}
+.info-spoiler[open] summary::before{transform:rotate(90deg)}
+.info-inner{padding:10px 0 4px}
+.meta-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center;padding-bottom:8px}
+.gdot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;flex-shrink:0}
+.ctx-panel{display:flex;flex-wrap:wrap;gap:8px 18px;padding-top:8px;border-top:1px solid var(--border)}
+.ctx-item{display:flex;flex-direction:column;gap:2px}
+.ctx-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#454e6e}
+.ctx-val{font-size:13px;font-weight:600;color:var(--text)}
+.act-buttons{display:flex;gap:14px;justify-content:center;width:100%;max-width:760px;flex-wrap:wrap}
+.act-btn{flex:1;min-width:220px;max-width:220px;padding:20px;font-size:22px;font-weight:900;border:none;border-radius:14px;cursor:pointer;color:#fff;transition:transform .12s,filter .12s,box-shadow .12s;letter-spacing:.5px}
+.act-btn:hover{filter:brightness(1.16);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.5)}
+.act-btn:active{transform:scale(.96)}.act-btn:disabled{opacity:.3;pointer-events:none}
+.ab-chk{background:linear-gradient(135deg,#1565c0,#0a3d8f)}
+.ab-bet{background:linear-gradient(135deg,#c0182d,#8b0000)}
+.fb{width:100%;max-width:760px;border-radius:13px;padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;animation:fi .22s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.fb-ok{background:#072212;border:1px solid rgba(0,201,122,.2)}.fb-err{background:#200810;border:1px solid rgba(255,61,87,.2)}
+.fb-ico{font-size:30px}.fb-text{flex:1}
+.fb-res{font-size:17px;font-weight:800;margin-bottom:3px}.fb-ok .fb-res{color:var(--green)}.fb-err .fb-res{color:var(--red)}
+.fb-det{font-size:13px;color:var(--muted)}.fb-det strong{color:var(--text)}
+/* RESULTS */
+#s-res{overflow-y:auto}
+.res-wrap{padding:28px 16px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.res-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:32px 36px;max-width:620px;width:100%;box-shadow:var(--shadow);text-align:center}
+.res-card .trp{font-size:60px;margin-bottom:10px}
+.res-card h2{font-size:26px;margin-bottom:4px}
+.res-score{font-size:50px;font-weight:800;margin:14px 0}.rs-ok{color:var(--green)}.rs-s,.rs-t{color:var(--muted);font-size:34px}
+.res-pct{font-size:18px;color:var(--muted);margin-bottom:22px}
+.res-bd{text-align:left;margin-bottom:24px}
+.res-bd h3{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.bd-row{display:flex;align-items:center;gap:9px;margin-bottom:7px;font-size:14px}
+.bd-nm{flex:1}.bd-bw{width:90px;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.bd-bf{height:100%;border-radius:3px}.bd-fr{font-size:12px;color:var(--muted);width:44px;text-align:right}
+.res-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+/* HISTORY CARD */
+.hist-sess-card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:20px 26px;max-width:620px;width:100%;box-shadow:var(--shadow)}
+.hist-sess-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.hist-sess-card h3{font-size:15px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:0}
+.hist-clr-btn{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--muted);cursor:pointer}
+.hist-clr-btn:hover{color:var(--red);border-color:var(--red)}
+.hist-empty{color:var(--muted);font-size:14px;text-align:center;padding:16px 0}
+.sess-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.sess-row:last-child{border-bottom:none}
+.sess-date{color:var(--muted);font-size:11px;flex-shrink:0;min-width:72px}
+.sess-score{font-weight:700;font-size:15px;flex-shrink:0}
+.sess-pct-bar{width:55px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;flex-shrink:0}
+.sess-pct-fill{height:100%;border-radius:2px}
+.sess-lessons{flex:1;color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:580px){
+  .sel-hdr,.sel-body,.sel-ftr,.tr-hdr,.tr-body{padding-left:12px;padding-right:12px}
+  .hand-card{padding:14px 13px}.act-btn{font-size:18px;padding:15px}
+  .playing-card{width:56px;height:80px;font-size:26px}
+  .res-card{padding:22px 16px}.res-score{font-size:38px}.load-box{padding:26px 16px}
+}
+</style>
+  <script src="categories_modal.js"></script>
+</head>
+<body>
+<div id="s-load" class="screen active">
+  <div class="load-box">
+    <div class="ico">&#9824;</div>
+    <h1>Постфлоп тренажёр</h1>
+    <p>Выберите все JSON-файлы из папки сразу (Ctrl+A).<br>Данные сохранятся — повторно выбирать не нужно.</p>
+    <ul class="flist" id="flist"></ul>
+    <div id="lspin" style="display:none"><div class="spin"></div></div>
+    <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+      <button class="btn b-blue" id="pickBtn">&#128194; Выбрать файлы из папки</button>
+      <button class="btn" style="background:#00b894;color:#fff;" id="serverBtn">&#128229; Загрузить уроки с сервера</button>
+    </div>
+    <p id="lprog"></p>
+    <input type="file" id="fInput" multiple accept=".json" style="display:none">
+  </div>
+</div>
+<div id="s-sel" class="screen">
+  <div class="sel-hdr">
+    <h1>&#9824; Выбор уроков</h1>
+    <div class="sel-tbr">
+      <button class="btn b-muted b-sm" id="selAll">&#10003; Все</button>
+      <button class="btn b-muted b-sm" id="deselAll">&#10007; Снять</button>
+      <button class="btn b-muted b-sm" id="clrCache">&#128465; Очистить кэш</button>
+      <button class="btn b-sm" style="background:#0984e3;color:#fff;margin-right:5px;" id="openRepBtn">&#128202; &#1054;&#1090;&#1095;&#1077;&#1090;&#1099;</button><button class="btn b-sm" style="background:#00b894;color:#fff;" id="updServerBtn">&#128229; Обновить с сервера</button>
+    </div>
+  </div>
+  <div class="sel-body"><div class="lgrid" id="lgrid"></div></div>
+  <div class="sel-ftr">
+    <span class="cnt" id="selCnt">Не выбрано</span>
+    <button class="btn b-blue" id="startBtn" disabled>&#9654; Начать (100 раздач)</button>
+  </div>
+</div>
+<div id="s-tr" class="screen">
+  <div class="tr-hdr">
+    <div class="prog-wrap">
+      <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+      <span class="ptxt" id="ptxt">0 / 0</span><span class="ptxt" id="trTimer" style="margin-left:15px; font-variant-numeric:tabular-nums; color:#a0aabf; font-weight:bold;">00:00</span>
+    </div>
+    <div class="sc">
+      <span class="sc-total" title="Общая статистика всех сессий" style="color:var(--orange);margin-right:15px">&#128200; <span id="scHistPct">0%</span></span>
+      <span class="sc-ok">&#9989; <span id="scOk">0</span></span>
+      <span class="sc-err">&#10060; <span id="scErr">0</span></span>
+    </div>
+    <button class="btn b-muted b-sm" id="exitBtn">&#8592; К урокам</button>
+  </div>
+  <div class="tr-body">
+    <div class="hand-card" id="hcard"></div>
+    <div class="act-buttons" id="actBtns"></div>
+    <div id="fbPanel" style="display:none"></div>
+    <button class="btn b-blue" id="nextBtn" style="display:none;font-size:15px;padding:13px 30px">Следующая &#8594;</button>
+  </div>
+</div>
+<div id="s-res" class="screen">
+  <div class="res-wrap">
+    <div class="res-card">
+      <div class="trp" id="rTrp">&#127942;</div>
+      <h2 id="rTitle">Сессия завершена!</h2>
+      <div class="res-score"><span class="rs-ok" id="rOk">0</span><span class="rs-s">/</span><span class="rs-t" id="rTot">0</span></div>
+      <div class="res-pct" id="rPct"></div><div style="text-align:center; color:#a0aabf; font-size:14px; margin-top:5px;" id="rTime"></div>
+      <div class="res-bd"><h3>По категориям</h3><div id="rBd"></div></div>
+      <div class="res-btns">
+        <button class="btn b-blue" id="agBtn">&#9654; Снова</button>
+        <button class="btn b-muted" id="backBtn">&#8592; К урокам</button>
+      </div>
+    </div>
+    <div class="hist-sess-card">
+      <div class="hist-sess-hdr">
+        <h3>&#128200; История всех сессий</h3>
+        <button class="hist-clr-btn" id="clrHistBtn">&#128465; Очистить</button>
+      </div>
+      <div id="histList"></div>
+    </div>
+  </div>
+</div>
+<div id="s-rep" class="screen">
+  <div class="sel-hdr" style="margin-bottom:20px;">
+    <h1>&#128202; &#1054;&#1073;&#1097;&#1080;&#1077; &#1086;&#1090;&#1095;&#1077;&#1090;&#1099; &#1087;&#1086; &#1091;&#1088;&#1086;&#1082;&#1072;&#1084;</h1>
+    <div class="sel-tbr">
+      <button class="btn b-muted" id="repBackBtn">&#8592; &#1053;&#1072;&#1079;&#1072;&#1076;</button>
+      <button class="btn b-sm" style="background:var(--red);color:#fff;" id="clrStatsBtn">&#128465; &#1057;&#1073;&#1088;&#1086;&#1089;&#1080;&#1090;&#1094; &#1089;&#1090;&#1072;&#1090;&#1091;</button>
+    </div>
+  </div>
+  <div id="repGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:15px; margin-bottom: 20px;"></div>
+  
+  <div id="repDetails" style="display:none; background:#0e1628; border:1px solid var(--border); border-radius:var(--r); padding:20px; margin-bottom:30px;">
+    <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+        <h2 id="repDetTitle" style="margin:0;">&#1054;&#1090;&#1095;&#1077;&#1090;</h2>
+        <button class="btn b-muted b-sm" id="repDetCloseBtn">&#10006; &#1047;&#1072;&#1082;&#1088;&#1099;&#1090;&#1094;</button>
+    </div>
+    <div style="display:flex; gap:20px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;&#1084;</h3><div id="repDetCat"></div></div>
+        
+        <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1075;&#1088;&#1091;&#1087;&#1087;&#1072;&#1084; &#1088;&#1091;&#1082;</h3><div id="repDetGrp"></div></div>
+    </div>
+  </div>
+</div>
+<script>
+const DB='pokerDB_v4',ST='d',HIST_KEY='trainerSessionHistory_v1';
+let db,appData={},colorMap={},queue=[],qIdx=0,scOk=0,scErr=0,statCat={},statGrp={},statType={},selIds=new Set();
+let autoNextTimer=null,spoilerOpen=false,sessionLessonNames=[];
+let timerInterval=null,lessonStartTime=0,totalDecisionTime=0,handStartTime=0;
+const FDEFS=[
+  {k:'lessons',m:n=>n.includes('lessons')&&!n.includes('config')},
+  {k:'flopA',m:n=>n.includes('flop')&&!n.includes('hand')&&!n.includes('matrix')&&!n.includes('editor')&&!n.includes('color')},
+  {k:'turnA',m:n=>n.includes('turn')&&!n.includes('hand')},
+  {k:'riverA',m:n=>(n.includes('cb river')||(n.includes('river')&&!n.includes('bxb')))&&!n.includes('hand')},
+  {k:'bxbA',m:n=>n.includes('bxb')&&!n.includes('hand')},
+  {k:'flopH',m:n=>n.includes('flop')&&n.includes('hand')},
+  {k:'turnH',m:n=>n.includes('turn')&&n.includes('hand')},
+  {k:'riverH',m:n=>n.includes('river')&&n.includes('hand')&&!n.includes('bxb')},
+  {k:'bxbH',m:n=>n.includes('bxb')&&n.includes('hand')},
+  {k:'colors',m:n=>n.includes('matrix')||n.includes('color')},
+];
+const FLBL={lessons:'Уроки',flopA:'Действия флоп',turnA:'Действия терн',riverA:'Действия ривер (BBB)',bxbA:'Действия ривер (BxB)',flopH:'Раздачи флоп',turnH:'Раздачи терн',riverH:'Раздачи ривер (BBB)',bxbH:'Раздачи ривер (BxB)',colors:'Цвета групп'};
+const CHIP={'X':{bg:'#1e2540',tc:'#8899bb',label:'X'},'B':{bg:'#2a1800',tc:'#f59d00',label:'B'},'C':{bg:'#082014',tc:'#00c97a',label:'C'},'F':{bg:'#200808',tc:'#ff3d57',label:'F'},'R':{bg:'#200f00',tc:'#ff7043',label:'R'},'A':{bg:'#140a24',tc:'#a855f7',label:'Al'},'L':{bg:'#081428',tc:'#4a90d9',label:'L'},'3B':{bg:'#1e0818',tc:'#f06292',label:'3B'}};
+const SUIT_CLS={s:'cs',h:'ch',d:'cd',c:'cc'};
+const GRP_CLR={c_red:'#e74c3c',c_orange:'#e67e22',c_yellow:'#f1c40f',c_green:'#2ecc71',c_blue:'#3498db',c_purple:'#9b59b6',c_pink:'#e84393'};
+const TT_LBL={over:'Оверкарта',under:'Андеркарта',pair:'Спарка'};
+const RT_LBL={'nopair':'Не спарилась','4straight':'4-стрит','4flush':'4-флеш','paired':'Спарилась','2paired':'Двойная спарилась','3paired':'Тройная спарилась','4paired':'Четырная спарилась','5straight':'5-стрит','5flush':'5-флеш'};
+function openDB(){return new Promise((y,n)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains(ST))e.target.result.createObjectStore(ST)};r.onsuccess=e=>y(e.target.result);r.onerror=e=>n(e.target.error)})}
+function iSet(k,v){return new Promise((y,n)=>{const tx=db.transaction(ST,'readwrite');tx.objectStore(ST).put(v,k);tx.oncomplete=y;tx.onerror=e=>n(e.target.error)})}
+function iGet(k){return new Promise((y,n)=>{const tx=db.transaction(ST,'readonly');const r=tx.objectStore(ST).get(k);r.onsuccess=e=>y(e.target.result);r.onerror=e=>n(e.target.error)})}
+function iClr(){return new Promise((y,n)=>{const tx=db.transaction(ST,'readwrite');tx.objectStore(ST).clear();tx.oncomplete=y;tx.onerror=e=>n(e.target.error)})}
+async function init(){
+  try{db=await openDB();if(await tryCache()){ss('s-sel');buildSel()}else{buildFList();ss('s-load')}}
+  catch(e){lp('Ошибка: '+e.message)}
+}
+async function tryCache(){
+  const req=['lessons','flopA','turnA','riverA','flopH','turnH','riverH','colors'];
+  const d={};for(const k of req){const v=await iGet(k);if(!v)return false;d[k]=v}
+  d.bxbA=await iGet('bxbA')||null;d.bxbH=await iGet('bxbH')||null;appData=d;mkClrMap();return true;
+}
+function mkClrMap(){
+  colorMap={}; let grpIdx=0; const c=appData.colors;if(c&&c.colors)c.colors.forEach(x=>{colorMap[x.id]={name:x.name,color:x.color||GRP_CLR[x.id]||'#888', idx: grpIdx++}}); const g=appData.flopA&&appData.flopA.groups;if(g)g.forEach(x=>{if(!colorMap[x.id])colorMap[x.id]={name:x.name,color:GRP_CLR[x.id]||'#888', idx: grpIdx++};else colorMap[x.id].idx = grpIdx++;});
+}
+function buildFList(){document.getElementById('flist').innerHTML=FDEFS.map(f=>`<li id="fs_${f.k}">${FLBL[f.k]}</li>`).join('')}
+function markF(k){const e=document.getElementById('fs_'+k);if(e)e.className='ok'}
+document.getElementById('pickBtn').onclick=()=>document.getElementById('fInput').click();
+
+const SERVER_FILES = {
+  lessons: 'poker_training_groups.json',
+  colors: 'poker_matrix_colors.json',
+  flopA: 'HU SB CB Flop Actions.json',
+  turnA: 'HU SB CB Turn Actions.json',
+  riverA: 'HU SB CB River Actions.json',
+  bxbA: 'HU SB BxB River Actions.json',
+  flopH: 'HU SB CB Flop Hands.json',
+  turnH: 'HU SB CB Turn Hands.json',
+  riverH: 'HU SB CB River Hands.json',
+  bxbH: 'HU SB BxB River Hands.json'
+};
+
+async function loadFromServer() {
+  document.getElementById('pickBtn').disabled=true;
+  const sBtn = document.getElementById('serverBtn'); if(sBtn) sBtn.disabled=true;
+  const uBtn = document.getElementById('updServerBtn'); if(uBtn) uBtn.disabled=true;
+  document.getElementById('lspin').style.display='block';
+  
+  buildFList(); const loaded={};
+  
+  for (const [key, fname] of Object.entries(SERVER_FILES)) {
+      lp('Загрузка ' + fname + '...');
+      try {
+          // Use encodeURIComponent to handle spaces in filename properly, and add cache buster
+          const url = encodeURIComponent(fname) + '?t=' + Date.now();
+          const resp = await fetch(url);
+          if (!resp.ok) {
+             if (['bxbA', 'bxbH'].includes(key)) continue; 
+             throw new Error('HTTP ' + resp.status);
+          }
+          const data = await resp.json();
+          loaded[key] = data;
+          markF(key);
+      } catch (err) {
+          console.error('Failed to load ' + fname, err);
+      }
+  }
+  
+  const req=['lessons','flopA','turnA','riverA','flopH','turnH','riverH','colors'];
+  const miss=req.filter(k=>!loaded[k]).map(k=>FLBL[k]);
+  
+  if (miss.length) {
+     lp('Ошибка! Не хватает на сервере: '+miss.join(', '));
+     document.getElementById('pickBtn').disabled=false;
+     if(sBtn) sBtn.disabled=false;
+     if(uBtn) uBtn.disabled=false;
+     document.getElementById('lspin').style.display='none';
+     return;
+  }
+  
+  lp('Сохраняю...');
+  for(const[k,v]of Object.entries(loaded)) await iSet(k,v);
+  for(const[k,v]of Object.entries(loaded)) appData[k]=v;
+  
+  mkClrMap();
+  document.getElementById('lspin').style.display='none';
+  lp('');
+  if(sBtn) sBtn.disabled=false;
+  if(uBtn) uBtn.disabled=false;
+  document.getElementById('pickBtn').disabled=false;
+  ss('s-sel'); buildSel();
+}
+
+if(document.getElementById('serverBtn')) document.getElementById('serverBtn').onclick=loadFromServer;
+if(document.getElementById('updServerBtn')) document.getElementById('updServerBtn').onclick=loadFromServer;
+
+document.getElementById('fInput').onchange=async e=>{
+  const files=[...e.target.files];if(!files.length)return;
+  document.getElementById('pickBtn').disabled=true;document.getElementById('lspin').style.display='block';
+  buildFList();const loaded={};
+  for(const f of files){
+    const n=f.name.toLowerCase();let fd=null;
+    for(const d of FDEFS){if(d.m(n)){fd=d;break}}
+    if(!fd)continue;
+    try{lp('Читаю '+f.name+'...');const txt=await readTxt(f);loaded[fd.k]=JSON.parse(txt);markF(fd.k)}catch(err){console.error(f.name,err)}
+  }
+  const req=['lessons','flopA','turnA','riverA','flopH','turnH','riverH','colors'];
+  const miss=req.filter(k=>!loaded[k]).map(k=>FLBL[k]);
+  if(miss.length){lp('Нужны: '+miss.join(', '));document.getElementById('pickBtn').disabled=false;document.getElementById('lspin').style.display='none';for(const[k,v]of Object.entries(loaded)){await iSet(k,v);appData[k]=v}e.target.value='';return}
+  lp('Сохраняю...');for(const f of FDEFS)if(loaded[f.k])await iSet(f.k,loaded[f.k]);
+  for(const[k,v]of Object.entries(loaded))appData[k]=v;
+  mkClrMap();document.getElementById('lspin').style.display='none';lp('');ss('s-sel');buildSel();e.target.value='';
+};
+function readTxt(f){return new Promise((y,n)=>{const r=new FileReader();r.onload=e=>y(e.target.result);r.onerror=e=>n(e.target.error);r.readAsText(f,'UTF-8')})}
+function lp(m){document.getElementById('lprog').textContent=m}
+function getStreet(l){const at=l.config.actionTree||{};if(!(at.river||[]).length&&(at.turn||[]).length)return'river';if(!(at.turn||[]).length&&(at.flop||[]).length)return'turn';return'flop'}
+function streetBdg(s){return{flop:'<span class="bdg bf">Флоп</span>',turn:'<span class="bdg bt">Терн</span>',river:'<span class="bdg br">Ривер</span>'}[s]||''}
+function buildSel(){
+    const ls=appData.lessons;if(!ls||!ls.length){document.getElementById('lgrid').innerHTML='<p style="color:var(--muted)">\u0423\u0440\u043e\u043a\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b</p>';return}
+    const g=document.getElementById('lgrid');g.innerHTML='';
+    g.style.display = 'block';
+    
+    const hist = loadHistory();
+    const mastered = new Set();
+    hist.forEach(s => {
+        if (s.pct === 100) {
+            const lnames = s.lessons.split(', ');
+            lnames.forEach(n => mastered.add(n));
+        }
+    });
+    
+    const blocks = [];
+    const blockMap = new Map();
+    ls.forEach(l => {
+        const bName = (l.config && l.config.blockName) || '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0439 \u0431\u043b\u043e\u043a';
+        if (!blockMap.has(bName)) {
+            blockMap.set(bName, blocks.length);
+            blocks.push({ name: bName, lessons: [] });
+        }
+        blocks[blockMap.get(bName)].lessons.push(l);
+    });
+
+    blocks.forEach((blk, r) => {
+        const blkDiv = document.createElement('div');
+        blkDiv.style.marginBottom = '25px';
+        blkDiv.style.border = '2px solid var(--border)';
+        blkDiv.style.borderRadius = 'var(--r)';
+        blkDiv.style.padding = '15px';
+        blkDiv.style.background = '#0e1628';
+        
+        const bNameEl = document.createElement('h3');
+        bNameEl.textContent = blk.name;
+        bNameEl.style.marginTop = '0';
+        bNameEl.style.marginBottom = '15px';
+        bNameEl.style.fontSize = '16px';
+        bNameEl.style.color = 'var(--text)';
+        bNameEl.style.borderBottom = '1px solid var(--border)';
+        bNameEl.style.paddingBottom = '8px';
+        blkDiv.appendChild(bNameEl);
+        
+        const grid = document.createElement('div');
+        grid.className = 'lgrid';
+        grid.style.marginBottom = '0';
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+        grid.style.gap = '12px';
+        
+        blk.lessons.forEach((l, c) => {
+            let isUnlocked = false;
+            let reqText = '';
+            
+            if (r === 0 && c === 0) {
+                isUnlocked = true;
+            } else if (c > 0) {
+                const prev = blk.lessons[c-1];
+                isUnlocked = mastered.has(prev.name);
+                reqText = `(\u041f\u0440\u043e\u0439\u0434\u0438\u0442\u0435 \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u0439 \u043d\u0430 100%)`;
+            } else if (c === 0 && r > 0) {
+                const prevBlockFirst = blocks[r-1].lessons[0];
+                isUnlocked = mastered.has(prevBlockFirst.name);
+                reqText = `(\u041f\u0440\u043e\u0439\u0434\u0438\u0442\u0435 1-\u0439 \u0443\u0440\u043e\u043a \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0435\u0433\u043e \u0431\u043b\u043e\u043a\u0430 \u043d\u0430 100%)`;
+            }
+            
+            let l_ok=0, l_tot=0;
+            hist.forEach(s=>{if(s.lessons&&s.lessons.split(', ').includes(l.name)){l_ok+=s.ok;l_tot+=s.tot;}});
+            const l_pct = l_tot ? Math.round(l_ok/l_tot*100) : null;
+            const pctCol = l_pct>=80?'#00c97a':l_pct>=60?'#f59d00':'#ff3d57';
+            const pctBdg = l_pct!==null ? `<span class="bdg" style="background:${pctCol}20;color:${pctCol};border:1px solid ${pctCol}">${l_pct}%</span>` : '';
+            
+            const cfg=l.config,st=getStreet(l);
+            const cats=st==='flop'?cfg.selectedCategories||[]:st==='turn'?cfg.selectedTurnCategories||[]:cfg.selectedRiverCategories||[];
+            const grps=cfg.selectedGroups||[];
+            const rawL=cfg.selectedRiverLine;const lines=Array.isArray(rawL)?rawL:[rawL||'bbb'];
+            const lineLabel=lines.map(x=>x==='bxb'?'BxB':'BBB').join('+');
+            const card=document.createElement('div');card.className='lcard';card.dataset.id=l.id;
+            
+            if (!isUnlocked) {
+                card.style.opacity = '0.5';
+                card.style.pointerEvents = 'none';
+                card.innerHTML=`<input type="checkbox" disabled><div class="info"><div class="nm">&#128274; ${esc(l.name)} <br><span style="font-size:12px;font-weight:normal;color:#999">${reqText}</span></div><div class="bgs">${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div></div>`;
+            } else {
+                card.innerHTML=`<input type="checkbox" data-id="${l.id}"><div class="info"><div class="nm">${esc(l.name)}</div><div class="bgs">${pctBdg}${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div></div>`;
+                const cb=card.querySelector('input');
+                if(selIds.has(l.id)){cb.checked=true;card.classList.add('sel')}
+                const tog=()=>{if(cb.checked){selIds.add(l.id);card.classList.add('sel')}else{selIds.delete(l.id);card.classList.remove('sel')}updFtr()};
+                cb.addEventListener('change',tog);card.addEventListener('click',e=>{if(e.target.type==='checkbox')return;cb.checked=!cb.checked;tog()});
+            }
+            grid.appendChild(card);
+        });
+        blkDiv.appendChild(grid);
+        g.appendChild(blkDiv);
+    });
+    updFtr();
+}
+function updFtr(){const n=selIds.size;document.getElementById('selCnt').textContent=n?`Выбрано: ${n}`:'Не выбрано';document.getElementById('startBtn').disabled=!n}
+document.getElementById('selAll').onclick=()=>{document.querySelectorAll('#lgrid input:not([disabled])').forEach(cb=>{cb.checked=true;cb.closest('.lcard').classList.add('sel');selIds.add(cb.dataset.id)});updFtr()};
+document.getElementById('deselAll').onclick=()=>{document.querySelectorAll('#lgrid input').forEach(cb=>{cb.checked=false;cb.closest('.lcard').classList.remove('sel')});selIds.clear();updFtr()};
+document.getElementById('clrCache').onclick=async()=>{if(!confirm('Очистить кэш?'))return;await iClr();appData={};ss('s-load');buildFList()};
+document.getElementById('startBtn').onclick=()=>{buildQ();if(!queue.length){alert('Нет раздач.');return}startTrain()};
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
+function buildQ(){
+  queue=[];statCat={};statGrp={};statType={};scOk=scErr=0;sessionLessonNames=[];
+  const ls=appData.lessons.filter(l=>selIds.has(l.id));
+  ls.forEach(l=>{if(!sessionLessonNames.includes(l.name))sessionLessonNames.push(l.name)});
+  for(const l of ls){const s=getStreet(l);if(s==='flop')addFlop(l);else if(s==='turn')addTurn(l);else addRiver(l)}
+  shuf(queue);queue=queue.slice(0,100);
+}
+function getBoardSuit(flop) {
+    if (!flop || flop.length < 3) return '1';
+    const s1=flop[0][1], s2=flop[1][1], s3=flop[2][1];
+    if (s1!==s2 && s1!==s3 && s2!==s3) return '1';
+    if (s1===s2 && s2===s3) return '3';
+    return '2';
+}
+  function addFlop(l){
+  const hdb=appData.flopH,adb=appData.flopA;if(!hdb||!adb)return;
+  const cfg=l.config;
+  const gs=cfg.selectedGroups&&cfg.selectedGroups.length?cfg.selectedGroups:Object.keys(hdb.hands||{});
+  const cs=cfg.selectedCategories&&cfg.selectedCategories.length?cfg.selectedCategories:['Мусор','Гатшот','Дро','Лоу','Мидл','Топ','Овер','Две пары+'];
+  for(const g of gs){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const c of cs){const arr=gh[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${g}|${c}`];if(!ans)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"flop",hand:h,lesson:l,ans:aa,gid:g,cat:c,suitLbl});}}}
+}
+function addTurn(l){
+  const hdb=appData.turnH,adb=appData.turnA;if(!hdb||!adb)return;
+  const cfg=l.config;
+  const tts=cfg.selectedTurnTypes&&cfg.selectedTurnTypes.length?cfg.selectedTurnTypes:['over','under','pair'];
+  const gs=cfg.selectedGroups&&cfg.selectedGroups.length?cfg.selectedGroups:Object.keys(hdb.hands||{});
+  const cs=cfg.selectedTurnCategories&&cfg.selectedTurnCategories.length?cfg.selectedTurnCategories:['Мусор','Гатшот','Дро','Лоу','Мидл','Топ','Овер','Две пары+'];
+  for(const g of gs){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const tt of tts){const tth=gh[tt];if(!tth)continue;for(const c of cs){const arr=tth[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${tt}|${g}|${c}`];if(!ans)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${tt}|${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${tt}|${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"turn",hand:h,lesson:l,ans:aa,gid:g,cat:c,tt,suitLbl});}}}}
+}
+function addRiver(l){
+  const cfg=l.config;const rawL=cfg.selectedRiverLine;const lines=Array.isArray(rawL)?rawL:[rawL||'bbb'];
+  const rts=cfg.selectedRiverTypes&&cfg.selectedRiverTypes.length?cfg.selectedRiverTypes:['nopair', '4straight', '4flush', 'paired', '2paired', '3paired', '4paired', '5straight', '5flush'];
+  const cs=cfg.selectedRiverCategories&&cfg.selectedRiverCategories.length?cfg.selectedRiverCategories:['Мусор','Гатшот','Дро','Лоу','Мидл','Топ','Овер','Две пары+'];
+  const gs=cfg.selectedGroups&&cfg.selectedGroups.length?cfg.selectedGroups:null;
+  for(const line of lines){
+    const isBxb=line==='bxb';const hdb=isBxb?appData.bxbH:appData.riverH;const adb=isBxb?appData.bxbA:appData.riverA;
+    if(!hdb||!adb)continue;const grps=gs||Object.keys(hdb.hands||{});
+    for(const g of grps){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const rt of rts){const rth=gh[rt];if(!rth)continue;for(const c of cs){const arr=rth[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${rt}|${g}|${c}`];if(!ans)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${rt}|${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${rt}|${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"river",hand:h,lesson:l,ans:aa,gid:g,cat:c,rt,bxb:isBxb,suitLbl});}}}}
+  }
+}
+function card(s){if(!s||s.length<2)return'';const rank=s.slice(0,-1),suit=s.slice(-1).toLowerCase();return`<div class="playing-card ${SUIT_CLS[suit]||''}">${rank}</div>`}
+function cards(arr){return(arr||[]).map(card).join('')}
+function chip(a){const ch=CHIP[a]||{bg:'#1e2540',tc:'#8899bb',label:a};return`<span class="achip" style="background:${ch.bg};color:${ch.tc}">${ch.label}</span>`}
+function buildHistory(at,street){
+  const ALL=['preflop','flop','turn','river'];const idx=ALL.indexOf(street);const prev=ALL.slice(0,idx);
+  if(!prev.length)return{v:'',h:''};
+  let v='',h='';
+  prev.forEach((s,i)=>{
+    if(i>0){const sp='<span class="hist-sep">|</span>';v+=sp;h+=sp}
+    const acts=(at[s]||[]);const va=acts.filter(a=>a.actor==='villain'),ha=acts.filter(a=>a.actor==='hero');
+    v+=`<div class="hist-group">${va.length?va.map(a=>chip(a.action)).join(''):'<span class="hist-dash">—</span>'}</div>`;
+    h+=`<div class="hist-group">${ha.length?ha.map(a=>chip(a.action)).join(''):'<span class="hist-dash">—</span>'}</div>`;
+  });
+  const fin='<span class="hist-sep">|</span><span class="hist-now">?</span>';v+=fin;h+=fin;
+  return{v,h};
+}
+function buildBoard(hand,street){
+  let html=`<div class="board-group">${cards(hand.flop||[])}</div>`;
+  if(street==='turn'||street==='river'){html+=`<span class="board-sep">|</span><div class="board-group">${card(hand.turn||'')}</div>`}
+  if(street==='river'){html+=`<span class="board-sep">|</span><div class="board-group">${card(hand.river||'')}</div>`}
+  return html;
+}
+function buildMeta(item){
+  const gc=colorMap[item.gid]||{name:item.gid,color:GRP_CLR[item.gid]||'#888'};
+  let extra='';
+  if(item.tt)extra+=`<span class="bdg bg">${TT_LBL[item.tt]||item.tt}</span>`;
+  if(item.rt)extra+=`<span class="bdg bg">${RT_LBL[item.rt]||item.rt}</span>`;
+  if(item.bxb)extra+=`<span class="bdg bl">BxB</span>`;
+  return`<span class="bdg" style="background:${gc.color}20;color:${gc.color};border:1px solid ${gc.color}40"><span class="gdot" style="background:${gc.color}"></span>${esc(gc.name)}</span><span class="bdg bc">${esc(item.cat)}</span>${extra}${streetBdg(item.street)}`;
+}
+function showHand(){
+  if(qIdx>=queue.length){showRes();return}
+  if(autoNextTimer){clearTimeout(autoNextTimer);autoNextTimer=null}
+  const item=queue[qIdx];const{hand,lesson,street}=item;const cfg=lesson.config;const at=cfg.actionTree||{};
+  const{v:vHist,h:hHist}=buildHistory(at,street);const boardHtml=buildBoard(hand,street);const metaHtml=buildMeta(item);
+  const pct=Math.round(qIdx/queue.length*100);
+  handStartTime=Date.now();
+    document.getElementById('pfill').style.width=pct+'%';document.getElementById('ptxt').textContent=`${qIdx+1} / ${queue.length}`;
+  const openAttr=spoilerOpen?' open':'';
+  document.getElementById('hcard').innerHTML=`
+    ${vHist?`<div class="hist-row"><span class="hist-label" style="color:#ff7070">Opp:</span>${vHist}</div><div class="hline"></div>`:''}
+    <div class="board-display">${boardHtml}</div>
+    ${hHist?`<div class="hline"></div><div class="hist-row"><span class="hist-label" style="color:#4a90d9">Hero:</span>${hHist}</div>`:''}
+    <div class="hline"></div>
+    <div class="hero-row"><span class="hero-lbl">Герой</span><div class="hcards">${cards(hand.hero||[])}</div></div>
+    <details class="info-spoiler"${openAttr} id="infoDetails">
+      <summary>Детали раздачи</summary>
+      <div class="info-inner">
+        <div class="meta-row">${metaHtml}</div>
+        <div class="ctx-panel">
+          <div class="ctx-item"><div class="ctx-lbl">Урок</div><div class="ctx-val">${esc(lesson.name)}</div></div>
+          <div class="ctx-item"><div class="ctx-lbl">Позиция</div><div class="ctx-val">${cfg.heroPosition||'?'} vs ${cfg.villainPosition||'?'}</div></div>
+          <div class="ctx-item"><div class="ctx-lbl">Стеки</div><div class="ctx-val">${cfg.heroStack||'?'}bb / ${cfg.villainStack||'?'}bb</div></div>
+          <div class="ctx-item"><div class="ctx-lbl">SB/BB</div><div class="ctx-val">${cfg.sb||'?'}/${cfg.bb||'?'}</div></div>
+        </div>
+      </div>
+    </details>`;
+  const det=document.getElementById('infoDetails');if(det)det.addEventListener('toggle',()=>{spoilerOpen=det.open});
+  buildActBtns(item);document.getElementById('fbPanel').style.display='none';document.getElementById('nextBtn').style.display='none';
+}
+function buildActBtns(item){
+    const c=document.getElementById('actBtns');c.innerHTML='';
+    const allBtns = [
+      {k:'Чек', cls:'ab-chk', l:'✋ Чек'},
+      {k:'Бет 25%', cls:'ab-bet', l:'💰 25%'},
+      {k:'Бет 33%', cls:'ab-bet', l:'💰 33%'},
+      {k:'Бет 50%', cls:'ab-bet', l:'💰 50%'},
+      {k:'Бет 66%', cls:'ab-bet', l:'💰 66%'},
+      {k:'Бет 75%', cls:'ab-bet', l:'💰 75%'},
+      {k:'Бет 100%', cls:'ab-bet', l:'💰 100%'},
+      {k:'Колл', cls:'ab-chk', l:'👍 Колл'},
+      {k:'Фолд', cls:'ab-chk', l:'👎 Фолд'},
+      {k:'Рейз', cls:'ab-bet', l:'🚀 Рейз'},
+      {k:'Аллын', cls:'ab-bet', l:'🔥 Олл-ин'}
+    ];
+    
+    const at = item.lesson?.config?.actionTree || {};
+    const preflop = at.preflop || [];
+    const raises = preflop.filter(a => ['R', '3B'].includes(a.action)).length;
+    const isLimpPot = preflop.length > 0 && raises === 0;
+    
+    const stActs = at[item.street] || [];
+    let lastAct = null;
+    if (stActs.length > 0) {
+        lastAct = stActs[stActs.length - 1].action;
+    }
+    
+    let validKeys = [];
+    if (!lastAct || lastAct === 'X') {
+        validKeys = ['Чек', 'Бет 25%', 'Бет 33%', 'Бет 50%', 'Бет 66%', 'Бет 75%', 'Бет 100%', 'Аллын'];
+        if (isLimpPot) {
+            validKeys = validKeys.filter(k => k !== 'Бет 25%' && k !== 'Бет 33%');
+        }
+    } else if (['B', 'R', '3B', 'A'].includes(lastAct)) {
+        validKeys = ['Фолд', 'Колл', 'Рейз', 'Аллын'];
+    } else {
+        validKeys = allBtns.map(b => b.k);
+    }
+    
+    allBtns.filter(b => validKeys.includes(b.k)).forEach(b=>{
+        const btn=document.createElement('button');
+        btn.className=`act-btn ${b.cls}`;
+        btn.textContent=b.l;
+        btn.onclick=()=>onAnswer(b.k,item);
+        c.appendChild(btn);
+    });
+}function onAnswer(ua,item){
+  document.querySelectorAll('.act-btn').forEach(b=>b.disabled=true);
+  const ok=ua===item.ans;if(ok)scOk++;else scErr++;updSc();
+  if(!statCat[item.cat])statCat[item.cat]={ok:0,tot:0};statCat[item.cat].tot++;if(ok)statCat[item.cat].ok++;
+  if(!statGrp[item.gid])statGrp[item.gid]={ok:0,tot:0};statGrp[item.gid].tot++;if(ok)statGrp[item.gid].ok++;
+  let tName = 'Флоп';
+  if(item.tt) tName = TT_LBL[item.tt] || item.tt;
+  if(item.rt) tName = RT_LBL[item.rt] || item.rt;
+  if(!statType[tName])statType[tName]={ok:0,tot:0};statType[tName].tot++;if(ok)statType[tName].ok++; const dTime=Date.now()-handStartTime; totalDecisionTime+=dTime; saveLessonStat(item, ok, tName, dTime); 
+  const gc=colorMap[item.gid]||{name:item.gid,color:'#888'};
+  const fp=document.getElementById('fbPanel');
+  fp.className=`fb ${ok?'fb-ok':'fb-err'}`;
+  fp.innerHTML=`<div class="fb-ico">${ok?'✅':'❌'}</div><div class="fb-text"><div class="fb-res">${ok?'Верно!':'Неверно!'}</div><div class="fb-det">Ты: <strong>${esc(ua)}</strong> &nbsp;|&nbsp; Правильно: <strong>${esc(item.ans)}</strong><br>Группа: <strong style="color:${gc.color}">${esc(gc.name)}</strong> &nbsp;|&nbsp; Категория: <strong>${esc(item.cat)}</strong></div></div>`;
+  fp.style.display='flex';
+  if(ok){autoNextTimer=setTimeout(()=>{qIdx++;showHand()},400)}
+  else document.getElementById('nextBtn').style.display='block';
+}
+document.getElementById('nextBtn').onclick=()=>{qIdx++;showHand()};
+document.getElementById('exitBtn').onclick=()=>{if(confirm('Выйти?')){if(autoNextTimer)clearTimeout(autoNextTimer);ss('s-sel')}};
+function updSc(){document.getElementById('scOk').textContent=scOk;document.getElementById('scErr').textContent=scErr}
+function getOverallPct(){const h=loadHistory();let ok=0,tot=0;h.forEach(s=>{ok+=s.ok;tot+=s.tot});return tot?Math.round(ok/tot*100):0}
+function startTrain(){
+    document.getElementById('scHistPct').textContent=getOverallPct()+'%';
+    qIdx=0;scOk=0;scErr=0;statCat={};statGrp={};statType={};updSc();
+    totalDecisionTime=0;
+    lessonStartTime=Date.now();
+    if(timerInterval) clearInterval(timerInterval);
+    const tEl=document.getElementById('trTimer');
+    if(tEl) tEl.textContent='00:00';
+    timerInterval=setInterval(()=>{
+        const sec=Math.floor((Date.now()-lessonStartTime)/1000);
+        const m=Math.floor(sec/60).toString().padStart(2,'0');
+        const s=(sec%60).toString().padStart(2,'0');
+        if(tEl) tEl.textContent=m+':'+s;
+    },1000);
+    ss('s-tr');showHand()
+}
+// HISTORY
+function loadHistory(){try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]')}catch(e){return[]}}
+function saveHistoryLS(h){try{localStorage.setItem(HIST_KEY,JSON.stringify(h))}catch(e){}}
+function saveSessionHistory(){
+  const tot=scOk+scErr,pct=tot?Math.round(scOk/tot*100):0;
+  const h=loadHistory();
+  h.unshift({date:new Date().toISOString(),ok:scOk,tot,pct,lessons:sessionLessonNames.join(', ')});
+  saveHistoryLS(h.slice(0,200));
+}
+function renderHistory(){
+  const h=loadHistory();const el=document.getElementById('histList');
+  if(!h.length){el.innerHTML='<div class="hist-empty">История пока пуста — сыграйте первую сессию!</div>';return}
+  el.innerHTML=h.map(s=>{
+    const d=new Date(s.date);
+    const ds=`${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+    const col=s.pct>=80?'#00c97a':s.pct>=60?'#f59d00':'#ff3d57';
+    return`<div class="sess-row"><span class="sess-date">${ds}</span><span class="sess-score" style="color:${col}">${s.ok}/${s.tot}</span><div class="sess-pct-bar"><div class="sess-pct-fill" style="width:${s.pct}%;background:${col}"></div></div><span class="sess-lessons">${esc(s.lessons||'')}</span></div>`;
+  }).join('');
+}
+document.getElementById('clrHistBtn').onclick=()=>{if(!confirm('Очистить всю историю?'))return;saveHistoryLS([]);renderHistory();buildSel()};
+function showRes(){
+  const tot=scOk+scErr,pct=tot?Math.round(scOk/tot*100):0;
+  document.getElementById('rOk').textContent=scOk;document.getElementById('rTot').textContent=tot;
+  document.getElementById('rPct').textContent=pct+'% \u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u044b\u0445 \u043e\u0442\u0432\u0435\u0442\u043e\u0432'; if(timerInterval) clearInterval(timerInterval); const avgTime = tot > 0 ? (totalDecisionTime / tot / 1000).toFixed(1) : 0; document.getElementById('rTime').textContent = '\u0412\u0440\u0435\u043c\u044f: ' + (document.getElementById('trTimer') ? document.getElementById('trTimer').textContent : '') + ' (' + avgTime + ' \u0441/\u043e\u0442\u0432)';
+  document.getElementById('rTrp').textContent=pct>=90?'🏆':pct>=70?'🎯':'📚';
+  document.getElementById('rTitle').textContent=pct>=90?'Отличный результат!':pct>=70?'Хороший результат!':'Продолжай тренироваться!';
+  const bd=document.getElementById('rBd');bd.innerHTML='';
+  
+  const renderStats = (statObj, title) => {
+     let html = `<h4 style="margin-top:15px;margin-bottom:5px;font-size:14px;color:#a0aabf;text-transform:uppercase;">${title}</h4>`;
+     Object.entries(statObj).sort((a,b)=>a[1].ok/a[1].tot-b[1].ok/b[1].tot).forEach(([key,{ok,tot}])=>{
+        const p=tot?Math.round(ok/tot*100):0,col=p>=80?'#00c97a':p>=60?'#f59d00':'#ff3d57';
+        let lbl = key; if (title.indexOf("\u0413\u0420\u0423\u041f\u041f") !== -1) { const parts = key.split("|"); if (colorMap && colorMap[parts[0]]) { lbl = colorMap[parts[0]].name + (parts[1] ? " ("+parts[1]+")" : ""); } }
+        if(title==='По группам' && colorMap[key]) lbl = colorMap[key].name;
+        html+=`<div class="bd-row"><div class="bd-nm">${esc(lbl)}</div><div class="bd-bw"><div class="bd-bf" style="width:${p}%;background:${col}"></div></div><div class="bd-fr" style="color:${col}">${ok}/${tot}</div></div>`;
+     });
+     return html;
+  };
+  
+  bd.innerHTML += renderStats(statCat, 'По категориям');
+  if (Object.keys(statType).length > 0 && Object.keys(statType)[0] !== 'Флоп') bd.innerHTML += renderStats(statType, 'По типам доски');
+  bd.innerHTML += renderStats(statGrp, 'По группам');
+  
+  saveSessionHistory();renderHistory();ss('s-res');
+}
+document.getElementById('agBtn').onclick=()=>{buildQ();if(!queue.length){alert('Нет раздач.');return}startTrain()};
+document.getElementById('backBtn').onclick=()=>{buildSel();ss('s-sel');};
+function ss(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function saveLessonStat(item, ok, tName, dTime) {
+    if(!item.lesson || !item.lesson.id) return;
+    const lid = item.lesson.id;
+    let lsStats = {};
+    try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
+    if (!lsStats[lid]) lsStats[lid] = { ok: 0, tot: 0, statCat: {}, statGrp: {}, statType: {}, totTime: 0 };
+    const st = lsStats[lid];
+    st.tot++; if(ok) st.ok++; st.totTime = (st.totTime||0) + (dTime||0);
+    if (!st.statCat[item.cat]) st.statCat[item.cat] = {ok:0, tot:0};
+    st.statCat[item.cat].tot++; if(ok) st.statCat[item.cat].ok++;
+    const grpKey = item.gid + (item.suitLbl ? "|" + item.suitLbl : ""); if (!st.statGrp[grpKey]) st.statGrp[grpKey] = {ok:0, tot:0};
+    st.statGrp[grpKey].tot++; if(ok) st.statGrp[grpKey].ok++;
+    if (!st.statType[tName]) st.statType[tName] = {ok:0, tot:0};
+    st.statType[tName].tot++; if(ok) st.statType[tName].ok++;
+    localStorage.setItem('lessonStats_v1', JSON.stringify(lsStats));
+}
+
+const openRepBtn = document.getElementById('openRepBtn');
+if(openRepBtn) openRepBtn.onclick = () => { buildRep(); ss('s-rep'); };
+const repBackBtn = document.getElementById('repBackBtn');
+if(repBackBtn) repBackBtn.onclick = () => { ss('s-sel'); };
+const clrStatsBtn = document.getElementById('clrStatsBtn');
+if(clrStatsBtn) clrStatsBtn.onclick = () => { if(confirm('\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0443 \u043f\u043e \u0443\u0440\u043e\u043a\u0430\u043c?')) { localStorage.removeItem('lessonStats_v1'); buildRep(); document.getElementById('repDetails').style.display='none'; } };
+const repDetCloseBtn = document.getElementById('repDetCloseBtn');
+if(repDetCloseBtn) repDetCloseBtn.onclick = () => { document.getElementById('repDetails').style.display='none'; };
+
+function buildRep() {
+    let lsStats = {};
+    try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
+    const rg = document.getElementById('repGrid');
+    rg.innerHTML = '';
+    const ls = appData.lessons || [];
+    if (!ls.length) { rg.innerHTML = '<div class="hint">\u041d\u0435\u0442 \u0443\u0440\u043e\u043a\u043e\u0432</div>'; return; }
+    
+    ls.forEach(l => {
+        const st = lsStats[l.id];
+        const ok = st ? st.ok : 0;
+        const tot = st ? st.tot : 0;
+        const pct = tot ? Math.round(ok/tot*100) : 0;
+        const col = tot===0 ? '#555' : (pct>=80 ? '#00c97a' : pct>=60 ? '#f59d00' : '#ff3d57');
+        
+        const card = document.createElement('div');
+        card.style.background = '#1a2235';
+        card.style.border = '1px solid ' + (tot===0 ? 'var(--border)' : col);
+        card.style.borderRadius = 'var(--r)';
+        card.style.padding = '15px';
+        card.style.cursor = tot===0 ? 'default' : 'pointer';
+        card.style.transition = 'background 0.2s';
+        if (tot > 0) {
+            card.onclick = () => showRepDet(l.name, st);
+            card.onmouseover = () => card.style.background = '#222b40';
+            card.onmouseout = () => card.style.background = '#1a2235';
+        }
+        
+        card.innerHTML = `
+            <div style="font-weight:bold; margin-bottom:10px; font-size:14px;">${esc(l.name)}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#a0aabf; font-size:12px;">\u041e\u0442\u0432\u0435\u0442\u043e\u0432: ${tot}<br>\u0421\u043a\u043e\u0440: ${st && st.totTime && tot ? (st.totTime/tot/1000).toFixed(1)+" \u0441/\u043e" : "-"}</span>
+                <span style="font-size:18px; font-weight:bold; color:${col}">${tot===0 ? '-' : pct+'%'}</span>
+            </div>
+            ${tot>0 ? `<div style="width:100%; height:4px; background:#0e1628; border-radius:2px; margin-top:10px; overflow:hidden;"><div style="height:100%; width:${pct}%; background:${col};"></div></div>` : ''}
+        `;
+        rg.appendChild(card);
+    });
+}
+
+function showRepDet(name, st) {
+    document.getElementById('repDetails').style.display = 'block';
+    document.getElementById('repDetTitle').textContent = '\u041e\u0442\u0447\u0435\u0442: ' + name + ` (${st.ok}/${st.tot})`;
+    
+    const renderS = (obj, useColorMap, sortType) => {
+        if (!obj || Object.keys(obj).length===0) return '<div style="color:#666;font-size:12px;">\u041d\u0435\u0442 \u0434\u0430\u043d\u043d\u044b\u0445</div>';
+        let h = '';
+        let entries = Object.entries(obj);
+        if (sortType === 'cat' && typeof PRESET_CATEGORIES !== 'undefined') {
+            const getCatW = (c) => {
+                const idx = PRESET_CATEGORIES.indexOf(c);
+                if (idx !== -1) return idx * 100;
+                for (let i = 0; i < PRESET_CATEGORIES.length; i++) {
+                    if (c.startsWith(PRESET_CATEGORIES[i])) return (i * 100) + 50;
+                }
+                return 999999;
+            };
+            entries.sort((a,b) => getCatW(a[0]) - getCatW(b[0]));
+        } else if (sortType === 'grp') {
+            const getGrpW = (k) => {
+                const p = k.split('|')[0];
+                if (!colorMap || !colorMap[p]) return 9999;
+                return (typeof colorMap[p].idx !== "undefined") ? colorMap[p].idx : parseInt(p);
+            };
+            entries.sort((a,b) => getGrpW(a[0]) - getGrpW(b[0]));
+        } else {
+            entries.sort((a,b)=> (b[1].ok/b[1].tot) - (a[1].ok/a[1].tot));
+        }
+        entries.forEach(([key,{ok,tot}])=>{
+            const p = tot ? Math.round(ok/tot*100) : 0;
+            const c = p>=80?'#00c97a':p>=60?'#f59d00':'#ff3d57';
+            let lbl = key; if (useColorMap) { const parts = key.split("|"); if (colorMap && colorMap[parts[0]]) { lbl = colorMap[parts[0]].name + (parts[1] ? " ("+parts[1]+")" : ""); } }
+            
+            h += `<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px; align-items:center;">
+                <span style="width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(lbl)}">${esc(lbl)}</span>
+                <div style="flex:1; margin:0 10px; height:6px; background:#0e1628; border-radius:3px; overflow:hidden;">
+                    <div style="height:100%; width:${p}%; background:${c};"></div>
+                </div>
+                <span style="color:${c}; width:45px; text-align:right;">${p}% <span style="font-size:10px;color:#777;">(${ok}/${tot})</span></span>
+            </div>`;
+        });
+        return h;
+    };
+    
+    document.getElementById('repDetCat').innerHTML = renderS(st.statCat, false, 'cat');
+    
+    document.getElementById('repDetGrp').innerHTML = renderS(st.statGrp, true, 'grp');
+    
+    document.getElementById('repDetails').scrollIntoView({behavior:'smooth'});
+}
+
+init();
+</script>
+</body>
+</html>

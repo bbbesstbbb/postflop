@@ -1,0 +1,808 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Матрица флопов (без учёта мастей)</title>
+  <style>
+    :root {
+      --bg: #f1f2f6;
+      --panel: #ffffff;
+      --border: #dfe4ea;
+      --text: #1e272e;
+      --accent: #2d3436;
+      --blue: #0984e3;
+      --green: #00b894;
+      --red: #d63031;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 12px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--accent);
+      color: #ffffff;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: #3d4348;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    #saveBtn {
+      background: var(--blue);
+    }
+
+    #saveBtn:hover {
+      background: #0873c4;
+    }
+
+    #loadBtn {
+      background: var(--green);
+    }
+
+    #loadBtn:hover {
+      background: #009f7f;
+    }
+
+    #resetBtn {
+      background: var(--red);
+    }
+
+    #resetBtn:hover {
+      background: #b02318;
+    }
+
+    .layout {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 68px;
+      width: 280px;
+      min-width: 280px;
+      max-height: calc(100vh - 68px);
+      overflow-y: auto;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar h2 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .tool-eraser,
+        .color-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: white;
+      border: 1px solid #dfe6e9;
+      border-radius: 6px;
+      cursor: grab;
+      user-select: none;
+    }
+    .color-row:active {
+      cursor: grabbing;
+    }
+    .color-row.dragging {
+      opacity: 0.4;
+      border: 2px dashed #0984e3;
+    }
+    /* original color-row was here */
+    .color-row-old {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #f8f9fa;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .tool-eraser {
+      font-weight: 600;
+      background: #f8f9fa;
+    }
+
+    .tool-eraser.active {
+      border-color: #2d3436;
+      background: #e8ecef;
+    }
+
+    .color-row.active {
+      border-color: #2d3436;
+      background: #eef1f4;
+    }
+
+    .color-row input[type="color"] {
+      width: 34px;
+      height: 34px;
+      border: none;
+      padding: 0;
+      background: none;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .color-row input[type="text"] {
+      flex: 1;
+      min-width: 0;
+      padding: 7px 9px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 500;
+      background: #ffffff;
+      color: var(--text);
+    }
+
+    .delete-btn {
+      border: none;
+      background: transparent;
+      color: #a4b0be;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .delete-btn:hover {
+      color: #ffffff;
+      background: var(--red);
+    }
+
+    #addColorBtn {
+      width: 100%;
+      margin-top: 6px;
+      border: none;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--green);
+      color: #fff;
+      transition: background 0.15s;
+    }
+
+    #addColorBtn:hover {
+      background: #009f7f;
+    }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: #57606f;
+      line-height: 1.5;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid var(--border);
+    }
+
+    main {
+      flex: 1;
+      padding: 16px 18px 40px;
+      min-width: 0;
+    }
+
+    .group {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .group-header {
+      font-size: 16px;
+      font-weight: 800;
+      margin: 0 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      color: #1e272e;
+    }
+
+    .flop-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .flop {
+      min-width: 54px;
+      height: 34px;
+      padding: 0 6px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #1e272e;
+      font-family: "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      transition: box-shadow 0.08s, transform 0.08s, background 0.15s;
+    }
+
+    .flop:hover {
+      z-index: 2;
+      box-shadow: 0 0 0 2px #2d3436;
+      transform: translateY(-1px);
+    }
+
+    .flop.colored {
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+
+      main {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🃏 Матрица флопов <span style="font-weight:400; font-size:15px;">(без учёта мастей)</span></h1>
+    <div class="toolbar">
+      <button id="saveBtn" class="btn" title="Сохранить раскраску в JSON-файл">💾 Сохранить файл</button>
+      <button id="loadBtn" class="btn" title="Загрузить раскраску из JSON-файла">📂 Загрузить файл</button>
+      <button id="resetBtn" class="btn" title="Сбросить все цвета и раскраску">🗑 Сброс</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <h2>🎨 Цвета</h2>
+
+      <div id="eraserTool" class="tool-eraser" title="Клик по флопу сотрёт его цвет">
+        🧽 Ластик
+      </div>
+
+      <div id="colorList"></div>
+
+      <button id="addColorBtn">➕ Добавить цвет</button>
+
+      <div class="hint">
+        Выберите цвет или ластик, затем кликайте по флопам.<br>
+        <strong>ПКМ</strong> по флопу — быстро стереть цвет.<br>
+        Цвет можно переименовать и изменить через поля в списке.<br>
+        🔄 Все изменения автоматически сохраняются в браузере.
+      </div>
+    </aside>
+
+    <main id="matrix"></main>
+  </div>
+
+  <input type="file" id="fileInput" accept=".json,application/json" hidden>
+
+  <script>
+    // Явный порядок от туза к двойке
+    const RANKS_DESC = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2'];
+
+    const RANK_NAMES = {
+      '2': 'Двойка',
+      '3': 'Тройка',
+      '4': 'Четверка',
+      '5': 'Пятерка',
+      '6': 'Шестерка',
+      '7': 'Семерка',
+      '8': 'Восьмерка',
+      '9': 'Девятка',
+      'T': 'Десятка',
+      'J': 'Валет',
+      'Q': 'Дама',
+      'K': 'Король',
+      'A': 'Туз'
+    };
+
+    const STORAGE_KEY = 'flopMatrixState_v1';
+
+    function defaultColors() {
+      return [
+        { id: 'c_red', name: 'Красный', color: '#e74c3c' },
+        { id: 'c_orange', name: 'Оранжевый', color: '#e67e22' },
+        { id: 'c_yellow', name: 'Жёлтый', color: '#f1c40f' },
+        { id: 'c_green', name: 'Зелёный', color: '#2ecc71' },
+        { id: 'c_blue', name: 'Синий', color: '#3498db' },
+        { id: 'c_purple', name: 'Фиолетовый', color: '#9b59b6' },
+        { id: 'c_pink', name: 'Розовый', color: '#e84393' },
+        { id: 'c_gray', name: 'Серый', color: '#95a5a6' }
+      ];
+    }
+
+    // Основное состояние
+    let colors = defaultColors();
+    let assignments = {};
+    let activeTool = 'eraser';
+
+    // ---------- Генерация флопов ----------
+    function generateFlops() {
+      const groups = {};
+      for (let i = 0; i < RANKS_DESC.length; i++) {
+        for (let j = i; j < RANKS_DESC.length; j++) {
+          for (let k = j; k < RANKS_DESC.length; k++) {
+            const flop = RANKS_DESC[i] + RANKS_DESC[j] + RANKS_DESC[k];
+            const high = RANKS_DESC[i];
+            if (!groups[high]) groups[high] = [];
+            groups[high].push(flop);
+          }
+        }
+      }
+      return groups;
+    }
+
+    // ---------- Утилиты ----------
+    function getContrastYIQ(hex) {
+      let h = String(hex || '').replace('#', '');
+      if (h.length === 3) {
+        h = h.split('').map(c => c + c).join('');
+      }
+      if (h.length < 6) return '#111111';
+      const r = parseInt(h.substr(0, 2), 16);
+      const g = parseInt(h.substr(2, 2), 16);
+      const b = parseInt(h.substr(4, 2), 16);
+      const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+      return yiq >= 128 ? '#111111' : '#ffffff';
+    }
+
+    // ---------- Работа с localStorage ----------
+    function saveStateToLocalStorage() {
+      try {
+        const data = {
+          version: 1,
+          colors: colors,
+          assignments: assignments
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {
+        console.warn('Не удалось сохранить состояние в localStorage:', e);
+      }
+    }
+
+    function loadStateFromLocalStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return null;
+        const data = JSON.parse(raw);
+        return data;
+      } catch (e) {
+        console.warn('Не удалось загрузить состояние из localStorage:', e);
+        return null;
+      }
+    }
+
+    function restoreStateFromObject(data) {
+      if (!data || !data.colors || !data.assignments) return false;
+      try {
+        const loadedColors = data.colors
+          .filter(c => c && c.id && c.color)
+          .map(c => ({
+            id: String(c.id),
+            name: String(c.name || 'Без названия'),
+            color: String(c.color)
+          }));
+
+        const validIds = new Set(loadedColors.map(c => c.id));
+        const loadedAssignments = {};
+
+        for (const [flop, colorId] of Object.entries(data.assignments)) {
+          if (validIds.has(colorId)) {
+            loadedAssignments[flop] = colorId;
+          }
+        }
+
+        colors = loadedColors;
+        assignments = loadedAssignments;
+        return true;
+      } catch (e) {
+        console.warn('Ошибка восстановления состояния:', e);
+        return false;
+      }
+    }
+
+    // ---------- Отрисовка ----------
+    function applyColor(btn, colorId) {
+      const color = colors.find(c => c.id === colorId);
+      if (colorId && color) {
+        btn.style.backgroundColor = color.color;
+        btn.style.color = getContrastYIQ(color.color);
+        btn.classList.add('colored');
+      } else {
+        btn.style.backgroundColor = '';
+        btn.style.color = '';
+        btn.classList.remove('colored');
+      }
+    }
+
+    function updateAllFlopColors() {
+      document.querySelectorAll('.flop').forEach(btn => {
+        const flop = btn.dataset.flop;
+        applyColor(btn, assignments[flop] || null);
+      });
+    }
+
+    function paintFlop(flop, btn) {
+      if (activeTool === 'eraser') {
+        delete assignments[flop];
+      } else {
+        const color = colors.find(c => c.id === activeTool);
+        if (color) {
+          assignments[flop] = color.id;
+        }
+      }
+      applyColor(btn, assignments[flop] || null);
+      saveStateToLocalStorage(); // автосохранение
+    }
+
+    function renderMatrix() {
+      const matrix = document.getElementById('matrix');
+      matrix.innerHTML = '';
+      const groups = generateFlops();
+
+      for (const high of RANKS_DESC) {
+        if (!groups[high]) continue;
+        const section = document.createElement('section');
+        section.className = 'group';
+
+        const header = document.createElement('div');
+        header.className = 'group-header';
+        header.textContent = `Флопы со старшей картой ${RANK_NAMES[high]} (${high}) — ${groups[high].length} вариантов`;
+        section.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'flop-grid';
+
+        groups[high].forEach(flop => {
+          const btn = document.createElement('button');
+          btn.className = 'flop';
+          btn.textContent = flop;
+          btn.dataset.flop = flop;
+          btn.title = flop;
+
+          btn.addEventListener('click', () => paintFlop(flop, btn));
+          btn.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            delete assignments[flop];
+            applyColor(btn, null);
+            saveStateToLocalStorage(); // автосохранение
+          });
+
+          applyColor(btn, assignments[flop] || null);
+          grid.appendChild(btn);
+        });
+
+        section.appendChild(grid);
+        matrix.appendChild(section);
+      }
+    }
+
+    function updateActiveToolUI() {
+      document.getElementById('eraserTool').classList.toggle('active', activeTool === 'eraser');
+      document.querySelectorAll('.color-row').forEach(row => {
+        row.classList.toggle('active', row.dataset.id === activeTool);
+      });
+    }
+
+    function setActiveTool(tool) {
+      activeTool = tool;
+      updateActiveToolUI();
+    }
+
+    function renderColors() {
+      const list = document.getElementById('colorList');
+      list.innerHTML = '';
+
+      colors.forEach(color => {
+        const row = document.createElement('div');
+        row.className = 'color-row';
+        row.dataset.id = color.id;
+        row.draggable = true;
+
+        row.addEventListener('dragstart', (e) => {
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', color.id);
+          row.classList.add('dragging');
+        });
+
+        row.addEventListener('dragend', (e) => {
+          row.classList.remove('dragging');
+        });
+
+        row.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          const draggingElement = document.querySelector('.color-row.dragging');
+          if (!draggingElement || draggingElement === row) return;
+          
+          const bounding = row.getBoundingClientRect();
+          const offset = e.clientY - bounding.top;
+          if (offset > bounding.height / 2) {
+            row.after(draggingElement);
+          } else {
+            row.before(draggingElement);
+          }
+        });
+
+        row.addEventListener('drop', (e) => {
+          e.preventDefault();
+          // rebuild colors order
+          const newColors = [];
+          Array.from(document.getElementById('colorList').children).forEach(r => {
+            const id = r.dataset.id;
+            const c = colors.find(c => c.id === id);
+            if (c) newColors.push(c);
+          });
+          colors = newColors;
+          saveStateToLocalStorage();
+        });
+
+        row.addEventListener('click', (e) => {
+          if (e.target.closest('input') || e.target.closest('button')) return;
+          setActiveTool(color.id);
+        });
+
+        const colorInput = document.createElement('input');
+        colorInput.type = 'color';
+        colorInput.value = color.color;
+        colorInput.title = 'Изменить цвет';
+        colorInput.addEventListener('click', (e) => e.stopPropagation());
+        colorInput.addEventListener('input', (e) => {
+          e.stopPropagation();
+          color.color = e.target.value;
+          updateAllFlopColors();
+          saveStateToLocalStorage(); // автосохранение
+        });
+
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.value = color.name;
+        nameInput.placeholder = 'Название цвета';
+        nameInput.title = 'Переименовать цвет';
+        nameInput.addEventListener('click', (e) => e.stopPropagation());
+        nameInput.addEventListener('input', (e) => {
+          e.stopPropagation();
+          color.name = e.target.value;
+          saveStateToLocalStorage(); // автосохранение
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.textContent = '✕';
+        deleteBtn.title = 'Удалить цвет';
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteColor(color.id);
+        });
+
+        row.append(colorInput, nameInput, deleteBtn);
+        list.appendChild(row);
+      });
+
+      updateActiveToolUI();
+    }
+
+    function deleteColor(id) {
+      const color = colors.find(c => c.id === id);
+      if (!color) return;
+
+      const sure = confirm(`Удалить цвет «${color.name}»?\nВсе флопы с этим цветом будут очищены.`);
+      if (!sure) return;
+
+      colors = colors.filter(c => c.id !== id);
+
+      for (const flop of Object.keys(assignments)) {
+        if (assignments[flop] === id) {
+          delete assignments[flop];
+        }
+      }
+
+      if (activeTool === id) {
+        activeTool = 'eraser';
+      }
+
+      renderColors();
+      updateAllFlopColors();
+      saveStateToLocalStorage(); // автосохранение
+    }
+
+    function addColor() {
+      const newColor = {
+        id: 'c_' + Date.now(),
+        name: 'Новый цвет',
+        color: '#3498db'
+      };
+      colors.push(newColor);
+      setActiveTool(newColor.id);
+      renderColors();
+      saveStateToLocalStorage(); // автосохранение
+    }
+
+    // ---------- Работа с файлами ----------
+    function saveToFile() {
+      const data = {
+        version: 1,
+        colors: colors,
+        assignments: assignments
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'flop-matrix-colors.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function loadFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+
+          if (!data.colors || !data.assignments) {
+            throw new Error('Файл должен содержать поля colors и assignments.');
+          }
+
+          const loadedColors = data.colors
+            .filter(c => c && c.id && c.color)
+            .map(c => ({
+              id: String(c.id),
+              name: String(c.name || 'Без названия'),
+              color: String(c.color)
+            }));
+
+          const validIds = new Set(loadedColors.map(c => c.id));
+          const loadedAssignments = {};
+
+          for (const [flop, colorId] of Object.entries(data.assignments)) {
+            if (validIds.has(colorId)) {
+              loadedAssignments[flop] = colorId;
+            }
+          }
+
+          colors = loadedColors;
+          assignments = loadedAssignments;
+          activeTool = 'eraser';
+
+          renderColors();
+          renderMatrix();
+          saveStateToLocalStorage(); // автосохранение после загрузки
+        } catch (err) {
+          alert('Ошибка загрузки файла: ' + err.message);
+        }
+      };
+
+      reader.readAsText(file);
+      fileInput.value = '';
+    }
+
+    function resetAll() {
+      const sure = confirm('Сбросить все цвета и раскраску?\nЭто действие нельзя отменить.');
+      if (!sure) return;
+
+      colors = defaultColors();
+      assignments = {};
+      activeTool = 'eraser';
+
+      renderColors();
+      renderMatrix();
+      saveStateToLocalStorage(); // автосохранение
+    }
+
+    // ---------- Инициализация ----------
+    function initApp() {
+      // Пытаемся восстановить состояние из localStorage
+      const saved = loadStateFromLocalStorage();
+      if (saved && restoreStateFromObject(saved)) {
+        // Состояние восстановлено
+      } else {
+        // Дефолтные настройки
+        colors = defaultColors();
+        assignments = {};
+        saveStateToLocalStorage(); // сразу сохраняем дефолт
+      }
+
+      activeTool = 'eraser';
+      renderColors();
+      renderMatrix();
+    }
+
+    // Обработчики кнопок
+    document.getElementById('eraserTool').addEventListener('click', () => setActiveTool('eraser'));
+    document.getElementById('addColorBtn').addEventListener('click', addColor);
+    document.getElementById('saveBtn').addEventListener('click', saveToFile);
+    document.getElementById('loadBtn').addEventListener('click', () => fileInput.click());
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', loadFile);
+
+    // Запуск
+    initApp();
+  </script>
+</body>
+</html>

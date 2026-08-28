@@ -1,0 +1,1427 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HU SB CB River</title>
+  <style>
+    :root {
+      --bg: #f1f2f6;
+      --panel: #ffffff;
+      --border: #dfe4ea;
+      --text: #1e272e;
+      --accent: #2d3436;
+      --blue: #0984e3;
+      --green: #00b894;
+      --red: #d63031;
+      --purple: #6c5ce7;
+      --shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 12px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--accent);
+      color: #ffffff;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: #3d4348;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    #saveBtn {
+      background: var(--blue);
+    }
+    #saveBtn:hover { background: #0873c4; }
+
+    #loadBtn {
+      background: var(--green);
+    }
+    #loadBtn:hover { background: #009f7f; }
+
+    #importGroupsBtn {
+      background: var(--purple);
+    }
+    #importGroupsBtn:hover { background: #5b4bc4; }
+
+    #resetBtn {
+      background: var(--red);
+    }
+    #resetBtn:hover { background: #b02318; }
+    
+    #scrollToGeneratorBtn {
+      background: #f39c12;
+    }
+    #scrollToGeneratorBtn:hover {
+      background: #d68910;
+    }
+
+    .main-container {
+      padding: 16px 18px 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .empty-groups {
+      text-align: center;
+      padding: 40px 20px;
+      color: #57606f;
+      background: #f8f9fa;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .river-section {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .river-section h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      font-weight: 800;
+      color: #1e272e;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #e1e5eb;
+      padding: 8px 10px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f8f9fa;
+      font-weight: 700;
+      color: #2d3436;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    th:first-child {
+      left: 0;
+      z-index: 3;
+      background: #f1f2f6;
+    }
+    td:first-child {
+      background: #f8f9fa;
+      font-weight: 700;
+      position: sticky;
+      left: 0;
+      z-index: 1;
+    }
+
+    select {
+      width: 100%;
+      min-width: 90px;
+      padding: 6px 10px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      background: #fff;
+      color: #2d3436;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    select:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(9, 132, 227, 0.2);
+    }
+
+    .hint {
+      margin-top: 16px;
+      font-size: 13px;
+      color: #57606f;
+      line-height: 1.5;
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+    }
+    .hint strong {
+      color: #1e272e;
+    }
+
+    /* ==== Генератор раздач ==== */
+    #generatorSection {
+      margin-top: 20px;
+    }
+
+    .card {
+      display: inline-block;
+      width: 36px;
+      height: 48px;
+      line-height: 48px;
+      text-align: center;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 16px;
+      margin: 2px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      user-select: none;
+    }
+
+    .hand-item {
+      background: #f8f9fa;
+      border: 1px solid #e1e5eb;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 4px;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .hand-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .generated-group {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .generated-group h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      border-bottom: 2px solid #e1e5eb;
+      padding-bottom: 6px;
+    }
+
+    .generated-category h4 {
+      margin: 12px 0 6px;
+      font-size: 15px;
+      color: #2d3436;
+    }
+
+    @media (max-width: 700px) {
+      .main-container { padding: 10px; }
+      th, td { padding: 6px 6px; font-size: 12px; }
+      select { min-width: 75px; padding: 4px 6px; font-size: 12px; }
+      .card {
+        width: 28px;
+        height: 38px;
+        line-height: 38px;
+        font-size: 13px;
+      }
+      .hand-item {
+        font-size: 12px;
+        padding: 5px 7px;
+      }
+    }
+  </style>
+<script src="categories_modal.js"></script>
+</head>
+<body>
+  <header>
+    <h1>📋 Действия на ривере (HU SB CB River)</h1>
+    <div class="toolbar">
+      <button id="saveBtn" class="btn" title="Сохранить действия в JSON-файл">💾 Сохранить файл</button>
+      <button class="btn" style="background-color: #9b59b6; margin-left: 10px;" onclick="openCategoriesModal()">⚙️ Настроить категории рук</button>
+      <button id="loadBtn" class="btn" title="Загрузить действия из JSON-файла">📂 Загрузить файл</button>
+      <button id="importGroupsBtn" class="btn" title="Импортировать группы флопов из матрицы">🎨 Импорт групп</button>
+      <button id="resetBtn" class="btn" title="Сбросить все действия">🗑 Сброс</button>
+      <button id="scrollToGeneratorBtn" class="btn" title="Перейти к генератору раздач">🎲 Генератор раздач</button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <div id="emptyGroups" class="empty-groups" style="display: none;">
+      Группы флопов не найдены. Нажмите «Импорт групп», чтобы загрузить их из матрицы флопов, или откройте матрицу в этом же браузере.
+    </div>
+
+    <div id="tablesContainer"></div>
+    
+    <!-- Секция генератора раздач -->
+    <div id="generatorSection">
+      <div class="river-section" style="margin-bottom: 10px;">
+        <h2>🎲 Генератор раздач (Ривер)</h2>
+        <p>Сгенерирует по 100 раздач для каждой группы флопа, типа ривера и категории руки. Флоп будет принадлежать выбранной группе (цвету из матрицы), терн - случайная карта, ривер - соответствовать типу (спарка доски / не спарка), а карты Хиро – указанной категории к риверу.</p>
+        <button id="generateHandsBtn" class="btn" style="background: var(--blue);">Сгенерировать раздачи</button>
+        <button id="saveGeneratedBtn" class="btn" style="background: var(--green);">💾 Сохранить раздачи в файл</button>
+      </div>
+      <div id="generatorResults"></div>
+    </div>
+
+    <div class="hint">
+      <strong>Подсказка:</strong> строки — ваши группы флопов (названия цветов из матрицы). Столбцы — категории рук.<br>
+      Для каждого типа ривера («Не спарилась» / «Спарилась») выберите действие в соответствующей таблице.<br>
+      Все изменения сохраняются автоматически в браузере. Для резервной копии используйте кнопки «Сохранить файл» и «Загрузить файл».
+    </div>
+  </div>
+
+  <input type="file" id="fileInput" accept=".json,application/json" hidden>
+  <input type="file" id="groupsFileInput" accept=".json,application/json" hidden>
+
+  <script>
+    // ==================== КОНСТАНТЫ ====================
+    
+    const ACTIONS = ['Чек', 'Бет', 'Бет 25%', 'Бет 33%', 'Бет 50%', 'Бет 66%', 'Бет 75%', 'Бет 100%', 'Колл', 'Фолд', 'Рейз', 'Аллын'];
+    const RIVER_TYPES = ['nopair', '4straight', '4flush', 'paired', '2paired', '3paired', '4paired', '5straight', '5flush'];
+    const RT_NAMES={'nopair':'🚫 Не спарилась','4straight':'📈 4-стрит','4flush':'💧 4-флеш','paired':'✅ Спарилась','2paired':'👯 Двойная спарилась','3paired':'🔥 Тройная спарилась','4paired':'💥 Четырная спарилась','5straight':'🎢 5-стрит','5flush':'🌊 5-флеш'};
+
+    const STORAGE_KEY = 'riverActionsState_v1';           // действия ривера
+    const GROUPS_STORAGE_KEY = 'riverActionsGroups_v1';   // сохранённые группы
+    const MATRIX_STORAGE_KEY = 'flopMatrixState_v1';      // ключ localStorage матрицы
+
+    // ==================== СОСТОЯНИЕ ====================
+    let groups = [];     // [{ id, name }]
+    let groupSuits = {};
+    let actions = {};    // ключ: "riverType|groupId|handCategory" -> действие
+    let HAND_CATEGORIES = ['Мусор', 'Гатшот', 'Дро', 'Лоу', 'Мидл', 'Топ', 'Овер', 'Две пары+'];
+
+    // ==================== НОВЫЕ КОНСТАНТЫ ДЛЯ ГЕНЕРАТОРА ====================
+    const SUITS = ['s', 'h', 'd', 'c'];
+    const RANKS = ['2','3','4','5','6','7','8','9','T','J','Q','K','A'];
+    const SUIT_SYMBOLS = { 's': '♠', 'h': '♥', 'd': '♦', 'c': '♣' };
+    const SUIT_COLORS = { 's': '#2d3436', 'h': '#e74c3c', 'd': '#f39c12', 'c': '#27ae60' };
+    
+    // Хранилище сгенерированных раздач
+    let generatedHands = {};
+
+    // ==================== УТИЛИТЫ ====================
+    function loadFromStorage(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (e) {
+        console.warn(`Ошибка чтения localStorage[${key}]:`, e);
+        return null;
+      }
+    }
+
+    function saveToStorage(key, data) {
+      try {
+        localStorage.setItem(key, JSON.stringify(data));
+      } catch (e) {
+        console.warn(`Ошибка записи localStorage[${key}]:`, e);
+      }
+    }
+
+    function getGroupsFromMatrixStorage() {
+      const matrixData = loadFromStorage(MATRIX_STORAGE_KEY);
+      if (matrixData && matrixData.colors && Array.isArray(matrixData.colors)) {
+        return matrixData.colors.map(c => ({
+          id: String(c.id),
+          name: String(c.name || 'Без названия')
+        }));
+      }
+      return null;
+    }
+
+    function getGroupsFromOwnStorage() {
+      const data = loadFromStorage(GROUPS_STORAGE_KEY);
+      if (data && Array.isArray(data)) {
+        return data.map(c => ({
+          id: String(c.id),
+          name: String(c.name || 'Без названия')
+        }));
+      }
+      return null;
+    }
+
+    function saveGroupsToOwnStorage() {
+      saveToStorage(GROUPS_STORAGE_KEY, groups);
+    }
+
+    function saveActionsToStorage() {
+      const data = {
+        version: 1,
+        groups: groups,
+        categories: HAND_CATEGORIES,
+        categories: HAND_CATEGORIES,
+        categories: HAND_CATEGORIES,
+        actions: actions
+      };
+      saveToStorage(STORAGE_KEY, data);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ==================== ОТРИСОВКА ТАБЛИЦ ====================
+    function renderTables() {
+      const emptyDiv = document.getElementById('emptyGroups');
+      const container = document.getElementById('tablesContainer');
+      if (groups.length === 0) {
+        container.style.display = 'none';
+        emptyDiv.style.display = 'block';
+        return;
+      }
+      emptyDiv.style.display = 'none';
+      container.style.display = 'block';
+      container.innerHTML='';
+      RIVER_TYPES.forEach(rt=>{
+        const sec=document.createElement('div');sec.className='river-section';
+        sec.innerHTML=`<h2>${RT_NAMES[rt]}</h2><table><thead id="head_${rt}"></thead><tbody id="body_${rt}"></tbody></table>`;
+        container.appendChild(sec);
+        renderSingleTable(rt, `head_${rt}`, `body_${rt}`);
+      });
+    }
+
+    function renderSingleTable(riverType, headId, bodyId) {
+      const head = document.getElementById(headId);
+      const body = document.getElementById(bodyId);
+
+      // Шапка
+      let headHtml = '<tr><th>Группа флопа / Рука</th>';
+      HAND_CATEGORIES.forEach(cat => {
+        headHtml += `<th>${cat}</th>`;
+      });
+      headHtml += '</tr>';
+      head.innerHTML = headHtml;
+
+      // Тело
+                        let bodyHtml = '';
+      groups.forEach(group => {
+        bodyHtml += `<tr><td>
+          <button class="btn b-sm b-muted" style="margin-right: 8px;" onclick="toggleSuits('${group.id}')" title="\u041D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u043C\u0430\u0441\u0442\u0438">
+            ${groupSuits[group.id] ? '[-]' : '[+]'}
+          </button>
+          ${escapeHtml(group.name)}
+        </td>`;
+        HAND_CATEGORIES.forEach(handCat => {
+          const key = `${riverType}|${group.id}|${handCat}`;
+          const currentAction = actions[key] || '';
+          bodyHtml += `<td>`;
+          bodyHtml += `<select data-turn-type="${riverType}" data-group-id="${group.id}" data-hand-category="${handCat}">`;
+          bodyHtml += `<option value="">-</option>`;
+          ACTIONS.forEach(action => {
+            const selected = (currentAction === action) ? ' selected' : '';
+            bodyHtml += `<option value="${action}"${selected}>${action}</option>`;
+          });
+          bodyHtml += `</select>`;
+          bodyHtml += `</td>`;
+        });
+        bodyHtml += '</tr>';
+
+        if (groupSuits[group.id]) {
+          for (let s = 1; s <= 5; s++) {
+            let label = s + (s === 1 ? ' \u043C\u0430\u0441\u0442\u044C' : (s >= 5 ? ' \u043C\u0430\u0441\u0442\u0435\u0439' : ' \u043C\u0430\u0441\u0442\u0438'));
+            if (s === 1) label += ' (\u0420\u0430\u0434\u0443\u0433\u0430)';
+            if (s === 2) label += ' (\u0424\u0414)';
+            if (s === 3) label += ' (\u041C\u043E\u043D\u043E\u0442\u043E\u043D)';
+            
+            bodyHtml += `<tr style="background:#f8f9fc;"><td style="padding-left: 20px; font-size: 13px; color: #555;">\u21B3 ${label}</td>`;
+            HAND_CATEGORIES.forEach(handCat => {
+              const key = `${riverType}|${group.id}|${handCat}|${s}`;
+              const currentAction = actions[key] || '';
+              bodyHtml += `<td>`;
+              bodyHtml += `<select data-turn-type="${riverType}" data-group-id="${group.id}" data-hand-category="${handCat}" data-suits="${s}">`;
+              bodyHtml += `<option value="">-</option>`;
+              ACTIONS.forEach(action => {
+                const selected = (currentAction === action) ? ' selected' : '';
+                bodyHtml += `<option value="${action}"${selected}>${action}</option>`;
+              });
+              bodyHtml += `</select></td>`;
+            });
+            bodyHtml += `</tr>`;
+          }
+        }
+      });
+      body.innerHTML = bodyHtml;
+
+      // Обработчики
+      body.querySelectorAll('select').forEach(select => {
+        select.addEventListener('change', handleActionChange);
+      });
+    }
+
+        function toggleSuits(gid) {
+      groupSuits[gid] = !groupSuits[gid];
+      renderTables();
+    }
+
+        function handleActionChange(e) {
+      const select = e.target;
+      const typeVal = select.dataset.rt || select.dataset.turnType || select.dataset.riverType || select.dataset.rt;
+      const groupId = select.dataset.groupId;
+      const handCat = select.dataset.handCategory;
+      const suits = select.dataset.suits;
+      const key = suits ? `${typeVal}|${groupId}|${handCat}|${suits}` : `${typeVal}|${groupId}|${handCat}`;
+      
+      if (select.value) {
+        actions[key] = select.value;
+      } else {
+        delete actions[key];
+      }
+      saveActionsToStorage();
+    }
+
+    // ==================== УПРАВЛЕНИЕ ГРУППАМИ ====================
+            function loadGroupsFromMatrix() {
+      const matrixGroups = getGroupsFromMatrixStorage();
+      if (matrixGroups) {
+        setGroups(matrixGroups);
+        alert('\u0413\u0440\u0443\u043F\u043F\u044B \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0438\u043C\u043F\u043E\u0440\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u044B \u0438\u0437 \u043C\u0430\u0442\u0440\u0438\u0446\u044B!');
+      } else {
+        alert('\u0413\u0440\u0443\u043F\u043F\u044B \u0444\u043B\u043E\u043F\u043E\u0432 \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u044B. \u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u0441\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u0435 \u043C\u0430\u0442\u0440\u0438\u0446\u0443.');
+      }
+    }
+
+    function importGroupsFromFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (data && Array.isArray(data.groups)) {
+            setGroups(data.groups);
+          } else {
+            alert('\u041D\u0435\u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u044B\u0439 \u0444\u0430\u0439\u043B \u0433\u0440\u0443\u043F\u043F.');
+          }
+        } catch (err) {
+          alert('\u041E\u0448\u0438\u0431\u043A\u0430 \u0447\u0442\u0435\u043D\u0438\u044F \u0444\u0430\u0439\u043B\u0430: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    function setGroups(newGroups) {
+      groups = newGroups;
+      saveGroupsToOwnStorage();
+      const validIds = new Set(groups.map(g => g.id));
+      for (const key of Object.keys(actions)) {
+        const parts = key.split('|');
+        if (parts.length >= 3 && !validIds.has(parts[1])) {
+          delete actions[key];
+        }
+      }
+      renderTables();
+    }
+
+    function saveToFile() {
+      const data = {
+        version: 1,
+        groups: groups,
+        categories: HAND_CATEGORIES,
+        actions: actions
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'HU SB CB River.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function loadFile(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (!data || typeof data.actions !== 'object') {
+            throw new Error('Файл не содержит действий');
+          }
+          if (data.groups && Array.isArray(data.groups)) groups = data.groups;
+          if (data.categories && Array.isArray(data.categories)) { HAND_CATEGORIES = data.categories; } else { const _fc = new Set(); for(const k of Object.keys(data.actions||{})){ const p = k.split('|'); if(p.length >= 2) { let cIdx = 1; if (p[0]==='over' || p[0]==='under' || p[0]==='pair' || p[0]==='4-straight' || p[0]==='4-flush' || p[0]==='3-straight' || p[0]==='3-flush' || p[0]==='2-flush' || p[0]==='rainbow' || p[0]==='not-paired' || p[0]==='paired') cIdx = 2; _fc.add(p[cIdx]); } } if (_fc.size > 0) { HAND_CATEGORIES = Array.from(_fc); if (typeof getCategoryWeight === 'function') { HAND_CATEGORIES.sort((a, b) => getCategoryWeight(a) - getCategoryWeight(b)); } } }
+
+          const validIds = new Set(groups.map(g => g.id));
+          const loadedActions = {};
+          for (const [key, value] of Object.entries(data.actions)) {
+            const parts = key.split('|');
+            if (parts.length >= 3 && validIds.has(parts[1]) && ACTIONS.includes(value)) {
+              loadedActions[key] = value;
+            }
+          }
+          actions = loadedActions;
+
+          saveGroupsToOwnStorage();
+          saveActionsToStorage();
+          renderTables();
+        } catch (err) {
+          alert('Ошибка загрузки файла: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    function resetAll() {
+      const sure = confirm('Сбросить все действия и группы?\nЭто действие нельзя отменить.');
+      if (!sure) return;
+      actions = {};
+      groups = [];
+      saveGroupsToOwnStorage();
+      saveActionsToStorage();
+      renderTables();
+    }
+    
+    // ==================== ФУНКЦИИ ГЕНЕРАТОРА ====================
+    function createDeck() {
+      const deck = [];
+      for (const suit of SUITS) {
+        for (const rank of RANKS) {
+          deck.push(rank + suit);
+        }
+      }
+      return deck;
+    }
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function cardRank(card) {
+      return card[0];
+    }
+
+    function cardSuit(card) {
+      return card[1];
+    }
+
+    function rankToNum(rank) {
+      const map = { '2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'T':10,'J':11,'Q':12,'K':13,'A':14 };
+      return map[rank] || 0;
+    }
+
+    function numToRank(num) {
+      const map = { 2:'2',3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'T',11:'J',12:'Q',13:'K',14:'A' };
+      return map[num] || '?';
+    }
+
+    function evaluate5(cards) {
+      const ranks = cards.map(cardRank).map(rankToNum).sort((a,b)=>b-a);
+      const suits = cards.map(cardSuit);
+      const rankCounts = {};
+      ranks.forEach(r => rankCounts[r] = (rankCounts[r]||0)+1);
+      const counts = Object.values(rankCounts).sort((a,b)=>b-a);
+
+      const isFlush = suits.every(s => s === suits[0]);
+
+      // Проверка стрита (учитывая колесо A-2-3-4-5)
+      const uniqueRanks = [...new Set(ranks)].sort((a,b)=>a-b);
+      let isStraight = false;
+      if (uniqueRanks.length === 5) {
+        if (uniqueRanks[4] - uniqueRanks[0] === 4) isStraight = true;
+        if (uniqueRanks[0] === 2 && uniqueRanks[1] === 3 && uniqueRanks[2] === 4 && uniqueRanks[3] === 5 && uniqueRanks[4] === 14) {
+          isStraight = true;
+        }
+      }
+
+      if (isStraight && isFlush) {
+        return { rank: 8, value: [uniqueRanks[4]] };
+      }
+      if (counts[0] === 4) {
+        const quadRank = Number(Object.keys(rankCounts).find(r => rankCounts[r] === 4));
+        const kicker = Number(Object.keys(rankCounts).find(r => rankCounts[r] === 1));
+        return { rank: 7, value: [quadRank, kicker] };
+      }
+      if (counts[0] === 3 && counts[1] === 2) {
+        const tripsRank = Number(Object.keys(rankCounts).find(r => rankCounts[r] === 3));
+        const pairRank = Number(Object.keys(rankCounts).find(r => rankCounts[r] === 2));
+        return { rank: 6, value: [tripsRank, pairRank] };
+      }
+      if (isFlush) return { rank: 5, value: ranks };
+      if (isStraight) return { rank: 4, value: [uniqueRanks[4]] };
+      if (counts[0] === 3) {
+        const tripsRank = Number(Object.keys(rankCounts).find(r => rankCounts[r] === 3));
+        const kickers = ranks.filter(r => r !== tripsRank).sort((a,b)=>b-a);
+        return { rank: 3, value: [tripsRank, ...kickers] };
+      }
+      if (counts[0] === 2 && counts[1] === 2) {
+        const pairRanks = Object.keys(rankCounts).filter(r => rankCounts[r] === 2).map(Number).sort((a,b)=>b-a);
+        const kicker = Number(Object.keys(rankCounts).find(r => rankCounts[r] === 1));
+        return { rank: 2, value: [...pairRanks, kicker] };
+      }
+      if (counts[0] === 2) {
+        const pairRank = Number(Object.keys(rankCounts).find(r => rankCounts[r] === 2));
+        const kickers = ranks.filter(r => r !== pairRank).sort((a,b)=>b-a);
+        return { rank: 1, value: [pairRank, ...kickers] };
+      }
+      return { rank: 0, value: ranks };
+    }
+
+    // evaluate6: лучшая рука из 6 карт (терн)
+    function evaluate6(cards) {
+      let bestHand = { rank: -1, value: [] };
+      for (let i=0; i<6; i++) {
+        const combo = cards.filter((_, idx) => idx !== i);
+        const res = evaluate5(combo);
+        if (res.rank > bestHand.rank) {
+          bestHand = res;
+        } else if (res.rank === bestHand.rank) {
+          for (let j=0; j<res.value.length; j++) {
+            if (res.value[j] > bestHand.value[j]) { bestHand = res; break; }
+            else if (res.value[j] < bestHand.value[j]) break;
+          }
+        }
+      }
+      return bestHand;
+    }
+
+    // Определение типа терн-карты относительно флопа
+    function getTurnType(flopCards, turnCard) {
+      const flopNums = flopCards.map(c => rankToNum(cardRank(c)));
+      const topFlopRank = Math.max(...flopNums);
+      const turnNum = rankToNum(cardRank(turnCard));
+      if (flopNums.includes(turnNum)) return 'pair';
+      if (turnNum > topFlopRank) return 'over';
+      return 'under';
+    }
+
+    // Классификация руки на флопе (5 карт)
+    function classifyFlopHand(heroCards, flopCards) { return classifyGenericHand(heroCards, flopCards, evaluate5); }
+    // Классификация руки на терне (6 карт: 2 хиро + 4 борд)
+    function classifyTurnHand(heroCards, turnBoardCards) { return classifyGenericHand(heroCards, turnBoardCards, evaluate6); }
+
+
+
+    function evaluate7(cards) {
+       // Для оценки руки на ривере перебираем все комбинации из 5 карт (из 7 доступных)
+       let bestHand = { rank: -1, value: [] };
+       for (let i=0; i<7; i++) {
+         for(let j=i+1; j<7; j++){
+             const combo = cards.filter((_, idx) => idx !== i && idx !== j);
+             const res = evaluate5(combo);
+             if (res.rank > bestHand.rank) {
+                bestHand = res;
+             } else if (res.rank === bestHand.rank) {
+                // сравнение value массивов
+                for(let k = 0; k < res.value.length; k++) {
+                  if (res.value[k] > bestHand.value[k]) {
+                     bestHand = res;
+                     break;
+                  } else if (res.value[k] < bestHand.value[k]) {
+                     break;
+                  }
+                }
+             }
+         }
+       }
+       return bestHand;
+    }
+
+    function getRiverType(board) {
+      const ranks = board.map(c => rankToNum(c[0]));
+      const suits = board.map(c => c[1]);
+      const suitCounts = {}; suits.forEach(s => suitCounts[s] = (suitCounts[s] || 0) + 1);
+      const maxSuit = Math.max(...Object.values(suitCounts));
+      const rankCounts = {}; ranks.forEach(r => rankCounts[r] = (rankCounts[r] || 0) + 1);
+      const counts = Object.values(rankCounts).sort((a,b) => b - a);
+      let ur = [...new Set(ranks)].sort((a,b) => a - b);
+      function hasNStraight(n) {
+        let r = [...ur]; if (r.includes(14)) r.unshift(1);
+        let mC = 1, cC = 1;
+        for (let i = 1; i < r.length; i++) {
+          if (r[i] === r[i-1] + 1) { cC++; if (cC > mC) mC = cC; }
+          else if (r[i] !== r[i-1]) cC = 1;
+        }
+        return mC >= n;
+      }
+      if (maxSuit === 5) return '5flush';
+      if (hasNStraight(5)) return '5straight';
+      if (counts[0] === 4) return '4paired';
+      if (counts[0] === 3) return '3paired';
+      if (counts[0] === 2 && counts[1] === 2) return '2paired';
+      if (counts[0] === 2) return 'paired';
+      if (maxSuit === 4) return '4flush';
+      if (hasNStraight(4)) return '4straight';
+      return 'nopair';
+    }
+
+    function getValidTurnRiverPairs(fc, desiredRiverType) {
+      const deck = createDeck().filter(c => !fc.includes(c));
+      const validPairs = [];
+      for (let i = 0; i < deck.length; i++) {
+        for (let j = i + 1; j < deck.length; j++) {
+          const board = [...fc, deck[i], deck[j]];
+          if (getRiverType(board) === desiredRiverType) validPairs.push([deck[i], deck[j]]);
+        }
+      }
+      return validPairs;
+    }
+
+    function checkDraws(heroCards, boardCards, allCards) {
+      const getR = c => typeof c === 'string' ? c[0] : cardRank(c);
+      const getS = c => typeof c === 'string' ? c[1] : cardSuit(c);
+      const rToN = { '2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'T':10,'J':11,'Q':12,'K':13,'A':14 };
+      const heroRanks = heroCards.map(c => rToN[getR(c)]);
+      const h1 = heroRanks[0], h2 = heroRanks[1];
+      const suits = allCards.map(c => getS(c));
+      const suitCounts = {}; suits.forEach(s => suitCounts[s] = (suitCounts[s]||0)+1);
+      const maxSuit = Math.max(...Object.values(suitCounts));
+      const heroSuits = heroCards.map(c => getS(c));
+      
+      let hasFlushDraw = false;
+      if (maxSuit >= 4) {
+         const flushSuit = Object.keys(suitCounts).find(s => suitCounts[s] >= 4);
+         if (heroSuits.includes(flushSuit)) hasFlushDraw = true;
+      }
+
+      const ur = [...new Set(allCards.map(c => rToN[getR(c)]))];
+      let outs = 0;
+      const h1Val = h1 === 14 ? [1, 14] : [h1];
+      const h2Val = h2 === 14 ? [1, 14] : [h2];
+      
+      for (let r = 2; r <= 14; r++) {
+          if (ur.includes(r)) continue;
+          const testUr = [...ur, r];
+          if (testUr.includes(14) && !testUr.includes(1)) testUr.push(1);
+          testUr.sort((a,b)=>a-b);
+          
+          let madeStraightWithHero = false;
+          for (let i = 0; i <= testUr.length - 5; i++) {
+              if (testUr[i+4] - testUr[i] === 4) {
+                  const st = testUr.slice(i, i+5);
+                  const heroInvolved = h1Val.some(v => st.includes(v)) || h2Val.some(v => st.includes(v));
+                  if (heroInvolved) {
+                      madeStraightWithHero = true;
+                      break;
+                  }
+              }
+          }
+          if (madeStraightWithHero) outs++;
+      }
+      
+      if (hasFlushDraw || outs >= 2) return 'Дро';
+      if (outs === 1) return 'Гатшот';
+      return 'Мусор';
+    }
+
+    function classifyGenericHand(heroCards, boardCards, evalFn) {
+      const all = [...heroCards, ...boardCards];
+      const { rank, value } = evalFn(all);
+      const getR = c => typeof c === 'string' ? c[0] : cardRank(c);
+      const rToN = { '2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'T':10,'J':11,'Q':12,'K':13,'A':14 };
+      const bRanks = boardCards.map(c => rToN[getR(c)]);
+      const bRankCounts = {}; bRanks.forEach(r => bRankCounts[r] = (bRankCounts[r] || 0) + 1);
+      const bCounts = Object.values(bRankCounts).sort((a,b) => b-a);
+      const bIsPaired = bCounts[0] >= 2;
+      const bUnpaired = Object.keys(bRankCounts).filter(r => bRankCounts[r] === 1).map(Number).sort((a,b)=>b-a);
+
+      const h1 = rToN[getR(heroCards[0])];
+      const h2 = rToN[getR(heroCards[1])];
+      const isPocket = h1 === h2;
+      
+      let isMonster = false;
+      let bRankValue = 0;
+      if (bCounts[0] === 4) bRankValue = 7;
+      else if (bCounts[0] === 3 && bCounts[1] === 2) bRankValue = 6;
+      else if (bCounts[0] === 3) bRankValue = 3;
+      else if (bCounts[0] === 2 && bCounts[1] === 2) bRankValue = 2;
+      else if (bCounts[0] === 2) bRankValue = 1;
+      
+      if (boardCards.length >= 5) {
+         const bEval = evalFn(boardCards);
+         if (bEval) bRankValue = Math.max(bRankValue, bEval.rank);
+      }
+      
+      if (rank >= 2 && rank > bRankValue) {
+          if (rank === 2) {
+              if (!bIsPaired) isMonster = true;
+          } else if (rank === 3) {
+              isMonster = true;
+          } else if (rank === 4 || rank === 5 || rank === 8) {
+              isMonster = true;
+          } else if (rank === 6) {
+              if (bCounts[0] === 3 && isPocket && !bRanks.includes(h1)) {
+                  isMonster = false;
+              } else {
+                  isMonster = true;
+              }
+          } else if (rank === 7) {
+              isMonster = true;
+          }
+      } else if (rank >= 4 && rank === bRankValue && boardCards.length >= 5) {
+          const bVal = evalFn(boardCards).value;
+          let improved = false;
+          for(let i=0; i<value.length; i++) {
+             if (value[i] > bVal[i]) { improved = true; break; }
+             else if (value[i] < bVal[i]) break;
+          }
+          if (improved) isMonster = true;
+      }
+
+              if (isMonster) {
+            if (rank === 2) return '\u0414\u0432\u0435 \u043f\u0430\u0440\u044b'; // Р”РІРµ РїР°СЂС‹
+            if (rank === 3) return '\u0422\u0440\u043e\u0439\u043a\u0430'; // РўСЂРѕР№РєР°
+            if (rank === 4) return '\u0421\u0442\u0440\u0438\u0442'; // РЎС‚СЂРёС‚
+            if (rank === 5) return '\u0424\u043b\u0435\u0448'; // Р¤Р»РµС€
+            return '\u0424\u0443\u043b\u043b-\u0425\u0430\u0443\u0441+'; // Р¤СѓР»Р»-РҐР°СѓСЃ+
+        }
+
+      let baseCategory = 'Мусор';
+
+      if (bIsPaired) {
+          let heroPairRank = -1;
+          if (isPocket && !bRanks.includes(h1)) heroPairRank = h1;
+          else {
+             if (bUnpaired.includes(h1)) heroPairRank = h1;
+             else if (bUnpaired.includes(h2)) heroPairRank = h2;
+          }
+                    if (heroPairRank !== -1) {
+              const uniqueB = [...new Set(bRanks)].sort((a,b)=>b-a);
+              if (heroPairRank > uniqueB[0]) baseCategory = '\u041e\u0432\u0435\u0440';
+              else if (heroPairRank === uniqueB[0]) baseCategory = '\u0422\u041f';
+              else if (uniqueB.length > 1 && heroPairRank > uniqueB[1]) baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a \u0422\u041a';
+              else if (uniqueB.length > 1 && heroPairRank === uniqueB[1]) {
+                  if (uniqueB.length === 2) baseCategory = '\u041b\u043e\u0443';
+                  else baseCategory = '\u041c\u0438\u0434\u043b';
+              } else if (uniqueB.length > 2 && heroPairRank > uniqueB[2]) baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a \u041c\u041a';
+              else if (uniqueB.length > 2 && heroPairRank === uniqueB[2]) baseCategory = '\u041b\u043e\u0443';
+              else if (uniqueB.length > 3 && heroPairRank > uniqueB[3]) baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a 3\u041a';
+              else if (uniqueB.length > 3 && heroPairRank === uniqueB[3]) baseCategory = '\u041b\u043e\u0443';
+              else baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a \u041b\u041a';
+          }
+      } else if (rank === 1) {
+          let heroPairRank = value[0];
+          const sortedB = bRanks.slice().sort((a,b)=>b-a);
+          if (heroPairRank > sortedB[0]) baseCategory = '\u041e\u0432\u0435\u0440';
+          else if (heroPairRank === sortedB[0]) baseCategory = '\u0422\u041f';
+          else if (isPocket) {
+              if (heroPairRank > sortedB[1]) baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a \u0422\u041a';
+              else if (heroPairRank === sortedB[1]) baseCategory = '\u041c\u0438\u0434\u043b';
+              else if (sortedB.length > 2 && heroPairRank > sortedB[2]) baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a \u041c\u041a';
+              else if (sortedB.length > 2 && heroPairRank === sortedB[2]) baseCategory = '\u041b\u043e\u0443';
+              else if (sortedB.length > 3 && heroPairRank > sortedB[3]) baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a 3\u041a';
+              else if (sortedB.length > 3 && heroPairRank === sortedB[3]) baseCategory = '4\u041f';
+              else baseCategory = '\u0410\u043d\u0434\u0435\u0440 \u043a \u041b\u041a';
+          } else {
+              if (heroPairRank >= sortedB[1]) baseCategory = '\u041c\u0438\u0434\u043b';
+              else baseCategory = '\u041b\u043e\u0443';
+          }
+      }
+
+      if (baseCategory === 'Мусор') return checkDraws(heroCards, boardCards, all);
+      return baseCategory;
+    }
+
+        
+
+        function getDetailedCategory(heroCards, boardCards, evalFn) {
+        const baseCategory = classifyGenericHand(heroCards, boardCards, evalFn);
+        
+        const hRanks = heroCards.map(c => typeof c === 'string' ? c[0] : cardRank(c));
+        const bRanks = boardCards.map(c => typeof c === 'string' ? c[0] : cardRank(c));
+        const all = [...heroCards, ...boardCards];
+        const allRanks = all.map(c => typeof c === 'string' ? c[0] : cardRank(c));
+        const rankVals = r => '23456789TJQKA'.indexOf(r);
+        
+        let kickerIndex = 0;
+        let isPocket = hRanks[0] === hRanks[1];
+        
+        const needsKicker = ['\u041e\u0432\u0435\u0440', '\u0422\u041f', '\u041c\u0438\u0434\u043b', '\u041b\u043e\u0443', '4\u041f', '5\u041f', '\u0410\u043d\u0434\u0435\u0440 \u043a \u0422\u041a', '\u0410\u043d\u0434\u0435\u0440 \u043a \u041c\u041a', '\u0410\u043d\u0434\u0435\u0440 \u043a 3\u041a', '\u0410\u043d\u0434\u0435\u0440 \u043a \u041b\u041a'];
+        if (needsKicker.includes(baseCategory)) {
+            if (isPocket) {
+                const bVals = [...new Set(bRanks.map(rankVals))].sort((a,b)=>b-a);
+                let possiblePockets = [];
+                for (let v=12; v>=0; v--) {
+                    if (bVals.includes(v)) continue;
+                    if (baseCategory === '\u041e\u0432\u0435\u0440' && v > bVals[0]) possiblePockets.push(v);
+                    else if (baseCategory === '\u0410\u043d\u0434\u0435\u0440 \u043a \u0422\u041a' && v < bVals[0] && (bVals.length < 2 || v > bVals[1])) possiblePockets.push(v);
+                    else if (baseCategory === '\u0410\u043d\u0434\u0435\u0440 \u043a \u041c\u041a' && bVals.length > 2 && v < bVals[1] && v > bVals[2]) possiblePockets.push(v);
+                    else if (baseCategory === '\u0410\u043d\u0434\u0435\u0440 \u043a 3\u041a' && bVals.length > 3 && v < bVals[2] && v > bVals[3]) possiblePockets.push(v);
+                    else if (baseCategory === '\u0410\u043d\u0434\u0435\u0440 \u043a \u041b\u041a' && v < bVals[bVals.length-1]) possiblePockets.push(v);
+                }
+                const myVal = rankVals(hRanks[0]);
+                kickerIndex = possiblePockets.indexOf(myVal) + 1;
+            } else {
+                const pairRank = allRanks.find(r => allRanks.filter(x=>x===r).length===2);
+                const nonPairHero = hRanks.find(r => r !== pairRank);
+                if (nonPairHero) {
+                    const myKickerVal = rankVals(nonPairHero);
+                    let possibleKickers = [];
+                    for (let v=12; v>=0; v--) {
+                        if (v === rankVals(pairRank) || bRanks.includes('23456789TJQKA'[v])) continue;
+                        possibleKickers.push(v);
+                    }
+                    kickerIndex = possibleKickers.indexOf(myKickerVal) + 1;
+                }
+            }
+        }
+        
+        let txIndex = 0;
+        const needsTX = ['\u041c\u0443\u0441\u043e\u0440', '\u0413\u0430\u0442\u0448\u043e\u0442', '\u0414\u0440\u043e'];
+        if (needsTX.includes(baseCategory)) {
+            const myMaxVal = Math.max(rankVals(hRanks[0]), rankVals(hRanks[1]));
+            let possibleTX = [];
+            for (let v=12; v>=0; v--) {
+                if (bRanks.includes('23456789TJQKA'[v])) continue;
+                possibleTX.push(v);
+            }
+            txIndex = possibleTX.indexOf(myMaxVal) + 1;
+        }
+
+        return { base: baseCategory, kicker: kickerIndex, tx: txIndex, heroPairRank: isPocket ? '23456789TJQKA'.indexOf(hRanks[0]) : -1 };
+    }
+
+    function matchCategory(det, name) {
+        name = name.toLowerCase().trim();
+        
+        let txMatch = name.match(/tx\s*(\d+)(?:-(\d+))?/);
+        if (!txMatch) txMatch = name.match(/(\d+)\s*tx/); 
+        
+        let ppMatch = name.match(/([23456789tjqka])\1([+-]?)/i);
+        if (ppMatch && det.heroPairRank !== -1 && det.heroPairRank !== undefined) {
+            const targetVal = '23456789TJQKA'.indexOf(ppMatch[1].toUpperCase());
+            const mod = ppMatch[2];
+            if (mod === '+') {
+                if (det.heroPairRank < targetVal) return false;
+            } else if (mod === '-') {
+                if (det.heroPairRank > targetVal) return false;
+            } else {
+                if (det.heroPairRank !== targetVal) return false;
+            }
+        }
+        
+        if (txMatch) {
+            let min = 1, max = 1;
+            const m1 = name.match(/tx\s*(\d+)-(\d+)/);
+            const m2 = name.match(/tx\s*(\d+)/);
+            const m3 = name.match(/(\d+)\s*tx/);
+            if (m1) { min = parseInt(m1[1]); max = parseInt(m1[2]); }
+            else if (m2) { min = max = parseInt(m2[1]); }
+            else if (m3) { min = 1; max = parseInt(m3[1]); } 
+            
+            let reqBase = null;
+            if (name.includes('\u0433\u0430\u0442\u0448\u043e\u0442')) reqBase = '\u0413\u0430\u0442\u0448\u043e\u0442'; // РіР°С‚С€РѕС‚
+            else if (name.includes('\u0434\u0440\u043e')) reqBase = '\u0414\u0440\u043e'; // РґСЂРѕ
+            else if (name.includes('\u043c\u0443\u0441\u043e\u0440')) reqBase = '\u041c\u0443\u0441\u043e\u0440'; // РјСѓСЃРѕСЂ
+            
+            if (reqBase && det.base !== reqBase) return false;
+            if (!reqBase && det.base !== '\u041c\u0443\u0441\u043e\u0440') return false; 
+            
+            return det.tx >= min && det.tx <= max;
+        }
+        
+        const baseMap = {
+            '\u0414\u0432\u0435 \u043f\u0430\u0440\u044b': '\u0414\u0432\u0435 \u043f\u0430\u0440\u044b', // Р”РІРµ РїР°СЂС‹
+            '\u0422\u0440\u043e\u0439\u043a\u0430': '\u0422\u0440\u043e\u0439\u043a\u0430', // РўСЂРѕР№РєР°
+            '\u0421\u0442\u0440\u0438\u0442': '\u0421\u0442\u0440\u0438\u0442', // РЎС‚СЂРёС‚
+            '\u0424\u043b\u0435\u0448': '\u0424\u043b\u0435\u0448', // Р¤Р»РµС€
+            '\u0424\u0443\u043b\u043b-\u0425\u0430\u0443\u0441+': '\u0424\u0443\u043b\u043b-\u0425\u0430\u0443\u0441+', // Р¤СѓР»Р»-РҐР°СѓСЃ+
+            '\u041e\u0432\u0435\u0440': '\u041e\u0432\u0435\u0440', // РћРІРµСЂ
+            '\u0422\u041f': '\u0422\u041f', // РўРџ
+            '\u041c\u0438\u0434\u043b': '\u041c\u0438\u0434\u043b', // РњРёРґР»
+            '\u041b\u043e\u0443': '\u041b\u043e\u0443', // Р›РѕСѓ
+            '\u041c\u0443\u0441\u043e\u0440': '\u041c\u0443\u0441\u043e\u0440', // РњСѓСЃРѕСЂ
+            '\u0413\u0430\u0442\u0448\u043e\u0442': '\u0413\u0430\u0442\u0448\u043e\u0442', // Р“Р°С‚С€РѕС‚
+            '\u0414\u0440\u043e': '\u0414\u0440\u043e', // Р”СЂРѕ
+            '\u0410\u043d\u0434\u0435\u0440 \u043a \u0422\u041a': '\u0410\u043d\u0434\u0435\u0440 \u043a \u0422\u041a',
+            '\u0410\u043d\u0434\u0435\u0440 \u043a \u041c\u041a': '\u0410\u043d\u0434\u0435\u0440 \u043a \u041c\u041a',
+            '\u0410\u043d\u0434\u0435\u0440 \u043a 3\u041a': '\u0410\u043d\u0434\u0435\u0440 \u043a 3\u041a',
+            '\u0410\u043d\u0434\u0435\u0440 \u043a \u041b\u041a': '\u0410\u043d\u0434\u0435\u0440 \u043a \u041b\u041a'
+        };
+        
+        let targetBase = null;
+        if (name === '\u0442\u043e\u043f') return det.base === '\u0422\u041f';
+        
+        for (const [k, v] of Object.entries(baseMap)) {
+            if (name.includes(k.toLowerCase())) {
+                if (k === '\u0422\u041f' && !name.match(/(^|\s)\u0442\u043f/)) continue;
+                targetBase = v;
+                break;
+            }
+        }
+        
+        if (targetBase) {
+            const monsters = ['\u0414\u0432\u0435 \u043f\u0430\u0440\u044b', '\u0422\u0440\u043e\u0439\u043a\u0430', '\u0421\u0442\u0440\u0438\u0442', '\u0424\u043b\u0435\u0448', '\u0424\u0443\u043b\u043b-\u0425\u0430\u0443\u0441+'];
+            if (monsters.includes(targetBase) && det.base === targetBase) return true;
+            if (det.base !== targetBase) return false;
+            
+            const topMatch = name.match(/\u0442\u043e\u043f\s*(\d+)(?:-(\d+))?/); // \u0442\u043e\u043f = С‚РѕРї
+            if (topMatch) {
+                if (topMatch[2]) {
+                    const min = parseInt(topMatch[1]);
+                    const max = parseInt(topMatch[2]);
+                    return det.kicker >= min && det.kicker <= max;
+                } else {
+                    return det.kicker === parseInt(topMatch[1]);
+                }
+            }
+            return true;
+        }
+        
+        if (ppMatch) {
+            if (name.includes('\u0430\u043d\u0434\u0435\u0440')) {
+                return det.base.startsWith('\u0410\u043d\u0434\u0435\u0440');
+            }
+            return true;
+        }
+        
+        return false;
+    }
+
+    function classifyHandWithColumns(heroCards, boardCards, evalFn, columns) {
+        const det = getDetailedCategory(heroCards, boardCards, evalFn);
+        const sortedCols = [...columns].sort((a, b) => {
+            const getSpec = c => { if (c.match(/([23456789tjqka])\1[+-]/i)) return 1; return c.match(/\d+-\d+/) ? 2 : (c.match(/\d+/) ? 3 : 1); };
+            return getSpec(b) - getSpec(a);
+        });
+        for (const col of sortedCols) {
+            if (matchCategory(det, col)) return col;
+        }
+        return det.base;
+    }
+    function classifyHand(heroCards, boardCards) { return classifyGenericHand(heroCards, boardCards, evaluate7); }
+
+    function generateFlopCards(ranks) {
+      const deck = createDeck();
+      const selected = [];
+      const availableDeck = [...deck];
+
+      for (const rank of ranks) {
+        const cardsOfRank = availableDeck.filter(card => cardRank(card) === rank);
+        if (cardsOfRank.length === 0) return null;
+        const chosen = cardsOfRank[Math.floor(Math.random() * cardsOfRank.length)];
+        selected.push(chosen);
+        const idx = availableDeck.indexOf(chosen);
+        if (idx !== -1) availableDeck.splice(idx, 1);
+      }
+      return selected;
+    }
+    
+
+
+    function generateHeroCards(boardCards) {
+      const deck = createDeck().filter(card => !boardCards.includes(card));
+      shuffle(deck);
+      if (deck.length < 2) return null;
+      return [deck[0], deck[1]];
+    }
+
+    function getFlopRanksForGroup(groupId) {
+      const matrixData = loadFromStorage(MATRIX_STORAGE_KEY);
+      if (!matrixData || !matrixData.assignments) return [];
+
+      const flops = [];
+      for (const [flopRanks, colorId] of Object.entries(matrixData.assignments)) {
+        if (colorId === groupId) {
+          flops.push(flopRanks);
+        }
+      }
+      return flops;
+    }
+
+    function generateHandsForGroupTypeCategory(groupId, riverType, category, count, flopRanksList, flopActionsData, turnActionsData, columns) {
+      if (flopRanksList.length === 0) return [];
+
+      const results = [];
+      const maxAttempts = 30000; 
+      let attempts = 0;
+      const validPairsCache = {};
+
+      while (results.length < count && attempts < maxAttempts) {
+        attempts++;
+        const flopRanks = flopRanksList[Math.floor(Math.random() * flopRanksList.length)];
+        const ranksArray = flopRanks.split(''); 
+        const flopCards = generateFlopCards(ranksArray);
+        if (!flopCards) continue;
+        
+        const fcKey = flopCards.slice().sort().join('');
+        if (!validPairsCache[fcKey]) {
+          validPairsCache[fcKey] = getValidTurnRiverPairs(flopCards, riverType);
+        }
+        const validPairs = validPairsCache[fcKey];
+        if (!validPairs.length) continue;
+        const trCards = validPairs[Math.floor(Math.random() * validPairs.length)];
+
+        const turnCard = trCards[0];
+        const riverCard = trCards[1];
+        const boardCards = [...flopCards, turnCard, riverCard];
+        const heroCards = generateHeroCards(boardCards);
+        if (!heroCards) continue;
+
+        // Фильтрация 1: только руки, с которыми ставили флоп
+        if (flopActionsData) {
+          const flopCat = classifyFlopHand(heroCards, flopCards);
+          const act = flopActionsData[`${groupId}|${flopCat}`]; if (!act || !act.startsWith('Бет')) continue;
+        }
+
+        // Фильтрация 2: только руки, с которыми ставили терн (CB River = бет флоп + бет терн)
+        if (turnActionsData) {
+          const tt = getTurnType(flopCards, turnCard);
+          const turnCat = classifyTurnHand(heroCards, [...flopCards, turnCard]);
+          const tact = turnActionsData[`${tt}|${groupId}|${turnCat}`]; if (!tact || !tact.startsWith('Бет')) continue;
+        }
+
+        const cat = classifyHandWithColumns(heroCards, boardCards, evaluate7, columns);
+        if (cat === category) {
+          results.push({ hero: heroCards, flop: flopCards, turn: turnCard, river: riverCard });
+        }
+      }
+
+      if (results.length < count) {
+        console.warn(`Группа ${groupId}, тип ${riverType}, категория ${category}: сгенерировано ${results.length} из ${count}`);
+      }
+      return results;
+    }
+
+
+    function generateAllHands() {
+      if (groups.length === 0) {
+        alert('Нет групп. Импортируйте их из матрицы.');
+        return;
+      }
+
+      const matrixData = loadFromStorage(MATRIX_STORAGE_KEY);
+      if (!matrixData || !matrixData.assignments) {
+        alert('Не найдены данные матрицы флопов. Откройте матрицу, раскрасьте флопы и сохраните её.');
+        return;
+      }
+
+      const groupFlops = {};
+      for (const group of groups) {
+        groupFlops[group.id] = getFlopRanksForGroup(group.id);
+      }
+
+      // Загружаем действия флопа и терна для фильтрации
+      const flopData = loadFromStorage('flopActionsState_v3');
+      const flopActionsData = (flopData && flopData.actions) ? flopData.actions : null;
+      const turnData = loadFromStorage('turnActionsState_v1');
+      const turnActionsData = (turnData && turnData.actions) ? turnData.actions : null;
+
+      generatedHands = {};
+      const resultsContainer = document.getElementById('generatorResults');
+      const filterNote = [];
+      if (flopActionsData) filterNote.push('флоп');
+      if (turnActionsData) filterNote.push('терн');
+      resultsContainer.innerHTML = filterNote.length
+        ? `<p>⏳ Генерация раздач (фильтрация по: ${filterNote.join(' + ')})...</p>`
+        : '<p>⏳ Генерация раздач (без фильтрации)...</p>';
+
+      setTimeout(() => {
+        try {
+          for (const group of groups) {
+            generatedHands[group.id] = {};
+            for (const riverType of RIVER_TYPES) {
+              generatedHands[group.id][riverType] = {};
+              const activeCategories = HAND_CATEGORIES.filter(cat => {
+                  const key = riverType + '|' + group.id + '|' + cat;
+                  if (actions[key] && actions[key] !== '') return true;
+                  const suits = ['1', '2', '3'];
+                  for (let s of suits) {
+                      if (actions[key + '|' + s] && actions[key + '|' + s] !== '') return true;
+                  }
+                  return false;
+              });
+              for (const cat of activeCategories) {
+                const hands = generateHandsForGroupTypeCategory(group.id, riverType, cat, 100, groupFlops[group.id], flopActionsData, turnActionsData, activeCategories);
+                generatedHands[group.id][riverType][cat] = hands;
+              }
+            }
+          }
+          displayGeneratedHands();
+        } catch (e) {
+          resultsContainer.innerHTML = `<p style="color:red;">Ошибка генерации: ${escapeHtml(e.message)}</p>`;
+        }
+      }, 50);
+    }
+
+    function displayCard(card) {
+      const rank = card[0];
+      const suit = card[1];
+      const symbol = SUIT_SYMBOLS[suit] || suit;
+      const color = SUIT_COLORS[suit] || '#333';
+      const textColor = '#fff';
+      return `<span class="card" style="background:${color}; color:${textColor};">${rank}${symbol}</span>`;
+    }
+
+    const RIVER_TYPE_NAMES = RT_NAMES;
+
+    function displayGeneratedHands() {
+      const container = document.getElementById('generatorResults');
+      container.innerHTML = '';
+
+      for (const group of groups) {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'generated-group';
+        groupDiv.innerHTML = `<h3>${escapeHtml(group.name)}</h3>`;
+
+        for (const riverType of RIVER_TYPES) {
+            const ttDiv = document.createElement('div');
+            ttDiv.style.marginLeft = "10px";
+            ttDiv.style.borderLeft = "3px solid var(--border)";
+            ttDiv.style.paddingLeft = "10px";
+            ttDiv.innerHTML = `<h4 style="color: var(--blue); margin-top: 15px;">${RIVER_TYPE_NAMES[riverType]}</h4>`;
+            
+            for (const cat of HAND_CATEGORIES) {
+                const hands = generatedHands[group.id]?.[riverType]?.[cat] || [];
+                if (hands.length === 0) continue;
+                const catDiv = document.createElement('div');
+              catDiv.className = 'generated-category';
+              catDiv.innerHTML = `<h4>${cat} (${hands.length} раздач)</h4>`;
+
+              const grid = document.createElement('div');
+              grid.className = 'hand-grid';
+              hands.forEach(hand => {
+                const item = document.createElement('div');
+                item.className = 'hand-item';
+                item.innerHTML = `
+                  <strong>Хиро:</strong> ${displayCard(hand.hero[0])} ${displayCard(hand.hero[1])}
+                  <strong>Борд:</strong> ${displayCard(hand.flop[0])} ${displayCard(hand.flop[1])} ${displayCard(hand.flop[2])} ${displayCard(hand.turn)} ${displayCard(hand.river)}
+                `;
+                grid.appendChild(item);
+              });
+              catDiv.appendChild(grid);
+              ttDiv.appendChild(catDiv);
+            }
+            groupDiv.appendChild(ttDiv);
+        }
+        container.appendChild(groupDiv);
+      }
+    }
+
+    function saveGeneratedHandsToFile() {
+      if (Object.keys(generatedHands).length === 0) {
+        alert('Нет сгенерированных раздач. Сначала нажмите «Сгенерировать раздачи».');
+        return;
+      }
+
+      const data = {
+        version: 1,
+        groups: groups.map(g => ({ id: g.id, name: g.name })),
+        hands: generatedHands
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'HU SB CB River - Hands.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+    function initApp() {
+      // Загружаем группы
+      const matrixGroups = getGroupsFromMatrixStorage();
+      if (matrixGroups) {
+        groups = matrixGroups;
+      } else {
+        const ownGroups = getGroupsFromOwnStorage();
+        if (ownGroups) {
+          groups = ownGroups;
+        }
+      }
+
+      // Загружаем действия
+      const savedData = loadFromStorage(STORAGE_KEY);
+      if (savedData && savedData.categories && Array.isArray(savedData.categories)) { HAND_CATEGORIES = savedData.categories; } else if (savedData && savedData.actions) { const _fc = new Set(); for(const k of Object.keys(savedData.actions||{})){ const p = k.split('|'); if(p.length >= 2) { let cIdx = 1; if (p[0]==='over' || p[0]==='under' || p[0]==='pair' || p[0]==='4-straight' || p[0]==='4-flush' || p[0]==='3-straight' || p[0]==='3-flush' || p[0]==='2-flush' || p[0]==='rainbow' || p[0]==='not-paired' || p[0]==='paired') cIdx = 2; _fc.add(p[cIdx]); } } if (_fc.size > 0) { HAND_CATEGORIES = Array.from(_fc); if (typeof getCategoryWeight === 'function') { HAND_CATEGORIES.sort((a, b) => getCategoryWeight(a) - getCategoryWeight(b)); } } }
+            if (savedData && savedData.actions && typeof savedData.actions === 'object' && savedData.actions !== null) {
+          const validIds = new Set(groups.map(g => g.id));
+          const loadedActions = {};
+          for (const [key, value] of Object.entries(savedData.actions || {})) {
+            const parts = key.split('|');
+            if (parts.length >= 3 && validIds.has(parts[1]) && ACTIONS.includes(value)) {
+              loadedActions[key] = value;
+            }
+          }
+          actions = loadedActions;
+      } else {
+        actions = {};
+      }
+
+      if (groups.length > 0) {
+        saveGroupsToOwnStorage();
+      }
+      renderTables();
+    }
+
+    // ==================== ОБРАБОТЧИКИ КНОПОК ====================
+    document.getElementById('saveBtn').addEventListener('click', saveToFile);
+    document.getElementById('loadBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+    document.getElementById('importGroupsBtn').addEventListener('click', loadGroupsFromMatrix);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+    document.getElementById('scrollToGeneratorBtn').addEventListener('click', () => {
+      document.getElementById('generatorSection').scrollIntoView({ behavior: 'smooth' });
+    });
+    document.getElementById('generateHandsBtn').addEventListener('click', generateAllHands);
+    document.getElementById('saveGeneratedBtn').addEventListener('click', saveGeneratedHandsToFile);
+
+    document.getElementById('fileInput').addEventListener('change', loadFile);
+    document.getElementById('groupsFileInput').addEventListener('change', importGroupsFromFile);
+
+    // Запуск
+    initApp();
+  </script>
+</body>
+</html>
