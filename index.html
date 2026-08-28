@@ -272,17 +272,17 @@ function markF(k){const e=document.getElementById('fs_'+k);if(e)e.className='ok'
 document.getElementById('pickBtn').onclick=()=>document.getElementById('fInput').click();
 
 const SERVER_FILES = {
-  lessons: 'poker_training_groups.json',
-  colors: 'poker_matrix_colors.json',
-  flopA: 'HU SB CB Flop Actions.json',
-  turnA: 'HU SB CB Turn Actions.json',
-  riverA: 'HU SB CB River Actions.json',
-  bxbA: 'HU SB BxB River Actions.json',
-  flopH: 'HU SB CB Flop Hands.json',
-  turnH: 'HU SB CB Turn Hands.json',
-  riverH: 'HU SB CB River Hands.json',
-  bxbH: 'HU SB BxB River Hands.json'
-};
+    lessons: 'poker-session-lessons.json',
+    colors: 'flop-matrix-colors.json',
+    flopA: 'HU SB CB Flop.json',
+    turnA: 'HU SB CB Turn.json',
+    riverA: 'HU SB CB River.json',
+    bxbA: 'HU SB BxB River.json',
+    flopH: 'HU SB CB Flop - Hands.json',
+    turnH: 'HU SB CB Turn - Hands.json',
+    riverH: 'HU SB CB River - Hands.json',
+    bxbH: 'HU SB BxB River - Hands.json'
+  };
 
 async function loadFromServer() {
   document.getElementById('pickBtn').disabled=true;
