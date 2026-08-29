@@ -716,7 +716,7 @@ if(openRepBtn) openRepBtn.onclick = () => { buildRep(); ss('s-rep'); };
 const repBackBtn = document.getElementById('repBackBtn');
 if(repBackBtn) repBackBtn.onclick = () => { ss('s-sel'); };
 const clrStatsBtn = document.getElementById('clrStatsBtn');
-if(clrStatsBtn) clrStatsBtn.onclick = async () => { if(await customConfirm('\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0441\u0442\u0430\u0442\u0438\u0441\u0442\u0438\u043a\u0443 \u043f\u043e \u0443\u0440\u043e\u043a\u0430\u043c?')) { localStorage.removeItem('lessonStats_v1'); buildRep(); document.getElementById('repDetails').style.display='none'; } };
+if(clrStatsBtn) clrStatsBtn.onclick = async () => { if(await customConfirm('РЈРґР°Р»РёС‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РїРѕ СѓСЂРѕРєР°Рј?')) { localStorage.removeItem('lessonStats_v1'); buildRep(); document.getElementById('repDetails').style.display='none'; } };
 const repDetCloseBtn = document.getElementById('repDetCloseBtn');
 if(repDetCloseBtn) repDetCloseBtn.onclick = () => { document.getElementById('repDetails').style.display='none'; };
 
@@ -818,7 +818,7 @@ init();
     <div id="cModalText" style="margin-bottom:20px; font-size:16px;"></div>
     <div style="display:flex; gap:10px; justify-content:center;">
       <button id="cModalOk" class="btn" style="background:#0984e3;color:#fff;">OK</button>
-      <button id="cModalCancel" class="btn b-muted">\u041e\u0442\u043c\u0435\u043d\u0430</button>
+      <button id="cModalCancel" class="btn b-muted">&#x041e;&#x0442;&#x043c;&#x0435;&#x043d;&#x0430;</button>
     </div>
   </div>
 </div>
