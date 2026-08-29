@@ -672,7 +672,7 @@ function showRes(){
   document.getElementById('rPct').textContent=pct+'% \u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u044b\u0445 \u043e\u0442\u0432\u0435\u0442\u043e\u0432'; if(timerInterval) clearInterval(timerInterval); const avgTime = tot > 0 ? (totalDecisionTime / tot / 1000).toFixed(1) : 0; document.getElementById('rTime').textContent = '\u0412\u0440\u0435\u043c\u044f: ' + (document.getElementById('trTimer') ? document.getElementById('trTimer').textContent : '') + ' (' + avgTime + ' \u0441/\u043e\u0442\u0432)';
   document.getElementById('rTrp').textContent=pct>=90?'🏆':pct>=70?'🎯':'📚';
   document.getElementById('rTitle').textContent=pct>=90?'Отличный результат!':pct>=70?'Хороший результат!':'Продолжай тренироваться!';
-    const rv=document.getElementById("rVideo"); if(rv){ if(pct===100 && tot>0){ rv.innerHTML=`<video src="100.mp4" autoplay playsinline style="max-width:100%; max-height:250px; border-radius:10px;"></video>`; }else{ rv.innerHTML=""; } }
+    const rv=document.getElementById("rVideo"); if(rv){ if(pct===100 && tot>0){ rv.innerHTML=`<video src="100.mp4" autoplay playsinline style="max-width:100%; max-height:250px; border-radius:10px;"></video>`; }else if(pct>=90 && pct<100 && tot>0){ rv.innerHTML=`<img src="90.gif" style="max-width:100%; max-height:250px; border-radius:10px;">`; }else{ rv.innerHTML=""; } }
   const bd=document.getElementById('rBd');bd.innerHTML='';
   
   const renderStats = (statObj, title) => {
