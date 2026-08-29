@@ -150,7 +150,11 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
 </div>
 <div id="s-sel" class="screen">
   <div class="sel-hdr">
-    <h1>&#9824; Выбор уроков</h1>
+    <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+<h1>&#9824; &#x0412;&#x044b;&#x0431;&#x043e;&#x0440; &#x0443;&#x0440;&#x043e;&#x043a;&#x043e;&#x0432;</h1>
+<span class="cnt" id="selCnt" style="color:var(--muted);font-size:15px;font-weight:600;">&#x041d;&#x0438;&#x0447;&#x0435;&#x0433;&#x043e; &#x043d;&#x0435; &#x0432;&#x044b;&#x0431;&#x0440;&#x0430;&#x043d;&#x043e;</span>
+<button class="btn b-blue" id="startBtn" disabled style="padding:10px 24px; font-size:16px;">&#9654; &#x041d;&#x0430;&#x0447;&#x0430;&#x0442;&#x044c; (100 &#x0440;&#x0430;&#x0437;&#x0434;&#x0430;&#x0447;)</button>
+</div>
     <div class="sel-tbr">
       <button class="btn b-muted b-sm" id="selAll">&#10003; Все</button>
       <button class="btn b-muted b-sm" id="deselAll">&#10007; Снять</button>
@@ -159,11 +163,7 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
     </div>
   </div>
   <div class="sel-body"><div class="lgrid" id="lgrid"></div></div>
-  <div class="sel-ftr">
-    <span class="cnt" id="selCnt">Не выбрано</span>
-    <button class="btn b-blue" id="startBtn" disabled>&#9654; Начать (100 раздач)</button>
   </div>
-</div>
 <div id="s-tr" class="screen">
   <div class="tr-hdr">
     <div class="prog-wrap">
