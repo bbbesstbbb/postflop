@@ -230,9 +230,13 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
         <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;&#1084;</h3><div id="repDetCat"></div></div>
         
         <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1075;&#1088;&#1091;&#1087;&#1087;&#1072;&#1084; &#1088;&#1091;&#1082;</h3><div id="repDetGrp"></div></div>
+      </div>
+      <div id="repDetChartContainer" style="margin-top:30px; display:none;">
+          <h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1044;&#1080;&#1085;&#1072;&#1084;&#1080;&#1082;&#1072; &#1089;&#1082;&#1086;&#1088;&#1086;&#1089;&#1090;&#1080; (&#1089;&#1077;&#1082;/&#1086;&#1090;&#1074;)</h3>
+          <div id="repDetChart" style="height:120px; display:flex; align-items:flex-end; gap:6px; padding-top:20px; border-bottom:1px solid var(--border); overflow-x:auto;"></div>
+      </div>
     </div>
   </div>
-</div>
 <script>
 const DB='pokerDB_v4',ST='d',HIST_KEY='trainerSessionHistory_v1';
 let db,appData={},colorMap={},queue=[],qIdx=0,scOk=0,scErr=0,statCat={},statGrp={},statType={},selIds=new Set();
@@ -465,7 +469,12 @@ function buildSel(){
             } else {
                               const lStats = lsStats[l.id]; let tStr='';
               if(lStats && lStats.tot > 0 && lStats.totTime > 0){
-                  tStr = `<div style="font-size:12px;color:var(--muted);margin-top:6px;">&#128337; ${ (lStats.totTime/lStats.tot/1000).toFixed(1) } &#x0441;&#x0435;&#x043a;/&#x043e;&#x0442;&#x0432;</div>`;
+                  const avgTotal = (lStats.totTime/lStats.tot/1000).toFixed(1);
+                    tStr = `<div style="font-size:12px;color:var(--muted);margin-top:6px;">&#128337; ${avgTotal} &#x0441;&#x0435;&#x043a;/&#x043e;&#x0442;&#x0432;`;
+                    if (lStats.lastAvgTime) {
+                        tStr += ` <span style="opacity:0.6; margin-left:8px;">(\u043f\u043e\u0441\u043b: ${lStats.lastAvgTime})</span>`;
+                    }
+                    tStr += `</div>`;
               }
               card.innerHTML=`<input type="checkbox" data-id="${l.id}"><div class="info"><div class="nm">${esc(l.name)}</div><div class="bgs">${pctBdg}${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div>${tStr}</div>`;
                 const cb=card.querySelector('input');
@@ -878,7 +887,25 @@ function showRes(){
   if (Object.keys(statType).length > 0 && Object.keys(statType)[0] !== 'Флоп') bd.innerHTML += renderStats(statType, 'По типам доски');
   bd.innerHTML += renderStats(statGrp, 'По группам');
   
-  saveSessionHistory();renderHistory();ss('s-res');
+      try {
+        let lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}');
+        sessionLessonNames.forEach(lname => {
+            const l = appData.lessons.find(x => x.name === lname);
+            if (l) {
+                if (!lsStats[l.id]) lsStats[l.id] = { ok: 0, tot: 0, statCat: {}, statGrp: {}, statType: {}, totTime: 0 };
+                lsStats[l.id].lastAvgTime = avgTime;
+                if (!lsStats[l.id].timeHistory) lsStats[l.id].timeHistory = [];
+                lsStats[l.id].timeHistory.push({
+                    date: Date.now(),
+                    time: parseFloat(avgTime),
+                    pct: pct
+                });
+                if (lsStats[l.id].timeHistory.length > 50) lsStats[l.id].timeHistory.shift();
+            }
+        });
+        localStorage.setItem('lessonStats_v1', JSON.stringify(lsStats));
+    } catch(e) {}
+    saveSessionHistory();renderHistory();ss('s-res');
 }
 document.getElementById('agBtn').onclick=async()=>{buildQ();if(!queue.length){await customAlert('Нет раздач.');return}startTrain()};
 document.getElementById('backBtn').onclick=()=>{buildSel();ss('s-sel');};
@@ -997,8 +1024,53 @@ function showRepDet(name, st) {
     document.getElementById('repDetCat').innerHTML = renderS(st.statCat, false, 'cat');
     
     document.getElementById('repDetGrp').innerHTML = renderS(st.statGrp, true, 'grp');
-    
-    document.getElementById('repDetails').scrollIntoView({behavior:'smooth'});
+      
+      const chartContainer = document.getElementById('repDetChartContainer');
+      const chartDiv = document.getElementById('repDetChart');
+      if (st.timeHistory && st.timeHistory.length > 0) {
+          chartContainer.style.display = 'block';
+          chartDiv.innerHTML = '';
+          const maxTime = Math.max(...st.timeHistory.map(x => x.time));
+          st.timeHistory.forEach(th => {
+              const hPct = Math.max(5, (th.time / (maxTime || 1)) * 100);
+              const col = th.pct >= 80 ? '#00c97a' : (th.pct >= 60 ? '#f59d00' : '#ff3d57');
+              
+              const barWrap = document.createElement('div');
+              barWrap.style.flex = '1';
+              barWrap.style.display = 'flex';
+              barWrap.style.flexDirection = 'column';
+              barWrap.style.justifyContent = 'flex-end';
+              barWrap.style.alignItems = 'center';
+              barWrap.style.height = '100%';
+              barWrap.style.minWidth = '25px';
+              barWrap.title = `${th.time} \u0441\u0435\u043a (${th.pct}% \u0432\u0435\u0440\u043d\u044b\u0445)`;
+              
+              const lbl = document.createElement('div');
+              lbl.style.fontSize = '10px';
+              lbl.style.color = '#a0aabf';
+              lbl.style.marginBottom = '4px';
+              lbl.textContent = th.time;
+              
+              const bar = document.createElement('div');
+              bar.style.width = '100%';
+              bar.style.maxWidth = '30px';
+              bar.style.background = col;
+              bar.style.height = hPct + '%';
+              bar.style.borderRadius = '3px 3px 0 0';
+              bar.style.opacity = '0.8';
+              bar.style.transition = 'opacity 0.2s';
+              bar.onmouseover = () => bar.style.opacity = '1';
+              bar.onmouseout = () => bar.style.opacity = '0.8';
+              
+              barWrap.appendChild(lbl);
+              barWrap.appendChild(bar);
+              chartDiv.appendChild(barWrap);
+          });
+      } else if (chartContainer) {
+          chartContainer.style.display = 'none';
+      }
+      
+      document.getElementById('repDetails').scrollIntoView({behavior:'smooth'});
 }
 
 init();
