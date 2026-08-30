@@ -292,7 +292,12 @@ const SERVER_FILES = {
 async function loadFromServer() {
   document.getElementById('pickBtn').disabled=true;
   const sBtn = document.getElementById('serverBtn'); if(sBtn) sBtn.disabled=true;
-  const uBtn = document.getElementById('updServerBtn'); if(uBtn) uBtn.disabled=true;
+      const uBtn = document.getElementById('updServerBtn');
+    if(uBtn) {
+        uBtn.disabled=true;
+        if(!uBtn.dataset.orig) uBtn.dataset.orig = uBtn.innerHTML;
+        uBtn.innerHTML = '\u23F3 \u041e\u0431\u043d\u043e\u0432\u043b\u044f\u0435\u043c...';
+    }
   document.getElementById('lspin').style.display='block';
   
   buildFList(); const loaded={};
@@ -322,7 +327,7 @@ async function loadFromServer() {
      lp('Ошибка! Не хватает на сервере: '+miss.join(', '));
      document.getElementById('pickBtn').disabled=false;
      if(sBtn) sBtn.disabled=false;
-     if(uBtn) uBtn.disabled=false;
+     if(uBtn) { uBtn.disabled=false; if(uBtn.dataset.orig) uBtn.innerHTML = uBtn.dataset.orig; }
      document.getElementById('lspin').style.display='none';
      return;
   }
@@ -335,7 +340,7 @@ async function loadFromServer() {
   document.getElementById('lspin').style.display='none';
   lp('');
   if(sBtn) sBtn.disabled=false;
-  if(uBtn) uBtn.disabled=false;
+  if(uBtn) { uBtn.disabled=false; if(uBtn.dataset.orig) uBtn.innerHTML = uBtn.dataset.orig; }
   document.getElementById('pickBtn').disabled=false;
   ss('s-sel'); buildSel();
 }
