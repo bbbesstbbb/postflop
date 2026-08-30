@@ -931,13 +931,13 @@ function saveLessonStat(item, ok, tName, dTime) {
 const openRepBtn = document.getElementById('openRepBtn');
 if(openRepBtn) openRepBtn.onclick = () => { buildRep(); ss('s-rep'); };
 const repBackBtn = document.getElementById('repBackBtn');
-if(repBackBtn) repBackBtn.onclick = () => { ss('s-sel'); };
+if(repBackBtn) repBackBtn.onclick = () => { document.getElementById('repDetails').style.display='none'; ss('s-sel'); };
 const clrStatsBtn = document.getElementById('clrStatsBtn');
 if(clrStatsBtn) clrStatsBtn.onclick = async () => { if(await customConfirm('РЈРґР°Р»РёС‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РїРѕ СѓСЂРѕРєР°Рј?')) { localStorage.removeItem('lessonStats_v1'); buildRep(); document.getElementById('repDetails').style.display='none'; } };
 const repDetCloseBtn = document.getElementById('repDetCloseBtn');
 if(repDetCloseBtn) repDetCloseBtn.onclick = () => { document.getElementById('repDetails').style.display='none'; };
 
-function buildRep() {
+function buildRep() { document.getElementById('repDetails').style.display='none';
     let lsStats = {};
     try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
     const rg = document.getElementById('repGrid');
@@ -1036,13 +1036,12 @@ function showRepDet(name, st) {
               const col = th.pct >= 80 ? '#00c97a' : (th.pct >= 60 ? '#f59d00' : '#ff3d57');
               
               const barWrap = document.createElement('div');
-              barWrap.style.flex = '1';
+              barWrap.style.flex = '0 0 35px';
               barWrap.style.display = 'flex';
               barWrap.style.flexDirection = 'column';
               barWrap.style.justifyContent = 'flex-end';
               barWrap.style.alignItems = 'center';
               barWrap.style.height = '100%';
-              barWrap.style.minWidth = '25px';
               barWrap.title = `${th.time} \u0441\u0435\u043a (${th.pct}% \u0432\u0435\u0440\u043d\u044b\u0445)`;
               
               const lbl = document.createElement('div');
