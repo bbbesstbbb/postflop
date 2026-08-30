@@ -153,7 +153,7 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
     <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
 <h1>&#9824; &#x0412;&#x044b;&#x0431;&#x043e;&#x0440; &#x0443;&#x0440;&#x043e;&#x043a;&#x043e;&#x0432;</h1>
 <span class="cnt" id="selCnt" style="color:var(--muted);font-size:15px;font-weight:600;">&#x041d;&#x0438;&#x0447;&#x0435;&#x0433;&#x043e; &#x043d;&#x0435; &#x0432;&#x044b;&#x0431;&#x0440;&#x0430;&#x043d;&#x043e;</span>
-<button class="btn b-blue" id="startBtn" disabled style="padding:10px 24px; font-size:16px;">&#9654; &#x041d;&#x0430;&#x0447;&#x0430;&#x0442;&#x044c; (100 &#x0440;&#x0430;&#x0437;&#x0434;&#x0430;&#x0447;)</button>
+<button class="btn b-blue" id="startBtn" disabled style="padding:10px 24px; font-size:16px;">&#9654; &#x041d;&#x0430;&#x0447;&#x0430;&#x0442;&#x044c; (100 &#x0440;&#x0430;&#x0437;&#x0434;&#x0430;&#x0447;)</button><label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#a0aabf; font-size:14px; margin-left: 10px;"><input type="checkbox" id="learningModeCb" style="cursor:pointer; width:16px; height:16px;"> &#x0420;&#x0435;&#x0436;&#x0438;&#x043c; &#x043e;&#x0431;&#x0443;&#x0447;&#x0435;&#x043d;&#x0438;&#x044f;</label>
 </div>
     <div class="sel-tbr">
       <button class="btn b-muted b-sm" id="selAll">&#10003; Все</button>
@@ -164,7 +164,9 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
   </div>
   <div class="sel-body"><div class="lgrid" id="lgrid"></div></div>
   </div>
-<div id="s-tr" class="screen">
+<div id="s-tr" class="screen" style="flex-direction: row; justify-content: center; height: 100vh;">
+  <div id="leftStrategyPanel" style="flex: 1; max-width: 450px; display: flex; visibility: hidden; flex-direction: column; padding: 25px; overflow-y: auto; background: var(--panel2); border-right: 1px solid var(--border);"></div>
+  <div style="display: flex; flex-direction: column; flex: 2; max-width: 800px; height: 100%;">
   <div class="tr-hdr">
     <div class="prog-wrap">
       <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
@@ -183,6 +185,8 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
     <div id="fbPanel" style="display:none"></div>
     <button class="btn b-blue" id="nextBtn" style="display:none;font-size:15px;padding:13px 30px">Следующая &#8594;</button>
   </div>
+  </div>
+  <div id="rightStrategyPanel" style="flex: 1; max-width: 450px; display: flex; visibility: hidden; flex-direction: column; padding: 25px; overflow-y: auto; background: var(--panel2); border-left: 1px solid var(--border);"></div>
 </div>
 <div id="s-res" class="screen">
   <div class="res-wrap">
@@ -361,7 +365,17 @@ function lp(m){document.getElementById('lprog').textContent=m}
 function getStreet(l){const at=l.config.actionTree||{};if(!(at.river||[]).length&&(at.turn||[]).length)return'river';if(!(at.turn||[]).length&&(at.flop||[]).length)return'turn';return'flop'}
 function streetBdg(s){return{flop:'<span class="bdg bf">Флоп</span>',turn:'<span class="bdg bt">Терн</span>',river:'<span class="bdg br">Ривер</span>'}[s]||''}
 function buildSel(){
-    const ls=appData.lessons;if(!ls||!ls.length){document.getElementById('lgrid').innerHTML='<p style="color:var(--muted)">\u0423\u0440\u043e\u043a\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b</p>';return}
+          let lsStats = {};
+      try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
+      if (appData.flopA && appData.flopH && appData.lessons && !appData.lessons.find(l=>l.id==='guess_flop_groups')) {
+                      appData.lessons.unshift({
+                id: 'guess_flop_groups',
+                name: '\u0422\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0430 \u0431\u043e\u0440\u0434\u043e\u0432 (\u0423\u0433\u0430\u0434\u0430\u0439 \u0433\u0440\u0443\u043f\u043f\u0443 \u0444\u043b\u043e\u043f\u0430)',
+                config: { blockName: '\u0421\u043f\u0435\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0435 \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0438' },
+                specialMode: 'guess_flop_groups'
+            });
+      }
+      const ls=appData.lessons;if(!ls||!ls.length){document.getElementById('lgrid').innerHTML='<p style="color:var(--muted)">\u0423\u0440\u043e\u043a\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b</p>';return}
     const g=document.getElementById('lgrid');g.innerHTML='';
     g.style.display = 'block';
     
@@ -444,7 +458,11 @@ function buildSel(){
                 card.style.pointerEvents = 'none';
                 card.innerHTML=`<input type="checkbox" disabled><div class="info"><div class="nm">&#128274; ${esc(l.name)} <br><span style="font-size:12px;font-weight:normal;color:#999">${reqText}</span></div><div class="bgs">${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div></div>`;
             } else {
-                card.innerHTML=`<input type="checkbox" data-id="${l.id}"><div class="info"><div class="nm">${esc(l.name)}</div><div class="bgs">${pctBdg}${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div></div>`;
+                              const lStats = lsStats[l.id]; let tStr='';
+              if(lStats && lStats.tot > 0 && lStats.totTime > 0){
+                  tStr = `<div style="font-size:12px;color:var(--muted);margin-top:6px;">&#128337; ${ (lStats.totTime/lStats.tot/1000).toFixed(1) } &#x0441;&#x0435;&#x043a;/&#x043e;&#x0442;&#x0432;</div>`;
+              }
+              card.innerHTML=`<input type="checkbox" data-id="${l.id}"><div class="info"><div class="nm">${esc(l.name)}</div><div class="bgs">${pctBdg}${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div>${tStr}</div>`;
                 const cb=card.querySelector('input');
                 if(selIds.has(l.id)){cb.checked=true;card.classList.add('sel')}
                 const tog=()=>{if(cb.checked){selIds.add(l.id);card.classList.add('sel')}else{selIds.delete(l.id);card.classList.remove('sel')}updFtr()};
@@ -467,10 +485,41 @@ function buildQ(){
   queue=[];statCat={};statGrp={};statType={};scOk=scErr=0;sessionLessonNames=[];
   const ls=appData.lessons.filter(l=>selIds.has(l.id));
   ls.forEach(l=>{if(!sessionLessonNames.includes(l.name))sessionLessonNames.push(l.name)});
-  for(const l of ls){const s=getStreet(l);if(s==='flop')addFlop(l);else if(s==='turn')addTurn(l);else addRiver(l)}
+  for(const l of ls){
+        if (l.specialMode === 'guess_flop_groups') addGuessFlop(l);
+        else {
+            const s=getStreet(l);
+            if(s==='flop')addFlop(l);else if(s==='turn')addTurn(l);else addRiver(l);
+        }
+    }
   shuf(queue);queue=queue.slice(0,100);
 }
-function getBoardSuit(flop) {
+  function addGuessFlop(l) {
+      const hdb=appData.flopH; if(!hdb||!hdb.hands)return;
+      const gs = Object.keys(hdb.hands);
+      if(!gs.length)return;
+      for(let i=0; i<150; i++){
+          const g = gs[Math.floor(Math.random()*gs.length)];
+          const cats = Object.keys(hdb.hands[g]||{});
+          if(!cats.length) continue;
+          const c = cats[Math.floor(Math.random()*cats.length)];
+          const arr = hdb.hands[g][c];
+          if(!arr||!arr.length) continue;
+          const h = arr[Math.floor(Math.random()*arr.length)];
+          const handCopy = JSON.parse(JSON.stringify(h));
+          handCopy.hero = []; 
+          queue.push({
+              street: 'flop',
+              hand: handCopy,
+              lesson: l,
+              ans: g,
+              gid: g,
+              cat: '\u0411\u043e\u0440\u0434',
+              isGuessFlop: true
+          });
+      }
+  }
+  function getBoardSuit(flop) {
     if (!flop || flop.length < 3) return '1';
     const s1=flop[0][1], s2=flop[1][1], s3=flop[2][1];
     if (s1!==s2 && s1!==s3 && s2!==s3) return '1';
@@ -533,7 +582,7 @@ function buildMeta(item){
   if(item.bxb)extra+=`<span class="bdg bl">BxB</span>`;
   return`<span class="bdg" style="background:${gc.color}20;color:${gc.color};border:1px solid ${gc.color}40"><span class="gdot" style="background:${gc.color}"></span>${esc(gc.name)}</span><span class="bdg bc">${esc(item.cat)}</span>${extra}${streetBdg(item.street)}`;
 }
-function showHand(){
+function showHand(){document.getElementById('leftStrategyPanel').style.visibility='hidden';document.getElementById('rightStrategyPanel').style.visibility='hidden';document.getElementById('leftStrategyPanel').innerHTML='';document.getElementById('rightStrategyPanel').innerHTML='';
   if(qIdx>=queue.length){showRes();return}
   if(autoNextTimer){clearTimeout(autoNextTimer);autoNextTimer=null}
   const item=queue[qIdx];const{hand,lesson,street}=item;const cfg=lesson.config;const at=cfg.actionTree||{};
@@ -548,23 +597,59 @@ function showHand(){
     ${hHist?`<div class="hline"></div><div class="hist-row"><span class="hist-label" style="color:#4a90d9">Hero:</span>${hHist}</div>`:''}
     <div class="hline"></div>
     <div class="hero-row"><span class="hero-lbl">Герой</span><div class="hcards">${cards(hand.hero||[])}</div></div>
-    <details class="info-spoiler"${openAttr} id="infoDetails">
-      <summary>Детали раздачи</summary>
-      <div class="info-inner">
-        <div class="meta-row">${metaHtml}</div>
-        <div class="ctx-panel">
+    <div class="ctx-panel" style="border-top:none; padding-top:12px; margin-top:12px;">
           <div class="ctx-item"><div class="ctx-lbl">Урок</div><div class="ctx-val">${esc(lesson.name)}</div></div>
           <div class="ctx-item"><div class="ctx-lbl">Позиция</div><div class="ctx-val">${cfg.heroPosition||'?'} vs ${cfg.villainPosition||'?'}</div></div>
           <div class="ctx-item"><div class="ctx-lbl">Стеки</div><div class="ctx-val">${cfg.heroStack||'?'}bb / ${cfg.villainStack||'?'}bb</div></div>
           <div class="ctx-item"><div class="ctx-lbl">SB/BB</div><div class="ctx-val">${cfg.sb||'?'}/${cfg.bb||'?'}</div></div>
-        </div>
-      </div>
-    </details>`;
-  const det=document.getElementById('infoDetails');if(det)det.addEventListener('toggle',()=>{spoilerOpen=det.open});
+        </div>`;
   buildActBtns(item);document.getElementById('fbPanel').style.display='none';document.getElementById('nextBtn').style.display='none';
+  if(isLearningMode){
+    const s=getBoardSuit(item.hand.flop);
+    let stratKey='';let suitKey='';let grpSuitKey='';
+    if(item.street==='flop'){stratKey=item.gid+'|'+item.cat;suitKey=stratKey+'|'+s;grpSuitKey=item.gid+'|'+s;}
+    else if(item.street==='turn'){stratKey=item.tt+'|'+item.gid+'|'+item.cat;suitKey=stratKey+'|'+s;grpSuitKey=item.tt+'|'+item.gid+'|'+s;}
+    else if(item.street==='river'){stratKey=item.rt+'|'+item.gid+'|'+item.cat;suitKey=stratKey+'|'+s;grpSuitKey=item.rt+'|'+item.gid+'|'+s;}
+    const adb=(item.street==='flop')?appData.flopA:(item.street==='turn')?appData.turnA:(item.bxb?appData.bxbA:appData.riverA);
+    let sGrp='';let sCell='';
+    if(adb&&adb.descriptions){
+      sGrp=(grpSuitKey&&adb.descriptions.groups[grpSuitKey])?adb.descriptions.groups[grpSuitKey]:(adb.descriptions.groups[item.gid]||'');
+      sCell=(suitKey&&adb.descriptions.cells[suitKey])?adb.descriptions.cells[suitKey]:(adb.descriptions.cells[stratKey]||'');
+    }
+    const gc=colorMap[item.gid]||{name:item.gid,color:'#888'};
+    const lp=document.getElementById('leftStrategyPanel');const rp=document.getElementById('rightStrategyPanel');
+    lp.innerHTML=`<h3 style="color:#f59d00;margin-top:0;">&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430; (${esc(gc.name)})</h3><div style="font-size:15px;line-height:1.6;">${(sGrp||'').replace(/\n/g,'<br>')}</div>`;lp.style.visibility='visible';
+rp.innerHTML=`<h3 style="color:#ff3d57;margin-top:0;">&#x0420;&#x0443;&#x043a;&#x0430; (${esc(item.cat)})</h3><div style="font-size:15px;line-height:1.6;">${(sCell||'').replace(/\n/g,'<br>')}</div>`;rp.style.visibility='visible';
+  }
 }
 function buildActBtns(item){
-    const c=document.getElementById('actBtns');c.innerHTML='';
+          const c=document.getElementById('actBtns');c.innerHTML='';
+      if (item.isGuessFlop) {
+          const allGroups = appData.flopA.groups || [];
+          const rows = [[], [], [], [], []];
+          allGroups.forEach(g => {
+              const n = g.name.toLowerCase();
+              if (n === '\u0433\u043e\u0442\u043e\u0432\u0430\u044f' || n === '\u043c\u043e\u043a\u0440\u0430\u044f') rows[0].push(g);
+              else if (n.indexOf('\u0441\u0443\u0445\u0430\u044f') === 0) rows[1].push(g);
+              else if (n.indexOf('\u043d\u0438\u0437\u043a\u0430\u044f') === 0) rows[2].push(g);
+              else if (n.indexOf('\u0441\u043f\u0430\u0440\u0435\u043d\u043d\u0430\u044f') === 0) rows[3].push(g);
+              else rows[4].push(g);
+          });
+          
+          let html = '<div style="display:flex; flex-direction:column; gap:12px; width:100%; align-items:center; margin-top:10px;">';
+          rows.forEach(row => {
+              if (!row.length) return;
+              html += '<div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">';
+              row.forEach(g => {
+                  const gc = colorMap[g.id] || {name: g.id, color: '#888'};
+                  html += `<button class="act-btn" style="background:${gc.color}15; color:${gc.color}; border: 1px solid ${gc.color}60; min-width:180px; max-width:210px; padding: 12px; font-size:14px; font-weight:700; border-radius:10px; transition:all 0.15s; cursor:pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);" onmouseover="this.style.background='${gc.color}30'" onmouseout="this.style.background='${gc.color}15'" onclick="onAnswer('${g.id}')">${esc(gc.name)}</button>`;
+              });
+              html += '</div>';
+          });
+          html += '</div>';
+          c.innerHTML = html;
+          return;
+      }
     const allBtns = [
       {k:'Чек', cls:'ab-chk', l:'✋ Чек'},
       {k:'Бет 25%', cls:'ab-bet', l:'💰 25%'},
@@ -610,6 +695,48 @@ function buildActBtns(item){
         c.appendChild(btn);
     });
 }function onAnswer(ua,item){
+    if (!item && typeof queue !== 'undefined' && typeof qIdx !== 'undefined') item = queue[qIdx];
+    if (item && item.isGuessFlop) {
+        document.querySelectorAll('.act-btn').forEach(b=>b.disabled=true);
+        const ok = (ua === item.ans);
+        if(!statType['GuessGroup'])statType['GuessGroup']={ok:0,tot:0};statType['GuessGroup'].tot++;if(ok)statType['GuessGroup'].ok++;
+        const dTime=Date.now()-handStartTime; totalDecisionTime+=dTime; if (typeof isLearningMode !== 'undefined' && !isLearningMode) { saveLessonStat(item, ok, 'GuessGroup', dTime); }
+        
+        const correctGc = colorMap[item.ans] || {name: item.ans, color: '#888'};
+        const wrongGc = colorMap[ua] || {name: ua, color: '#888'};
+        
+        if (ok) {
+            document.getElementById('fbPanel').innerHTML = `<h3 style="color:#00c97a;margin:0 0 10px 0">&#x0412;&#x0435;&#x0440;&#x043d;&#x043e;!</h3><p style="margin:0">&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430;: <span style="color:${correctGc.color}">${esc(correctGc.name)}</span></p>`;
+        } else {
+            document.getElementById('fbPanel').innerHTML = `<h3 style="color:#ff3d57;margin:0 0 10px 0">&#x041e;&#x0448;&#x0438;&#x0431;&#x043a;&#x0430;!</h3><p style="margin:0">&#x0412;&#x044b; &#x0432;&#x044b;&#x0431;&#x0440;&#x0430;&#x043b;&#x0438;: <span style="color:${wrongGc.color}">${esc(wrongGc.name)}</span><br>&#x041f;&#x0440;&#x0430;&#x0432;&#x0438;&#x043b;&#x044c;&#x043d;&#x043e;: <span style="color:${correctGc.color}">${esc(correctGc.name)}</span></p>`;
+            
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn b-blue';
+            nextBtn.style.marginTop = '15px';
+            nextBtn.textContent = '\u0414\u0430\u043b\u0435\u0435 \u2192';
+            nextBtn.onclick = () => {
+                document.getElementById('fbPanel').style.display = 'none';
+                qIdx++; showHand();
+            };
+            document.getElementById('fbPanel').appendChild(nextBtn);
+        }
+        document.getElementById('fbPanel').style.background = ok ? 'rgba(0,201,122,0.1)' : 'rgba(255,61,87,0.1)';
+        document.getElementById('fbPanel').style.border = '1px solid ' + (ok ? '#00c97a' : '#ff3d57');
+        document.getElementById('fbPanel').style.display = 'block';
+        
+        if(ok) {
+            scOk++;
+            if(autoNextTimer) clearTimeout(autoNextTimer);
+            autoNextTimer=setTimeout(()=>{
+                document.getElementById('fbPanel').style.display = 'none';
+                qIdx++; showHand();
+            },400);
+        } else {
+            scErr++;
+        }
+        updSc();
+        return;
+    }
   document.querySelectorAll('.act-btn').forEach(b=>b.disabled=true);
   const ok=ua===item.ans;if(ok)scOk++;else scErr++;updSc();
   if(!statCat[item.cat])statCat[item.cat]={ok:0,tot:0};statCat[item.cat].tot++;if(ok)statCat[item.cat].ok++;
@@ -617,11 +744,47 @@ function buildActBtns(item){
   let tName = 'Флоп';
   if(item.tt) tName = TT_LBL[item.tt] || item.tt;
   if(item.rt) tName = RT_LBL[item.rt] || item.rt;
-  if(!statType[tName])statType[tName]={ok:0,tot:0};statType[tName].tot++;if(ok)statType[tName].ok++; const dTime=Date.now()-handStartTime; totalDecisionTime+=dTime; saveLessonStat(item, ok, tName, dTime); 
+  if(!statType[tName])statType[tName]={ok:0,tot:0};statType[tName].tot++;if(ok)statType[tName].ok++; const dTime=Date.now()-handStartTime; totalDecisionTime+=dTime; if (!isLearningMode) { saveLessonStat(item, ok, tName, dTime); } 
   const gc=colorMap[item.gid]||{name:item.gid,color:'#888'};
-  const fp=document.getElementById('fbPanel');
-  fp.className=`fb ${ok?'fb-ok':'fb-err'}`;
-  fp.innerHTML=`<div class="fb-ico">${ok?'✅':'❌'}</div><div class="fb-text"><div class="fb-res">${ok?'Верно!':'Неверно!'}</div><div class="fb-det">Ты: <strong>${esc(ua)}</strong> &nbsp;|&nbsp; Правильно: <strong>${esc(item.ans)}</strong><br>Группа: <strong style="color:${gc.color}">${esc(gc.name)}</strong> &nbsp;|&nbsp; Категория: <strong>${esc(item.cat)}</strong></div></div>`;
+  const adb = (item.street === 'flop') ? appData.flopA : (item.street === 'turn') ? appData.turnA : (item.bxb ? appData.bxbA : appData.riverA);
+    const s = getBoardSuit(item.hand.flop);
+    let stratKey = '';
+    let suitKey = '';
+    let grpSuitKey = '';
+    if (item.street === 'flop') {
+        stratKey = item.gid + '|' + item.cat;
+        suitKey = stratKey + '|' + s;
+        grpSuitKey = item.gid + '|' + s;
+    } else if (item.street === 'turn') {
+        stratKey = item.tt + '|' + item.gid + '|' + item.cat;
+        suitKey = stratKey + '|' + s;
+        grpSuitKey = item.tt + '|' + item.gid + '|' + s;
+    } else if (item.street === 'river') {
+        stratKey = item.rt + '|' + item.gid + '|' + item.cat;
+        suitKey = stratKey + '|' + s;
+        grpSuitKey = item.rt + '|' + item.gid + '|' + s;
+    }
+    
+    let strategyGroup = ''; let strategyCell = '';
+    if (adb && adb.descriptions) {
+        strategyGroup = (grpSuitKey && adb.descriptions.groups[grpSuitKey]) ? adb.descriptions.groups[grpSuitKey] : (adb.descriptions.groups[item.gid] || '');
+        strategyCell = (suitKey && adb.descriptions.cells[suitKey]) ? adb.descriptions.cells[suitKey] : (adb.descriptions.cells[stratKey] || '');
+    }    
+    let strategyHtml = '';
+    const lp = document.getElementById('leftStrategyPanel');
+    const rp = document.getElementById('rightStrategyPanel');
+    
+    
+          if (!ok) {
+          lp.innerHTML = `<h3 style="color:#f59d00; margin-top:0;">&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430; (${esc(gc.name)})</h3><div style="font-size:15px; line-height:1.6;">${(strategyGroup||'').replace(/\n/g, '<br>')}</div>`;
+          lp.style.visibility = 'visible';
+          rp.innerHTML = `<h3 style="color:#ff3d57; margin-top:0;">&#x0420;&#x0443;&#x043a;&#x0430; (${esc(item.cat)})</h3><div style="font-size:15px; line-height:1.6;">${(strategyCell||'').replace(/\n/g, '<br>')}</div>`;
+          rp.style.visibility = 'visible';
+      }
+
+    const fp=document.getElementById('fbPanel');
+    fp.className=`fb ${ok?'fb-ok':'fb-err'}`;
+    fp.innerHTML=`<div class="fb-ico">${ok?'&#9989;':'&#10060;'}</div><div class="fb-text" style="width:100%;"><div class="fb-res">${ok?'&#x0412;&#x0435;&#x0440;&#x043D;&#x043E;!':'&#x0415;&#x0448;&#x0438;&#x0431;&#x043a;&#x0430;!'}</div><div class="fb-det">&#x041E;&#x0442;&#x0432;&#x0435;&#x0442;: <strong>${esc(ua)}</strong> &nbsp;&#x124;&nbsp; &#x041f;&#x0440;&#x0430;&#x0432;&#x0438;&#x043b;&#x044c;&#x043D;&#x043E;: <strong>${esc(item.ans)}</strong><br>&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430;: <strong style="color:${gc.color}">${esc(gc.name)}</strong> &nbsp;&#x124;&nbsp; &#x041a;&#x0430;&#x0442;&#x0435;&#x0433;&#x043E;&#x0440;&#x0438;&#x044f;: <strong>${esc(item.cat)}</strong></div></div>`;
   fp.style.display='flex';
   if(ok){autoNextTimer=setTimeout(()=>{qIdx++;showHand()},400)}
   else document.getElementById('nextBtn').style.display='block';
@@ -630,7 +793,7 @@ document.getElementById('nextBtn').onclick=()=>{qIdx++;showHand()};
 document.getElementById('exitBtn').onclick=async()=>{if(await customConfirm('Выйти?')){if(autoNextTimer)clearTimeout(autoNextTimer);ss('s-sel')}};
 function updSc(){document.getElementById('scOk').textContent=scOk;document.getElementById('scErr').textContent=scErr}
 function getOverallPct(){const h=loadHistory();let ok=0,tot=0;h.forEach(s=>{ok+=s.ok;tot+=s.tot});return tot?Math.round(ok/tot*100):0}
-function startTrain(){
+function startTrain(){ isLearningMode = document.getElementById('learningModeCb') ? document.getElementById('learningModeCb').checked : false;
     document.getElementById('scHistPct').textContent=getOverallPct()+'%';
     qIdx=0;scOk=0;scErr=0;statCat={};statGrp={};statType={};updSc();
     totalDecisionTime=0;
