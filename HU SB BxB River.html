@@ -104,7 +104,7 @@
   function getGroupsFromMatrixStorage(){const d=loadFromStorage(MATRIX_STORAGE_KEY);if(d&&d.colors&&Array.isArray(d.colors))return d.colors.map(c=>({id:String(c.id),name:String(c.name||'Без названия')}));return null}
   function getGroupsFromOwnStorage(){const d=loadFromStorage(GROUPS_STORAGE_KEY);if(d&&Array.isArray(d))return d.map(c=>({id:String(c.id),name:String(c.name||'Без названия')}));return null}
   function saveGroupsToOwnStorage(){saveToStorage(GROUPS_STORAGE_KEY,groups)}
-  function saveActionsToStorage(){saveToStorage(STORAGE_KEY,{version:1,groups,categories:HAND_CATEGORIES,actions})}
+  function saveActionsToStorage(){saveToStorage(STORAGE_KEY,{version:1,groups,categories:HAND_CATEGORIES,actions,descriptions})}
   function escapeHtml(t){const d=document.createElement('div');d.textContent=t;return d.innerHTML}
 
   function renderTables(){
@@ -131,7 +131,7 @@
       <button class="btn b-sm b-muted" style="margin-right: 8px;" onclick="toggleSuits('${g.id}')" title="\u041D\u0430\u0441\u0442\u0440\u043E\u0438\u0442\u044C \u043C\u0430\u0441\u0442\u0438">
         ${groupSuits[g.id] ? '[-]' : '[+]'}
       </button>
-      ${escapeHtml(g.name)}
+      ${escapeHtml(g.name)} <button class="btn b-sm b-muted" style="margin-left:5px; padding:2px 5px; font-size:11px; ${descriptions.groups[riverType + '|' + g.id] ? 'color:#00c97a; border-color:#00c97a;' : ''} " onclick="editGrpDesc('${riverType + '|' + g.id}')" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button>
     </td>`;
     HAND_CATEGORIES.forEach(hc => {
       const key = `${riverType}|${g.id}|${hc}`;
@@ -198,7 +198,7 @@
   }
 
   function saveToFile(){
-    const data={version:1,groups,actions};
+    const data={version:1,groups,actions,descriptions};
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
     a.download='HU SB BxB River.json';document.body.appendChild(a);a.click();document.body.removeChild(a);
   }
@@ -213,7 +213,7 @@
         if (d.categories && Array.isArray(d.categories)) { HAND_CATEGORIES = d.categories; } else { const _fc = new Set(); for(const k of Object.keys(d.actions||{})){ const p = k.split('|'); if(p.length>=3) _fc.add(p[2]); } if (_fc.size > 0) { HAND_CATEGORIES = Array.from(_fc); if (typeof getCategoryWeight === 'function') { HAND_CATEGORIES.sort((a, b) => getCategoryWeight(a) - getCategoryWeight(b)); } } } if(!groups.length)throw new Error('Нет групп');
         const vi=new Set();RIVER_TYPES.forEach(rt=>groups.forEach(g=>HAND_CATEGORIES.forEach(hc=>vi.add(`${rt}|${g.id}|${hc}`))));
         const la={};for(const[k,v]of Object.entries(d.actions))if(vi.has(k)&&ACTIONS.includes(v))la[k]=v;
-        actions=la;saveGroupsToOwnStorage();saveActionsToStorage();renderTables();
+        if(d.descriptions) descriptions=d.descriptions; else descriptions={groups:{},cells:{}}; actions=la;saveGroupsToOwnStorage();saveActionsToStorage();renderTables();
       }catch(err){alert('Ошибка: '+err.message)}
     };
     r.readAsText(f);e.target.value='';
@@ -710,7 +710,7 @@
       gDiv.innerHTML=`<h3>${escapeHtml(g.name)}</h3>`;
       for(const rt of RIVER_TYPES){
         const rtDiv=document.createElement('div');rtDiv.style.cssText='margin-left:10px;border-left:3px solid var(--border);padding-left:10px';
-        rtDiv.innerHTML=`<h4 style="color:var(--blue);margin-top:15px">${RT_NAMES[rt]}</h4>`;
+        rtDiv.innerHTML=`<h4 style="color:var(--blue);margin-top:15px">${RT_NAMES[rt]} <button class="btn b-sm b-muted" style="margin-left:5px; padding:2px 5px; font-size:11px; ${descriptions.groups[rt + '|' + g.id] ? 'color:#00c97a; border-color:#00c97a;' : ''} " onclick="editGrpDesc('${rt + '|' + g.id}')" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button></h4>`;
         for(const cat of HAND_CATEGORIES){
           const hands=generatedHands[g.id]?.[rt]?.[cat]||[];
           const cDiv=document.createElement('div');cDiv.className='generated-category';
@@ -740,6 +740,7 @@
       const la={};for(const[k,v]of Object.entries(sd.actions))if(vi.has(k)&&ACTIONS.includes(v))la[k]=v;
       actions=la;
     }else actions={};
+      if(sd&&sd.descriptions) descriptions=sd.descriptions; else descriptions={groups:{},cells:{}};
     if(groups.length)saveGroupsToOwnStorage();
     renderTables();
   }
@@ -809,10 +810,21 @@ document.getElementById('descModalSave').onclick = () => {
             else delete descriptions.cells[currentDescTarget.id];
         }
         saveActionsToStorage();
-        renderTable(); 
+        renderTables(); 
     }
     document.getElementById('descModal').style.display = 'none';
 };
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

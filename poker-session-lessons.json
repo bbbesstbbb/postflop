@@ -95,6 +95,271 @@
     }
   },
   {
+    "id": "lesson_1788124290892",
+    "name": "HU SB CB Flop TP",
+    "config": {
+      "playersCount": 2,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "SB",
+      "heroStack": 25,
+      "villainPosition": "BB",
+      "villainStack": 25,
+      "preflopAggressor": "hero",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "texture",
+      "flopCards": [
+        {
+          "rank": "4",
+          "suit": "h"
+        },
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "Q",
+          "suit": "c"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_orange",
+        "c_yellow",
+        "c_green",
+        "c_blue",
+        "c_1787843692874",
+        "c_pink",
+        "c_1787843026152",
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [
+        "Топ",
+        "ТП топ5",
+        "ТП топ4",
+        "ТП топ3",
+        "ТП топ2",
+        "ТП топ1"
+      ],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "1"
+    }
+  },
+  {
+    "id": "lesson_1788124352221",
+    "name": "HU SB CB Flop MP",
+    "config": {
+      "playersCount": 2,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "SB",
+      "heroStack": 25,
+      "villainPosition": "BB",
+      "villainStack": 25,
+      "preflopAggressor": "hero",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "texture",
+      "flopCards": [
+        {
+          "rank": "4",
+          "suit": "h"
+        },
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "Q",
+          "suit": "c"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_orange",
+        "c_yellow",
+        "c_green",
+        "c_blue",
+        "c_1787843692874",
+        "c_pink",
+        "c_1787843026152",
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [
+        "Мидл",
+        "Мидл топ4",
+        "Мидл топ3",
+        "Мидл топ2",
+        "Мидл топ1"
+      ],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "1"
+    }
+  },
+  {
+    "id": "lesson_1788124415969",
+    "name": "HU SB CB Flop LP",
+    "config": {
+      "playersCount": 2,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "SB",
+      "heroStack": 25,
+      "villainPosition": "BB",
+      "villainStack": 25,
+      "preflopAggressor": "hero",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "texture",
+      "flopCards": [
+        {
+          "rank": "4",
+          "suit": "h"
+        },
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "Q",
+          "suit": "c"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_orange",
+        "c_yellow",
+        "c_green",
+        "c_blue",
+        "c_1787843692874",
+        "c_pink",
+        "c_1787843026152",
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [
+        "Лоу",
+        "Лоу топ4",
+        "Лоу топ3",
+        "Лоу топ2",
+        "Лоу топ1"
+      ],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "1"
+    }
+  },
+  {
     "id": "lesson_1787921989666",
     "name": "HU SB CB Flop Pair",
     "config": {

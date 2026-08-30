@@ -631,8 +631,11 @@ function showHand(){document.getElementById('leftStrategyPanel').style.visibilit
       sCell=(suitKey&&adb.descriptions.cells[suitKey])?adb.descriptions.cells[suitKey]:(adb.descriptions.cells[stratKey]||'');
     }
     const gc=colorMap[item.gid]||{name:item.gid,color:'#888'};
-    const lp=document.getElementById('leftStrategyPanel');const rp=document.getElementById('rightStrategyPanel');
-    lp.innerHTML=`<h3 style="color:#f59d00;margin-top:0;">&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430; (${esc(gc.name)})</h3><div style="font-size:15px;line-height:1.6;">${(sGrp||'').replace(/\n/g,'<br>')}</div>`;lp.style.visibility='visible';
+    let grpTitle = gc.name;
+      if (item.street === 'turn' && item.tt) grpTitle += ' \u2192 ' + (TT_LBL[item.tt] || item.tt);
+      if (item.street === 'river' && item.rt) grpTitle += ' \u2192 ' + (RT_LBL[item.rt] || item.rt);
+      const lp=document.getElementById('leftStrategyPanel');const rp=document.getElementById('rightStrategyPanel');
+      lp.innerHTML=`<h3 style="color:#f59d00;margin-top:0;">&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430; (${esc(grpTitle)})</h3><div style="font-size:15px;line-height:1.6;">${(sGrp||'').replace(/\n/g,'<br>')}</div>`;lp.style.visibility='visible';
 rp.innerHTML=`<h3 style="color:#ff3d57;margin-top:0;">&#x0420;&#x0443;&#x043a;&#x0430; (${esc(item.cat)})</h3><div style="font-size:15px;line-height:1.6;">${(sCell||'').replace(/\n/g,'<br>')}</div>`;rp.style.visibility='visible';
   }
 }
@@ -809,16 +812,20 @@ function buildActBtns(item){
     const rp = document.getElementById('rightStrategyPanel');
     
     
-          if (!ok) {
-          lp.innerHTML = `<h3 style="color:#f59d00; margin-top:0;">&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430; (${esc(gc.name)})</h3><div style="font-size:15px; line-height:1.6;">${(strategyGroup||'').replace(/\n/g, '<br>')}</div>`;
+                let grpTitle = gc.name;
+      if (item.street === 'turn' && item.tt) grpTitle += ' \u2192 ' + (TT_LBL[item.tt] || item.tt);
+      if (item.street === 'river' && item.rt) grpTitle += ' \u2192 ' + (RT_LBL[item.rt] || item.rt);
+
+      if (!ok) {
+          lp.innerHTML = `<h3 style="color:#f59d00; margin-top:0;">&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430; (${esc(grpTitle)})</h3><div style="font-size:15px; line-height:1.6;">${(strategyGroup||'').replace(/\n/g, '<br>')}</div>`;
           lp.style.visibility = 'visible';
           rp.innerHTML = `<h3 style="color:#ff3d57; margin-top:0;">&#x0420;&#x0443;&#x043a;&#x0430; (${esc(item.cat)})</h3><div style="font-size:15px; line-height:1.6;">${(strategyCell||'').replace(/\n/g, '<br>')}</div>`;
           rp.style.visibility = 'visible';
       }
-
-    const fp=document.getElementById('fbPanel');
-    fp.className=`fb ${ok?'fb-ok':'fb-err'}`;
-    fp.innerHTML=`<div class="fb-ico">${ok?'&#9989;':'&#10060;'}</div><div class="fb-text" style="width:100%;"><div class="fb-res">${ok?'&#x0412;&#x0435;&#x0440;&#x043D;&#x043E;!':'&#x0415;&#x0448;&#x0438;&#x0431;&#x043a;&#x0430;!'}</div><div class="fb-det">&#x041E;&#x0442;&#x0432;&#x0435;&#x0442;: <strong>${esc(ua)}</strong> &nbsp;&#x124;&nbsp; &#x041f;&#x0440;&#x0430;&#x0432;&#x0438;&#x043b;&#x044c;&#x043D;&#x043E;: <strong>${esc(item.ans)}</strong><br>&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430;: <strong style="color:${gc.color}">${esc(gc.name)}</strong> &nbsp;&#x124;&nbsp; &#x041a;&#x0430;&#x0442;&#x0435;&#x0433;&#x043E;&#x0440;&#x0438;&#x044f;: <strong>${esc(item.cat)}</strong></div></div>`;
+  
+      const fp=document.getElementById('fbPanel');
+      fp.className=`fb ${ok?'fb-ok':'fb-err'}`;
+      fp.innerHTML=`<div class="fb-ico">${ok?'&#9989;':'&#10060;'}</div><div class="fb-text" style="width:100%;"><div class="fb-res">${ok?'&#x0412;&#x0435;&#x0440;&#x043D;&#x043E;!':'&#x0415;&#x0448;&#x0438;&#x0431;&#x043a;&#x0430;!'}</div><div class="fb-det">&#x041E;&#x0442;&#x0432;&#x0435;&#x0442;: <strong>${esc(ua)}</strong> &nbsp;&#x124;&nbsp; &#x041f;&#x0440;&#x0430;&#x0432;&#x0438;&#x043b;&#x044c;&#x043D;&#x043E;: <strong>${esc(item.ans)}</strong><br>&#x0413;&#x0440;&#x0443;&#x043f;&#x043f;&#x0430;: <strong style="color:${gc.color}">${esc(grpTitle)}</strong> &nbsp;&#x124;&nbsp; &#x041a;&#x0430;&#x0442;&#x0435;&#x0433;&#x043E;&#x0440;&#x0438;&#x044f;: <strong>${esc(item.cat)}</strong></div></div>`;
   fp.style.display='flex';
   if(ok){autoNextTimer=setTimeout(()=>{qIdx++;showHand()},400)}
   else document.getElementById('nextBtn').style.display='block';
