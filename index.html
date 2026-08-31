@@ -545,7 +545,7 @@ function buildQ(){
   const cfg=l.config;
   const gs=cfg.selectedGroups&&cfg.selectedGroups.length?cfg.selectedGroups:Object.keys(hdb.hands||{});
   const cs=cfg.selectedCategories&&cfg.selectedCategories.length?cfg.selectedCategories:['Мусор','Гатшот','Дро','Лоу','Мидл','Топ','Овер','Две пары+'];
-  for(const g of gs){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const c of cs){const arr=gh[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${g}|${c}`];if(!ans)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"flop",hand:h,lesson:l,ans:aa,gid:g,cat:c,suitLbl});}}}
+  for(const g of gs){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const c of cs){const arr=gh[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${g}|${c}`]; const hasSub = adb.actions && (adb.actions[`${g}|${c}|1`] || adb.actions[`${g}|${c}|2`] || adb.actions[`${g}|${c}|3`] || adb.actions[`${g}|${c}|4`] || adb.actions[`${g}|${c}|5`]); if(!ans && !hasSub)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"flop",hand:h,lesson:l,ans:aa,gid:g,cat:c,suitLbl});}}}
 }
 function addTurn(l){
   const hdb=appData.turnH,adb=appData.turnA;if(!hdb||!adb)return;
@@ -553,7 +553,7 @@ function addTurn(l){
   const tts=cfg.selectedTurnTypes&&cfg.selectedTurnTypes.length?cfg.selectedTurnTypes:['over','under','pair'];
   const gs=cfg.selectedGroups&&cfg.selectedGroups.length?cfg.selectedGroups:Object.keys(hdb.hands||{});
   const cs=cfg.selectedTurnCategories&&cfg.selectedTurnCategories.length?cfg.selectedTurnCategories:['Мусор','Гатшот','Дро','Лоу','Мидл','Топ','Овер','Две пары+'];
-  for(const g of gs){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const tt of tts){const tth=gh[tt];if(!tth)continue;for(const c of cs){const arr=tth[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${tt}|${g}|${c}`];if(!ans)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${tt}|${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${tt}|${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"turn",hand:h,lesson:l,ans:aa,gid:g,cat:c,tt,suitLbl});}}}}
+  for(const g of gs){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const tt of tts){const tth=gh[tt];if(!tth)continue;for(const c of cs){const arr=tth[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${tt}|${g}|${c}`]; const hasSub = adb.actions && (adb.actions[`${tt}|${g}|${c}|1`] || adb.actions[`${tt}|${g}|${c}|2`] || adb.actions[`${tt}|${g}|${c}|3`] || adb.actions[`${tt}|${g}|${c}|4`] || adb.actions[`${tt}|${g}|${c}|5`]); if(!ans && !hasSub)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${tt}|${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${tt}|${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"turn",hand:h,lesson:l,ans:aa,gid:g,cat:c,tt,suitLbl});}}}}
 }
 function addRiver(l){
   const cfg=l.config;const rawL=cfg.selectedRiverLine;const lines=Array.isArray(rawL)?rawL:[rawL||'bbb'];
@@ -563,7 +563,7 @@ function addRiver(l){
   for(const line of lines){
     const isBxb=line==='bxb';const hdb=isBxb?appData.bxbH:appData.riverH;const adb=isBxb?appData.bxbA:appData.riverA;
     if(!hdb||!adb)continue;const grps=gs||Object.keys(hdb.hands||{});
-    for(const g of grps){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const rt of rts){const rth=gh[rt];if(!rth)continue;for(const c of cs){const arr=rth[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${rt}|${g}|${c}`];if(!ans)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${rt}|${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${rt}|${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"river",hand:h,lesson:l,ans:aa,gid:g,cat:c,rt,bxb:isBxb,suitLbl});}}}}
+    for(const g of grps){const gh=hdb.hands&&hdb.hands[g];if(!gh)continue;for(const rt of rts){const rth=gh[rt];if(!rth)continue;for(const c of cs){const arr=rth[c];if(!arr||!arr.length)continue;const ans=adb.actions&&adb.actions[`${rt}|${g}|${c}`]; const hasSub = adb.actions && (adb.actions[`${rt}|${g}|${c}|1`] || adb.actions[`${rt}|${g}|${c}|2`] || adb.actions[`${rt}|${g}|${c}|3`] || adb.actions[`${rt}|${g}|${c}|4`] || adb.actions[`${rt}|${g}|${c}|5`]); if(!ans && !hasSub)continue;for(const h of arr){const s=getBoardSuit(h.flop);let aa=adb.actions&&adb.actions[`${rt}|${g}|${c}|${s}`];if(!aa||aa==="-")aa=adb.actions&&adb.actions[`${rt}|${g}|${c}`];if(!aa||aa==="-")continue;const suitLbl=s==="1"?"\u0420\u0430\u0434\u0443\u0433\u0430":s==="2"?"\u0424\u0414":"\u041c\u043e\u043d\u043e\u0442\u043e\u043d";queue.push({street:"river",hand:h,lesson:l,ans:aa,gid:g,cat:c,rt,bxb:isBxb,suitLbl});}}}}
   }
 }
 function card(s){if(!s||s.length<2)return'';const rank=s.slice(0,-1),suit=s.slice(-1).toLowerCase();return`<div class="playing-card ${SUIT_CLS[suit]||''}">${rank}</div>`}
@@ -1114,3 +1114,5 @@ window.customConfirm = function(msg) {
 </script>
 </body>
 </html>
+
+
