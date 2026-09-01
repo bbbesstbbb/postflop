@@ -1,5 +1,214 @@
 [
   {
+    "id": "lesson_1788274272524",
+    "name": "Группы флопа",
+    "config": {
+      "playersCount": 6,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "BTN",
+      "heroStack": 100,
+      "villainPosition": "BB",
+      "villainStack": 100,
+      "preflopAggressor": "villain",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2.5,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "specific",
+      "flopCards": [
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "7",
+          "suit": "h"
+        },
+        {
+          "rank": "2",
+          "suit": "d"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_orange",
+        "c_yellow",
+        "c_green",
+        "c_blue",
+        "c_1787843692874",
+        "c_pink",
+        "c_1787843026152",
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "0",
+      "specialMode": "guess_flop_groups"
+    }
+  },
+  {
+    "id": "lesson_1788271918677",
+    "name": "Низкие",
+    "config": {
+      "playersCount": 6,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "BTN",
+      "heroStack": 100,
+      "villainPosition": "BB",
+      "villainStack": 100,
+      "preflopAggressor": "villain",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2.5,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "specific",
+      "flopCards": [
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "7",
+          "suit": "h"
+        },
+        {
+          "rank": "2",
+          "suit": "d"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_1787843692874",
+        "c_pink",
+        "c_1787843026152"
+      ],
+      "selectedCategories": [],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "0",
+      "specialMode": "guess_flop_groups",
+      "alwaysUnlocked": true
+    }
+  },
+  {
+    "id": "lesson_1788271006558",
+    "name": "Спаренные",
+    "config": {
+      "playersCount": 6,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "BTN",
+      "heroStack": 100,
+      "villainPosition": "BB",
+      "villainStack": 100,
+      "preflopAggressor": "villain",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2.5,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "specific",
+      "flopCards": [
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "7",
+          "suit": "h"
+        },
+        {
+          "rank": "2",
+          "suit": "d"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "0",
+      "specialMode": "guess_flop_groups",
+      "alwaysUnlocked": true
+    }
+  },
+  {
     "id": "lesson_1787309321329",
     "name": "HU SB CB Flop Trash",
     "config": {
@@ -1210,6 +1419,74 @@
         "river": []
       },
       "blockName": "4"
+    }
+  },
+  {
+    "id": "lesson_1788273688737",
+    "name": "Верхние",
+    "config": {
+      "playersCount": 6,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "BTN",
+      "heroStack": 100,
+      "villainPosition": "BB",
+      "villainStack": 100,
+      "preflopAggressor": "villain",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2.5,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "specific",
+      "flopCards": [
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "7",
+          "suit": "h"
+        },
+        {
+          "rank": "2",
+          "suit": "d"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_orange",
+        "c_yellow",
+        "c_green",
+        "c_blue"
+      ],
+      "selectedCategories": [],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "0",
+      "specialMode": "guess_flop_groups",
+      "alwaysUnlocked": true
     }
   }
 ]

@@ -211,25 +211,98 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
     </div>
   </div>
 </div>
+<style>
+/* ===== WITCHER SKILL TREE ===== */
+.rep-screen-wrap { flex:1; overflow-y:auto; padding:20px 26px; }
+.skill-legend { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; align-items:center; }
+.skill-legend-item { display:flex; align-items:center; gap:6px; font-size:12px; color:#a0aabf; }
+.skill-legend-dot { width:14px; height:14px; border-radius:50%; border:2px solid rgba(255,255,255,0.3); flex-shrink:0; }
+
+.skill-block { margin-bottom:32px; }
+.skill-block-title {
+  font-size:13px; font-weight:800; text-transform:uppercase; letter-spacing:1.5px;
+  color:#a0aabf; margin-bottom:14px; padding-bottom:6px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+  display:flex; align-items:center; gap:8px;
+}
+.skill-block-title::before { content:''; display:inline-block; width:3px; height:14px; background:var(--purple); border-radius:2px; }
+.skill-nodes { display:flex; flex-wrap:wrap; gap:10px; }
+
+/* Individual skill node */
+.skill-node {
+  position:relative; width:130px; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center;
+  transition:transform 0.15s;
+}
+.skill-node:hover { transform:translateY(-3px); }
+
+.skill-gem {
+  width:80px; height:80px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:2px;
+  border:3px solid rgba(255,255,255,0.15);
+  box-shadow:0 0 20px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+  transition:box-shadow 0.2s, border-color 0.2s;
+  position:relative; overflow:hidden; text-align:center;
+}
+.skill-gem::before {
+  content:''; position:absolute; top:4px; left:12px; width:30px; height:10px;
+  background:rgba(255,255,255,0.15); border-radius:50%; transform:rotate(-20deg);
+}
+.skill-node:hover .skill-gem {
+  box-shadow:0 0 30px rgba(255,255,255,0.2), inset 0 2px 4px rgba(255,255,255,0.1);
+  border-color:rgba(255,255,255,0.4);
+}
+
+.skill-gem-rank { font-size:11px; font-weight:800; letter-spacing:0.5px; opacity:0.85; }
+.skill-gem-pct  { font-size:14px; font-weight:900; }
+.skill-gem-time { font-size:10px; opacity:0.7; }
+
+/* Rank colors */
+.sk-none    { background:radial-gradient(circle at 40% 35%, #2a2f40, #0d1117); border-color:#1e2540; }
+.sk-iron    { background:radial-gradient(circle at 40% 35%, #4a4e5a, #23272e); border-color:#6b7280; box-shadow:0 0 15px rgba(107,114,128,0.4); }
+.sk-bronze  { background:radial-gradient(circle at 40% 35%, #8b5e3c, #4a2e18); border-color:#cd7f32; box-shadow:0 0 15px rgba(205,127,50,0.4); }
+.sk-silver  { background:radial-gradient(circle at 40% 35%, #8a9ab5, #3a4a60); border-color:#c0c0c0; box-shadow:0 0 15px rgba(192,192,192,0.4); }
+.sk-gold    { background:radial-gradient(circle at 40% 35%, #b8860b, #5a3d00); border-color:#ffd700; box-shadow:0 0 20px rgba(255,215,0,0.5); }
+.sk-plat    { background:radial-gradient(circle at 40% 35%, #a78bfa, #4c1d95); border-color:#a78bfa; box-shadow:0 0 25px rgba(167,139,250,0.6), 0 0 50px rgba(167,139,250,0.2); }
+
+.skill-name {
+  font-size:11px; font-weight:600; text-align:center; margin-top:7px;
+  color:#d0d8ef; line-height:1.3; max-width:110px;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+}
+.skill-sub { font-size:10px; color:#5a6480; text-align:center; margin-top:2px; }
+</style>
+
 <div id="s-rep" class="screen">
-  <div class="sel-hdr" style="margin-bottom:20px;">
-    <h1>&#128202; &#1054;&#1073;&#1097;&#1080;&#1077; &#1086;&#1090;&#1095;&#1077;&#1090;&#1099; &#1087;&#1086; &#1091;&#1088;&#1086;&#1082;&#1072;&#1084;</h1>
+  <div class="sel-hdr" style="flex-shrink:0;">
+    <h1>&#127981; &#1044;&#1077;&#1088;&#1077;&#1074;&#1086; &#1091;&#1084;&#1077;&#1085;&#1080;&#1081;</h1>
     <div class="sel-tbr">
       <button class="btn b-muted" id="repBackBtn">&#8592; &#1053;&#1072;&#1079;&#1072;&#1076;</button>
-      <button class="btn b-sm" style="background:var(--red);color:#fff;" id="clrStatsBtn">&#128465; &#1057;&#1073;&#1088;&#1086;&#1089;&#1080;&#1090;&#1094; &#1089;&#1090;&#1072;&#1090;&#1091;</button>
+      <button class="btn b-sm" style="background:var(--red);color:#fff;" id="clrStatsBtn">&#128465; &#1057;&#1073;&#1088;&#1086;&#1089;&#1080;&#1090;&#1100; &#1089;&#1090;&#1072;&#1090;</button>
     </div>
   </div>
-  <div id="repGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap:15px; margin-bottom: 20px;"></div>
-  
-  <div id="repDetails" style="display:none; background:#0e1628; border:1px solid var(--border); border-radius:var(--r); padding:20px; margin-bottom:30px;">
-    <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
-        <h2 id="repDetTitle" style="margin:0;">&#1054;&#1090;&#1095;&#1077;&#1090;</h2>
-        <button class="btn b-muted b-sm" id="repDetCloseBtn">&#10006; &#1047;&#1072;&#1082;&#1088;&#1099;&#1090;&#1094;</button>
+  <div class="rep-screen-wrap">
+    <div class="skill-legend">
+      <span style="color:#6b7280; font-size:12px; font-weight:700;">&#1056;&#1072;&#1085;&#1075;&#1080;:</span>
+      <span class="skill-legend-item"><span class="skill-legend-dot" style="background:#23272e;border-color:#4a4e5a"></span>&#1046;&#1077;&#1083;&#1077;&#1079;&#1086; (&gt;4&#1089;)</span>
+      <span class="skill-legend-item"><span class="skill-legend-dot" style="background:#4a2e18;border-color:#cd7f32"></span>&#1041;&#1088;&#1086;&#1085;&#1079;&#1072; (&le;4&#1089;)</span>
+      <span class="skill-legend-item"><span class="skill-legend-dot" style="background:#3a4a60;border-color:#c0c0c0"></span>&#1057;&#1077;&#1088;&#1077;&#1073;&#1088;&#1086; (&le;3&#1089;)</span>
+      <span class="skill-legend-item"><span class="skill-legend-dot" style="background:#5a3d00;border-color:#ffd700"></span>&#1047;&#1086;&#1083;&#1086;&#1090;&#1086; (&le;2&#1089;)</span>
+      <span class="skill-legend-item"><span class="skill-legend-dot" style="background:#4c1d95;border-color:#a78bfa"></span>&#1055;&#1083;&#1072;&#1090;&#1080;&#1085;&#1072; (&le;1&#1089;)</span>
     </div>
-    <div style="display:flex; gap:20px; flex-wrap:wrap;">
-        <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;&#1084;</h3><div id="repDetCat"></div></div>
-        
-        <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1075;&#1088;&#1091;&#1087;&#1087;&#1072;&#1084; &#1088;&#1091;&#1082;</h3><div id="repDetGrp"></div></div>
+    <div id="repGrid"></div>
+  </div>
+
+  <div id="repDetails" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(7,11,26,0.96); z-index:1000; overflow-y:auto;">
+    <div style="padding:25px; max-width:900px; margin:0 auto;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+          <h2 id="repDetTitle" style="margin:0;">&#1054;&#1090;&#1095;&#1077;&#1090;</h2>
+          <button class="btn b-muted b-sm" id="repDetCloseBtn">&#10006; &#1047;&#1072;&#1082;&#1088;&#1099;&#1090;&#1100;</button>
+      </div>
+      <div style="display:flex; gap:20px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;&#1084;</h3><div id="repDetCat"></div></div>
+          <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1075;&#1088;&#1091;&#1087;&#1087;&#1072;&#1084; &#1088;&#1091;&#1082;</h3><div id="repDetGrp"></div></div>
       </div>
       <div id="repDetChartContainer" style="margin-top:30px; display:none;">
           <h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1044;&#1080;&#1085;&#1072;&#1084;&#1080;&#1082;&#1072; &#1089;&#1082;&#1086;&#1088;&#1086;&#1089;&#1090;&#1080; (&#1089;&#1077;&#1082;/&#1086;&#1090;&#1074;)</h3>
@@ -237,6 +310,7 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
       </div>
     </div>
   </div>
+</div>
 <script>
 const DB='pokerDB_v4',ST='d',HIST_KEY='trainerSessionHistory_v1';
 let db,appData={},colorMap={},queue=[],qIdx=0,scOk=0,scErr=0,statCat={},statGrp={},statType={},selIds=new Set();
@@ -376,14 +450,6 @@ function streetBdg(s){return{flop:'<span class="bdg bf">Флоп</span>',turn:'<
 function buildSel(){
           let lsStats = {};
       try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
-      if (appData.flopA && appData.flopH && appData.lessons && !appData.lessons.find(l=>l.id==='guess_flop_groups')) {
-                      appData.lessons.unshift({
-                id: 'guess_flop_groups',
-                name: '\u0422\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0430 \u0431\u043e\u0440\u0434\u043e\u0432 (\u0423\u0433\u0430\u0434\u0430\u0439 \u0433\u0440\u0443\u043f\u043f\u0443 \u0444\u043b\u043e\u043f\u0430)',
-                config: { blockName: '\u0421\u043f\u0435\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0435 \u0442\u0440\u0435\u043d\u0438\u0440\u043e\u0432\u043a\u0438' },
-                specialMode: 'guess_flop_groups'
-            });
-      }
       const ls=appData.lessons;if(!ls||!ls.length){document.getElementById('lgrid').innerHTML='<p style="color:var(--muted)">\u0423\u0440\u043e\u043a\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b</p>';return}
     const g=document.getElementById('lgrid');g.innerHTML='';
     g.style.display = 'block';
@@ -437,7 +503,9 @@ function buildSel(){
             let isUnlocked = false;
             let reqText = '';
             
-            if (r === 0 && c === 0) {
+            if (l.config && l.config.alwaysUnlocked) {
+                isUnlocked = true;
+            } else if (r === 0 && c === 0) {
                 isUnlocked = true;
             } else if (c > 0) {
                 const prev = blk.lessons[c-1];
@@ -500,7 +568,7 @@ function buildQ(){
   const ls=appData.lessons.filter(l=>selIds.has(l.id));
   ls.forEach(l=>{if(!sessionLessonNames.includes(l.name))sessionLessonNames.push(l.name)});
   for(const l of ls){
-        if (l.specialMode === 'guess_flop_groups') addGuessFlop(l);
+        if (l.specialMode === 'guess_flop_groups' || (l.config && l.config.specialMode === 'guess_flop_groups')) addGuessFlop(l);
         else {
             const s=getStreet(l);
             if(s==='flop')addFlop(l);else if(s==='turn')addTurn(l);else addRiver(l);
@@ -510,7 +578,7 @@ function buildQ(){
 }
   function addGuessFlop(l) {
       const hdb=appData.flopH; if(!hdb||!hdb.hands)return;
-      const gs = Object.keys(hdb.hands);
+      let gs = l.config.selectedGroups || []; if (!gs.length) gs = Object.keys(hdb.hands);
       if(!gs.length)return;
       for(let i=0; i<150; i++){
           const g = gs[Math.floor(Math.random()*gs.length)];
@@ -944,43 +1012,85 @@ if(clrStatsBtn) clrStatsBtn.onclick = async () => { if(await customConfirm('РЈ
 const repDetCloseBtn = document.getElementById('repDetCloseBtn');
 if(repDetCloseBtn) repDetCloseBtn.onclick = () => { document.getElementById('repDetails').style.display='none'; };
 
-function buildRep() { document.getElementById('repDetails').style.display='none';
+function getSkillRank(avgTimeSec) {
+    if (avgTimeSec === null) return { rank: 'none', label: '', cls: 'sk-none' };
+    if (avgTimeSec <= 1)     return { rank: 'plat',   label: '🔮 Платина', cls: 'sk-plat' };
+    if (avgTimeSec <= 2)     return { rank: 'gold',   label: '🏆 Золото',  cls: 'sk-gold' };
+    if (avgTimeSec <= 3)     return { rank: 'silver', label: '🥈 Серебро', cls: 'sk-silver' };
+    if (avgTimeSec <= 4)     return { rank: 'bronze', label: '🥉 Бронза',  cls: 'sk-bronze' };
+    return                          { rank: 'iron',   label: '⚙️ Железо',  cls: 'sk-iron' };
+}
+
+function buildRep() {
+    document.getElementById('repDetails').style.display='none';
     let lsStats = {};
     try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
     const rg = document.getElementById('repGrid');
     rg.innerHTML = '';
     const ls = appData.lessons || [];
-    if (!ls.length) { rg.innerHTML = '<div class="hint">\u041d\u0435\u0442 \u0443\u0440\u043e\u043a\u043e\u0432</div>'; return; }
-    
+    if (!ls.length) { rg.innerHTML = '<div class="hint">Нет уроков</div>'; return; }
+
+    // Group by blockName
+    const blocks = [];
     ls.forEach(l => {
-        const st = lsStats[l.id];
-        const ok = st ? st.ok : 0;
-        const tot = st ? st.tot : 0;
-        const pct = tot ? Math.round(ok/tot*100) : 0;
-        const col = tot===0 ? '#555' : (pct>=80 ? '#00c97a' : pct>=60 ? '#f59d00' : '#ff3d57');
-        
-        const card = document.createElement('div');
-        card.style.background = '#1a2235';
-        card.style.border = '1px solid ' + (tot===0 ? 'var(--border)' : col);
-        card.style.borderRadius = 'var(--r)';
-        card.style.padding = '15px';
-        card.style.cursor = tot===0 ? 'default' : 'pointer';
-        card.style.transition = 'background 0.2s';
-        if (tot > 0) {
-            card.onclick = () => showRepDet(l.name, st);
-            card.onmouseover = () => card.style.background = '#222b40';
-            card.onmouseout = () => card.style.background = '#1a2235';
-        }
-        
-        card.innerHTML = `
-            <div style="font-weight:bold; margin-bottom:10px; font-size:14px;">${esc(l.name)}</div>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#a0aabf; font-size:12px;">\u041e\u0442\u0432\u0435\u0442\u043e\u0432: ${tot}<br>\u0421\u043a\u043e\u0440: ${st && st.totTime && tot ? (st.totTime/tot/1000).toFixed(1)+" \u0441/\u043e" : "-"}</span>
-                <span style="font-size:18px; font-weight:bold; color:${col}">${tot===0 ? '-' : pct+'%'}</span>
-            </div>
-            ${tot>0 ? `<div style="width:100%; height:4px; background:#0e1628; border-radius:2px; margin-top:10px; overflow:hidden;"><div style="height:100%; width:${pct}%; background:${col};"></div></div>` : ''}
-        `;
-        rg.appendChild(card);
+        const bName = (l.config && l.config.blockName) || 'Основной блок';
+        let blk = blocks.find(b => b.name === bName);
+        if (!blk) { blk = { name: bName, items: [] }; blocks.push(blk); }
+        blk.items.push(l);
+    });
+
+    blocks.forEach(blk => {
+        const blockDiv = document.createElement('div');
+        blockDiv.className = 'skill-block';
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'skill-block-title';
+        titleDiv.textContent = blk.name;
+        blockDiv.appendChild(titleDiv);
+
+        const nodesDiv = document.createElement('div');
+        nodesDiv.className = 'skill-nodes';
+
+        blk.items.forEach(l => {
+            const st = lsStats[l.id];
+            const tot = st ? st.tot : 0;
+            const ok  = st ? st.ok  : 0;
+            const pct = tot ? Math.round(ok/tot*100) : null;
+
+            // Calc avg of last 5 sessions from timeHistory
+            let avgTimeSec = null;
+            if (st && st.timeHistory && st.timeHistory.length > 0) {
+                const last5 = st.timeHistory.slice(-5);
+                const sum = last5.reduce((s, x) => s + (x.time || 0), 0);
+                avgTimeSec = sum / last5.length;
+            }
+
+            const rankInfo = tot === 0 ? { rank: 'none', label: '', cls: 'sk-none' } : getSkillRank(avgTimeSec);
+
+            const node = document.createElement('div');
+            node.className = 'skill-node';
+            if (tot > 0) {
+                node.onclick = () => showRepDet(l.name, st);
+            }
+
+            const pctStr = pct !== null ? pct + '%' : '—';
+            const timeStr = avgTimeSec !== null ? avgTimeSec.toFixed(1) + 'с' : '';
+            const rankLabel = rankInfo.rank !== 'none' ? rankInfo.label.split(' ').slice(1).join(' ') : '';
+
+            node.innerHTML = `
+                <div class="skill-gem ${rankInfo.cls}">
+                    <span class="skill-gem-rank">${rankLabel}</span>
+                    <span class="skill-gem-pct">${pctStr}</span>
+                    ${timeStr ? `<span class="skill-gem-time">⏱ ${timeStr}</span>` : ''}
+                </div>
+                <div class="skill-name">${esc(l.name)}</div>
+                ${tot > 0 ? `<div class="skill-sub">${tot} отв.</div>` : '<div class="skill-sub">Не пройден</div>'}
+            `;
+            nodesDiv.appendChild(node);
+        });
+
+        blockDiv.appendChild(nodesDiv);
+        rg.appendChild(blockDiv);
     });
 }
 
@@ -1081,15 +1191,7 @@ function showRepDet(name, st) {
 
 init();
 </script>
-<div id="cModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
-  <div style="background:#1a2235; padding:20px; border-radius:10px; min-width:300px; text-align:center; border:1px solid #333;">
-    <div id="cModalText" style="margin-bottom:20px; font-size:16px;"></div>
-    <div style="display:flex; gap:10px; justify-content:center;">
-      <button id="cModalOk" class="btn" style="background:#0984e3;color:#fff;">OK</button>
-      <button id="cModalCancel" class="btn b-muted">&#x041e;&#x0442;&#x043c;&#x0435;&#x043d;&#x0430;</button>
-    </div>
-  </div>
-</div>
+
 <script>
 window.customAlert = function(msg) {
   return new Promise(resolve => {
@@ -1112,7 +1214,22 @@ window.customConfirm = function(msg) {
   });
 };
 </script>
+<div id="cModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:#1a2235; padding:20px; border-radius:10px; min-width:300px; text-align:center; border:1px solid #333;">
+    <div id="cModalText" style="margin-bottom:20px; font-size:16px;"></div>
+    <div style="display:flex; gap:10px; justify-content:center;">
+      <button id="cModalOk" class="btn" style="background:#0984e3;color:#fff;">OK</button>
+      <button id="cModalCancel" class="btn b-muted">&#x041e;&#x0442;&#x043c;&#x0435;&#x043d;&#x0430;</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
+
+
+
+
+
+
 
 
