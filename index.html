@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -272,6 +272,10 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
 }
 .skill-sub { font-size:10px; color:#5a6480; text-align:center; margin-top:2px; }
+/* Selected state in lesson picker */
+.gem-selected { outline:3px solid #fff; outline-offset:3px; }
+.sel-node-active .skill-name { color:#fff; font-weight:800; }
+.skill-node.sel-node { user-select:none; }
 </style>
 
 <div id="s-rep" class="screen">
@@ -448,118 +452,112 @@ function lp(m){document.getElementById('lprog').textContent=m}
 function getStreet(l){const at=l.config.actionTree||{};if(!(at.river||[]).length&&(at.turn||[]).length)return'river';if(!(at.turn||[]).length&&(at.flop||[]).length)return'turn';return'flop'}
 function streetBdg(s){return{flop:'<span class="bdg bf">Флоп</span>',turn:'<span class="bdg bt">Терн</span>',river:'<span class="bdg br">Ривер</span>'}[s]||''}
 function buildSel(){
-          let lsStats = {};
-      try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
-      const ls=appData.lessons;if(!ls||!ls.length){document.getElementById('lgrid').innerHTML='<p style="color:var(--muted)">\u0423\u0440\u043e\u043a\u0438 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u044b</p>';return}
-    const g=document.getElementById('lgrid');g.innerHTML='';
+    let lsStats = {};
+    try { lsStats = JSON.parse(localStorage.getItem('lessonStats_v1') || '{}'); } catch(e){}
+    const ls = appData.lessons;
+    const g = document.getElementById('lgrid');
+    g.innerHTML = '';
     g.style.display = 'block';
-    
+    if(!ls||!ls.length){ g.innerHTML='<p style="color:var(--muted)">Уроки не найдены</p>'; return; }
+
     const hist = loadHistory();
     const mastered = new Set();
     hist.forEach(s => {
-        if (s.pct === 100) {
-            const lnames = s.lessons.split(', ');
-            lnames.forEach(n => mastered.add(n));
-        }
+        if (s.pct === 100) { s.lessons.split(', ').forEach(n => mastered.add(n)); }
     });
-    
+
     const blocks = [];
     const blockMap = new Map();
     ls.forEach(l => {
-        const bName = (l.config && l.config.blockName) || '\u041e\u0441\u043d\u043e\u0432\u043d\u043e\u0439 \u0431\u043b\u043e\u043a';
-        if (!blockMap.has(bName)) {
-            blockMap.set(bName, blocks.length);
-            blocks.push({ name: bName, lessons: [] });
-        }
+        const bName = (l.config && l.config.blockName) || 'Основной блок';
+        if (!blockMap.has(bName)) { blockMap.set(bName, blocks.length); blocks.push({ name: bName, lessons: [] }); }
         blocks[blockMap.get(bName)].lessons.push(l);
     });
 
     blocks.forEach((blk, r) => {
-        const blkDiv = document.createElement('div');
-        blkDiv.style.marginBottom = '25px';
-        blkDiv.style.border = '2px solid var(--border)';
-        blkDiv.style.borderRadius = 'var(--r)';
-        blkDiv.style.padding = '15px';
-        blkDiv.style.background = '#0e1628';
-        
-        const bNameEl = document.createElement('h3');
-        bNameEl.textContent = blk.name;
-        bNameEl.style.marginTop = '0';
-        bNameEl.style.marginBottom = '15px';
-        bNameEl.style.fontSize = '16px';
-        bNameEl.style.color = 'var(--text)';
-        bNameEl.style.borderBottom = '1px solid var(--border)';
-        bNameEl.style.paddingBottom = '8px';
-        blkDiv.appendChild(bNameEl);
-        
-        const grid = document.createElement('div');
-        grid.className = 'lgrid';
-        grid.style.marginBottom = '0';
-        grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
-        grid.style.gap = '12px';
-        
+        const blockDiv = document.createElement('div');
+        blockDiv.className = 'skill-block';
+        const titleEl = document.createElement('div');
+        titleEl.className = 'skill-block-title';
+        titleEl.textContent = blk.name;
+        blockDiv.appendChild(titleEl);
+        const nodesDiv = document.createElement('div');
+        nodesDiv.className = 'skill-nodes';
+
         blk.lessons.forEach((l, c) => {
-            let isUnlocked = false;
-            let reqText = '';
-            
+            let isUnlocked = false, reqText = '';
             if (l.config && l.config.alwaysUnlocked) {
                 isUnlocked = true;
             } else if (r === 0 && c === 0) {
                 isUnlocked = true;
             } else if (c > 0) {
-                const prev = blk.lessons[c-1];
-                isUnlocked = mastered.has(prev.name);
-                reqText = `(\u041f\u0440\u043e\u0439\u0434\u0438\u0442\u0435 \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0438\u0439 \u043d\u0430 100%)`;
+                isUnlocked = mastered.has(blk.lessons[c-1].name);
+                reqText = 'Пройдите предыдущий на 100%';
             } else if (c === 0 && r > 0) {
-                const prevBlockFirst = blocks[r-1].lessons[0];
-                isUnlocked = mastered.has(prevBlockFirst.name);
-                reqText = `(\u041f\u0440\u043e\u0439\u0434\u0438\u0442\u0435 1-\u0439 \u0443\u0440\u043e\u043a \u043f\u0440\u0435\u0434\u044b\u0434\u0443\u0449\u0435\u0433\u043e \u0431\u043b\u043e\u043a\u0430 \u043d\u0430 100%)`;
+                isUnlocked = mastered.has(blocks[r-1].lessons[0].name);
+                reqText = 'Пройдите 1-й урок пред. блока на 100%';
             }
-            
-            let l_ok=0, l_tot=0;
-            hist.forEach(s=>{if(s.lessons&&s.lessons.split(', ').includes(l.name)){l_ok+=s.ok;l_tot+=s.tot;}});
-            const l_pct = l_tot ? Math.round(l_ok/l_tot*100) : null;
-            const pctCol = l_pct>=80?'#00c97a':l_pct>=60?'#f59d00':'#ff3d57';
-            const pctBdg = l_pct!==null ? `<span class="bdg" style="background:${pctCol}20;color:${pctCol};border:1px solid ${pctCol}">${l_pct}%</span>` : '';
-            
-            const cfg=l.config,st=getStreet(l);
-            const cats=st==='flop'?cfg.selectedCategories||[]:st==='turn'?cfg.selectedTurnCategories||[]:cfg.selectedRiverCategories||[];
-            const grps=cfg.selectedGroups||[];
-            const rawL=cfg.selectedRiverLine;const lines=Array.isArray(rawL)?rawL:[rawL||'bbb'];
-            const lineLabel=lines.map(x=>x==='bxb'?'BxB':'BBB').join('+');
-            const card=document.createElement('div');card.className='lcard';card.dataset.id=l.id;
-            
-            if (!isUnlocked) {
-                card.style.opacity = '0.5';
-                card.style.pointerEvents = 'none';
-                card.innerHTML=`<input type="checkbox" disabled><div class="info"><div class="nm">&#128274; ${esc(l.name)} <br><span style="font-size:12px;font-weight:normal;color:#999">${reqText}</span></div><div class="bgs">${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div></div>`;
-            } else {
-                              const lStats = lsStats[l.id]; let tStr='';
-              if(lStats && lStats.tot > 0 && lStats.totTime > 0){
-                  const avgTotal = (lStats.totTime/lStats.tot/1000).toFixed(1);
-                    tStr = `<div style="font-size:12px;color:var(--muted);margin-top:6px;">&#128337; ${avgTotal} &#x0441;&#x0435;&#x043a;/&#x043e;&#x0442;&#x0432;`;
-                    if (lStats.lastAvgTime) {
-                        tStr += ` <span style="opacity:0.6; margin-left:8px;">(\u043f\u043e\u0441\u043b: ${lStats.lastAvgTime})</span>`;
+
+            const st = lsStats[l.id];
+            const tot = st ? st.tot : 0;
+            const ok  = st ? st.ok  : 0;
+            const pct = tot ? Math.round(ok/tot*100) : null;
+
+            let avgTimeSec = null;
+            if (st && st.timeHistory && st.timeHistory.length > 0) {
+                const last5 = st.timeHistory.slice(-5);
+                avgTimeSec = last5.reduce((s, x) => s + (x.time || 0), 0) / last5.length;
+            }
+
+            const rankInfo = (tot === 0 || !isUnlocked) ? { rank: 'none', label: '', cls: 'sk-none' } : getSkillRank(avgTimeSec);
+            const isSel = selIds.has(l.id);
+
+            const node = document.createElement('div');
+            node.className = 'skill-node sel-node' + (isSel ? ' sel-node-active' : '');
+            node.dataset.lid = l.id;
+            if (!isUnlocked) node.style.opacity = '0.35';
+
+            const pctStr = pct !== null ? pct + '%' : (isUnlocked ? '—' : '🔒');
+            const timeStr = avgTimeSec !== null ? avgTimeSec.toFixed(1) + 'с' : '';
+            const rankLabel = (rankInfo.rank !== 'none') ? rankInfo.label.split(' ').slice(1).join(' ') : '';
+
+            node.innerHTML =
+                '<div class="skill-gem ' + rankInfo.cls + (isSel ? ' gem-selected' : '') + '">' +
+                '<span class="skill-gem-rank">' + rankLabel + '</span>' +
+                '<span class="skill-gem-pct">' + pctStr + '</span>' +
+                (timeStr ? '<span class="skill-gem-time">⏱ ' + timeStr + '</span>' : '') +
+                '</div>' +
+                '<div class="skill-name">' + esc(l.name) + '</div>' +
+                (tot > 0 ? '<div class="skill-sub">' + tot + ' отв.</div>' :
+                    (isUnlocked ? '<div class="skill-sub">Не пройден</div>' :
+                        '<div class="skill-sub" style="color:#a07040;font-size:9px">' + reqText + '</div>'));
+
+            if (isUnlocked) {
+                node.style.cursor = 'pointer';
+                node.addEventListener('click', () => {
+                    const gem = node.querySelector('.skill-gem');
+                    if (selIds.has(l.id)) {
+                        selIds.delete(l.id);
+                        node.classList.remove('sel-node-active');
+                        if(gem) gem.classList.remove('gem-selected');
+                    } else {
+                        selIds.add(l.id);
+                        node.classList.add('sel-node-active');
+                        if(gem) gem.classList.add('gem-selected');
                     }
-                    tStr += `</div>`;
-              }
-              card.innerHTML=`<input type="checkbox" data-id="${l.id}"><div class="info"><div class="nm">${esc(l.name)}</div><div class="bgs">${pctBdg}${streetBdg(st)}${cats.length?`<span class="bdg bc">${cats.join(', ')}</span>`:''}${grps.length?`<span class="bdg bg">${grps.length} \u0433\u0440\u0443\u043f\u043f</span>`:'<span class="bdg bg">\u0412\u0441\u0435 \u0433\u0440\u0443\u043f\u043f\u044b</span>'}${st==='river'?`<span class="bdg bl">${lineLabel}</span>`:''}</div>${tStr}</div>`;
-                const cb=card.querySelector('input');
-                if(selIds.has(l.id)){cb.checked=true;card.classList.add('sel')}
-                const tog=()=>{if(cb.checked){selIds.add(l.id);card.classList.add('sel')}else{selIds.delete(l.id);card.classList.remove('sel')}updFtr()};
-                cb.addEventListener('change',tog);card.addEventListener('click',e=>{if(e.target.type==='checkbox')return;cb.checked=!cb.checked;tog()});
+                    updFtr();
+                });
             }
-            grid.appendChild(card);
+            nodesDiv.appendChild(node);
         });
-        blkDiv.appendChild(grid);
-        g.appendChild(blkDiv);
+        blockDiv.appendChild(nodesDiv);
+        g.appendChild(blockDiv);
     });
     updFtr();
 }
 function updFtr(){const n=selIds.size;document.getElementById('selCnt').textContent=n?`Выбрано: ${n}`:'Не выбрано';document.getElementById('startBtn').disabled=!n}
-document.getElementById('selAll').onclick=()=>{document.querySelectorAll('#lgrid input:not([disabled])').forEach(cb=>{cb.checked=true;cb.closest('.lcard').classList.add('sel');selIds.add(cb.dataset.id)});updFtr()};
-document.getElementById('deselAll').onclick=()=>{document.querySelectorAll('#lgrid input').forEach(cb=>{cb.checked=false;cb.closest('.lcard').classList.remove('sel')});selIds.clear();updFtr()};
+document.getElementById('selAll').onclick=()=>{document.querySelectorAll('.sel-node').forEach(node=>{const lid=node.dataset.lid;if(lid&&node.style.opacity!=='0.35'){selIds.add(lid);node.classList.add('sel-node-active');const gem=node.querySelector('.skill-gem');if(gem)gem.classList.add('gem-selected');}});updFtr()};
+document.getElementById('deselAll').onclick=()=>{selIds.clear();document.querySelectorAll('.sel-node').forEach(node=>{node.classList.remove('sel-node-active');const gem=node.querySelector('.skill-gem');if(gem)gem.classList.remove('gem-selected');});updFtr()};
 document.getElementById('clrCache').onclick=async()=>{if(!await customConfirm('Очистить кэш?'))return;await iClr();appData={};ss('s-load');buildFList()};
 document.getElementById('startBtn').onclick=async()=>{buildQ();if(!queue.length){await customAlert('Нет раздач.');return}startTrain()};
 function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}}
