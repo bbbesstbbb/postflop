@@ -4,57 +4,68 @@
     {
       "id": "c_orange",
       "name": "Готовая",
-      "color": "#8e44ad"
+      "color": "#8e44ad",
+      "row": 1
     },
     {
       "id": "c_yellow",
       "name": "Мокрая",
-      "color": "#0984e3"
+      "color": "#0984e3",
+      "row": 1
     },
     {
       "id": "c_green",
-      "name": "2в1",
-      "color": "#00b894"
+      "name": "2верх1низ",
+      "color": "#00b894",
+      "row": 2
     },
     {
       "id": "c_blue",
-      "name": "1в2",
-      "color": "#55efc4"
+      "name": "1верх2низ",
+      "color": "#55efc4",
+      "row": 2
     },
     {
       "id": "c_1787843692874",
       "name": "Целая",
-      "color": "#e17055"
+      "color": "#e797dd",
+      "row": 3
     },
     {
       "id": "c_pink",
       "name": "Дырка",
-      "color": "#00cec9"
+      "color": "#33f0ed",
+      "row": 3
     },
     {
       "id": "c_1787843026152",
-      "name": "Мусор",
-      "color": "#fdcb6e"
+      "name": "Сухая",
+      "color": "#fdcb6e",
+      "row": 3
     },
     {
       "id": "c_red",
-      "name": "Верх (3в/1в2)",
-      "color": "#d63031"
+      "name": "Верхние",
+      "color": "#d63031",
+      "row": 4
     },
     {
       "id": "c_1787852906628",
-      "name": "Сред (2в1)",
-      "color": "#ff7675"
+      "name": "Средние",
+      "color": "#ff7675",
+      "row": 4
     },
     {
       "id": "c_purple",
-      "name": "Низ (3н)",
-      "color": "#ffb8b8"
+      "name": "Нижние",
+      "color": "#ffb8b8",
+      "row": 4
     },
     {
       "id": "c_1787843291880",
       "name": "Трио",
-      "color": "#6c0000"
+      "color": "#6c0000",
+      "row": 5
     }
   ],
   "assignments": {

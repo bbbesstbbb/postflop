@@ -352,7 +352,7 @@ async function tryCache(){
   d.bxbA=await iGet('bxbA')||null;d.bxbH=await iGet('bxbH')||null;appData=d;mkClrMap();return true;
 }
 function mkClrMap(){
-  colorMap={}; let grpIdx=0; const c=appData.colors;if(c&&c.colors)c.colors.forEach(x=>{colorMap[x.id]={name:x.name,color:x.color||GRP_CLR[x.id]||'#888', idx: grpIdx++}}); const g=appData.flopA&&appData.flopA.groups;if(g)g.forEach(x=>{if(!colorMap[x.id])colorMap[x.id]={name:x.name,color:GRP_CLR[x.id]||'#888', idx: grpIdx++};else colorMap[x.id].idx = grpIdx++;});
+  colorMap={}; let grpIdx=0; const c=appData.colors;if(c&&c.colors)c.colors.forEach(x=>{colorMap[x.id]={name:x.name,color:x.color||GRP_CLR[x.id]||'#888', idx: grpIdx++, row: x.row || 1}}); const g=appData.flopA&&appData.flopA.groups;if(g)g.forEach(x=>{if(!colorMap[x.id]){colorMap[x.id]={name:x.name,color:GRP_CLR[x.id]||'#888', idx: grpIdx++, row: x.row || 5};}else{colorMap[x.id].idx = grpIdx++; if(x.row !== undefined) colorMap[x.id].row = x.row;}});
 }
 function buildFList(){document.getElementById('flist').innerHTML=FDEFS.map(f=>`<li id="fs_${f.k}">${FLBL[f.k]}</li>`).join('')}
 function markF(k){const e=document.getElementById('fs_'+k);if(e)e.className='ok'}
@@ -695,6 +695,12 @@ function showHand(){document.getElementById('leftStrategyPanel').style.visibilit
     if(adb&&adb.descriptions){
       sGrp=(grpSuitKey&&adb.descriptions.groups[grpSuitKey])?adb.descriptions.groups[grpSuitKey]:(adb.descriptions.groups[item.gid]||'');
       sCell=(suitKey&&adb.descriptions.cells[suitKey])?adb.descriptions.cells[suitKey]:(adb.descriptions.cells[stratKey]||'');
+      if (!sCell && adb.descriptions.columns) {
+          let colKey = item.cat;
+          if (item.street === 'turn' && item.tt) colKey = item.tt + '|' + item.cat;
+          if (item.street === 'river' && item.rt) colKey = item.rt + '|' + item.cat;
+          sCell = adb.descriptions.columns[colKey] || '';
+      }
     }
     const gc=colorMap[item.gid]||{name:item.gid,color:'#888'};
     let grpTitle = gc.name;
@@ -711,13 +717,19 @@ function buildActBtns(item){
           const allGroups = appData.flopA.groups || [];
           const rows = [[], [], [], [], []];
           allGroups.forEach(g => {
-              const n = g.name.toLowerCase();
-              if (n === '\u0433\u043e\u0442\u043e\u0432\u0430\u044f' || n === '\u043c\u043e\u043a\u0440\u0430\u044f') rows[0].push(g);
-              else if (n.indexOf('\u0441\u0443\u0445\u0430\u044f') === 0) rows[1].push(g);
-              else if (n.indexOf('\u043d\u0438\u0437\u043a\u0430\u044f') === 0) rows[2].push(g);
-              else if (n.indexOf('\u0441\u043f\u0430\u0440\u0435\u043d\u043d\u0430\u044f') === 0) rows[3].push(g);
-              else rows[4].push(g);
+              const gc = colorMap[g.id] || {};
+              let r = parseInt(gc.row) - 1;
+              if (isNaN(r) || r < 0 || r > 4) {
+                  const n = g.name.toLowerCase();
+                  if (n === '\u0433\u043e\u0442\u043e\u0432\u0430\u044f' || n === '\u043c\u043e\u043a\u0440\u0430\u044f') r = 0;
+                  else if (n.indexOf('\u0441\u0443\u0445\u0430\u044f') === 0) r = 1;
+                  else if (n.indexOf('\u043d\u0438\u0437\u043a\u0430\u044f') === 0) r = 2;
+                  else if (n.indexOf('\u0441\u043f\u0430\u0440\u0435\u043d\u043d\u0430\u044f') === 0) r = 3;
+                  else r = 4;
+              }
+              rows[r].push(g);
           });
+          rows.forEach(r => r.sort((a,b) => (colorMap[a.id]?.idx || 0) - (colorMap[b.id]?.idx || 0)));
           
           c.innerHTML = '';
           const wrap = document.createElement('div');
@@ -872,6 +884,12 @@ function buildActBtns(item){
     if (adb && adb.descriptions) {
         strategyGroup = (grpSuitKey && adb.descriptions.groups[grpSuitKey]) ? adb.descriptions.groups[grpSuitKey] : (adb.descriptions.groups[item.gid] || '');
         strategyCell = (suitKey && adb.descriptions.cells[suitKey]) ? adb.descriptions.cells[suitKey] : (adb.descriptions.cells[stratKey] || '');
+        if (!strategyCell && adb.descriptions.columns) {
+            let colKey = item.cat;
+            if (item.street === 'turn' && item.tt) colKey = item.tt + '|' + item.cat;
+            if (item.street === 'river' && item.rt) colKey = item.rt + '|' + item.cat;
+            strategyCell = adb.descriptions.columns[colKey] || '';
+        }
     }    
     let strategyHtml = '';
     const lp = document.getElementById('leftStrategyPanel');
@@ -1223,6 +1241,11 @@ window.customConfirm = function(msg) {
 </div>
 </body>
 </html>
+
+
+
+
+
 
 
 

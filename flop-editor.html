@@ -174,7 +174,7 @@
       background: #eef1f4;
     }
 
-    .color-row input[type="color"] {
+    .color-row input[type="number"] { width: 45px; padding: 5px; border: 1px solid var(--border); border-radius: 7px; text-align: center; font-size: 13px; font-weight: 600; } .color-row input[type="color"] {
       width: 34px;
       height: 34px;
       border: none;
@@ -456,8 +456,9 @@
           .filter(c => c && c.id && c.color)
           .map(c => ({
             id: String(c.id),
-            name: String(c.name || 'Без названия'),
-            color: String(c.color)
+              name: String(c.name || 'Р‘РµР· РёРјРµРЅРё'),
+            color: String(c.color),
+            row: parseInt(c.row) || 1
           }));
 
         const validIds = new Set(loadedColors.map(c => c.id));
@@ -643,6 +644,19 @@
           saveStateToLocalStorage(); // автосохранение
         });
 
+        const rowInput = document.createElement('input');
+        rowInput.type = 'number';
+        rowInput.min = '1';
+        rowInput.max = '5';
+        rowInput.value = color.row || 1;
+        rowInput.title = 'Р СЏРґ РєРЅРѕРїРѕРє РІ С‚СЂРµРЅР°Р¶РµСЂРµ';
+        rowInput.addEventListener('click', (e) => e.stopPropagation());
+        rowInput.addEventListener('input', (e) => {
+          e.stopPropagation();
+          color.row = parseInt(e.target.value) || 1;
+          saveStateToLocalStorage();
+        });
+
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = '✕';
@@ -652,7 +666,7 @@
           deleteColor(color.id);
         });
 
-        row.append(colorInput, nameInput, deleteBtn);
+        row.append(colorInput, nameInput, rowInput, deleteBtn);
         list.appendChild(row);
       });
 
@@ -731,9 +745,10 @@
             .filter(c => c && c.id && c.color)
             .map(c => ({
               id: String(c.id),
-              name: String(c.name || 'Без названия'),
-              color: String(c.color)
-            }));
+              name: String(c.name || 'Р‘РµР· РёРјРµРЅРё'),
+            color: String(c.color),
+            row: parseInt(c.row) || 1
+          }));
 
           const validIds = new Set(loadedColors.map(c => c.id));
           const loadedAssignments = {};
@@ -806,3 +821,9 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+

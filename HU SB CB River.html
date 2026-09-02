@@ -337,7 +337,7 @@
     let groups = [];     // [{ id, name }]
     let groupSuits = {};
     let actions = {};    // ключ: "riverType|groupId|handCategory" -> действие
-      let descriptions = { groups: {}, cells: {} };
+      let descriptions = { groups: {}, cells: {}, columns: {} };
     let HAND_CATEGORIES = ['\u041c\u0443\u0441\u043e\u0440', '\u0413\u0430\u0442\u0448\u043e\u0442', '\u0414\u0440\u043e', '\u041b\u043e\u0443', '\u041c\u0438\u0434\u043b', '\u0422\u043e\u043f', '\u041e\u0432\u0435\u0440', '\u0414\u0432\u0435 \u043f\u0430\u0440\u044b+'];
 
     // ==================== НОВЫЕ КОНСТАНТЫ ДЛЯ ГЕНЕРАТОРА ====================
@@ -441,7 +441,7 @@
       // Шапка
       let headHtml = '<tr><th>Группа флопа / Рука</th>';
       HAND_CATEGORIES.forEach(cat => {
-        headHtml += `<th>${cat}</th>`;
+        headHtml += `<th>${cat} <button class="btn b-sm b-muted" style="margin-left:5px; padding:2px 5px; font-size:11px; ${(descriptions.columns && descriptions.columns[riverType + "|" + cat]) ? "color:#00c97a; border-color:#00c97a;" : ""} " onclick="editColDesc('${riverType}|${cat}', event)" title="РћРїРёСЃР°РЅРёРµ">&#9999;</button></th>`;
       });
       headHtml += '</tr>';
       head.innerHTML = headHtml;
@@ -467,7 +467,7 @@
             bodyHtml += `<option value="${action}"${selected}>${action}</option>`;
           });
           bodyHtml += `</select>`;
-          bodyHtml += `<button class="btn b-sm b-muted" style="padding:1px 4px; font-size:11px; ${descriptions.cells[key] ? 'color:#00c97a; border-color:#00c97a;' : ''}" onclick="editCellDesc('${key}')" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button></div></td>`;
+          bodyHtml += `<button class="btn b-sm b-muted" style="padding:1px 4px; font-size:11px; ${descriptions.cells[key] ? 'color:#00c97a; border-color:#00c97a;' : ''}" onclick="editCellDesc('${key}', event)" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button></div></td>`;
         });
         bodyHtml += '</tr>';
 
@@ -478,7 +478,7 @@
             if (s === 2) label += ' (\u0424\u0414)';
             if (s === 3) label += ' (\u041C\u043E\u043D\u043E\u0442\u043E\u043D)';
             
-            const grpSuitKey = riverType + '|' + group.id + '|' + s; bodyHtml += `<tr style="background:#f8f9fc;"><td style="padding-left: 20px; font-size: 13px; color: #555;">\u21B3 ${label} <button class="btn b-sm b-muted" style="margin-left:5px; padding:2px 5px; font-size:11px; ${descriptions.groups[grpSuitKey] ? 'color:#00c97a; border-color:#00c97a;' : ''}" onclick="editGrpDesc('${grpSuitKey}')" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button></td>`;
+            const grpSuitKey = riverType + '|' + group.id + '|' + s; bodyHtml += `<tr style="background:#f8f9fc;"><td style="padding-left: 20px; font-size: 13px; color: #555;">\u21B3 ${label} <button class="btn b-sm b-muted" style="margin-left:5px; padding:2px 5px; font-size:11px; ${descriptions.groups[grpSuitKey] ? 'color:#00c97a; border-color:#00c97a;' : ''}" onclick="editGrpDesc('${grpSuitKey}', event)" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button></td>`;
             HAND_CATEGORIES.forEach(handCat => {
               const key = `${riverType}|${group.id}|${handCat}|${s}`;
               const currentAction = actions[key] || '';
@@ -491,7 +491,7 @@
                 bodyHtml += `<option value="${action}"${selected}>${action}</option>`;
               });
               bodyHtml += `</select>`;
-            bodyHtml += `<button class="btn b-sm b-muted" style="padding:1px 4px; font-size:11px; ${descriptions.cells[key] ? 'color:#00c97a; border-color:#00c97a;' : ''} " onclick="editCellDesc('${key}')" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button></div></td>`;
+            bodyHtml += `<button class="btn b-sm b-muted" style="padding:1px 4px; font-size:11px; ${descriptions.cells[key] ? 'color:#00c97a; border-color:#00c97a;' : ''} " onclick="editCellDesc('${key}', event)" title="&#x041e;&#x043f;&#x0438;&#x0441;&#x0430;&#x043d;&#x0438;&#x0435; &#x0441;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x0438;">&#9999;</button></div></td>`;
             });
             bodyHtml += `</tr>`;
           }
@@ -611,7 +611,7 @@
             }
           }
           
-            if(data.descriptions) descriptions = data.descriptions; else descriptions = { groups: {}, cells: {} };
+            if(data.descriptions) descriptions = data.descriptions; else descriptions = { groups: {}, cells: {}, columns: {} };
             
           actions = loadedActions;
 
@@ -1406,7 +1406,7 @@
           }
           actions = loadedActions;
 
-          if(savedData && savedData.descriptions) descriptions = savedData.descriptions; else descriptions = { groups: {}, cells: {} };
+          if(savedData && savedData.descriptions) descriptions = savedData.descriptions; else descriptions = { groups: {}, cells: {}, columns: {} };
           
       }
       renderTables();
@@ -1453,30 +1453,80 @@
     <div id="descModalText" contenteditable="true" style="width:100%; height:250px; background:#0d1117; color:#fff; border:1px solid #333; border-radius:5px; padding:10px; margin-bottom:15px; overflow-y:auto; font-family:inherit;"></div>
     <div style="display:flex; justify-content:space-between;">
       <button class="btn b-muted" onclick="document.getElementById('descModal').style.display='none'">&#x041e;&#x0442;&#x043c;&#x0435;&#x043d;&#x0430;</button>
+      <button class="btn b-muted" id="descModalClear" style="color: #ff3d57;">&#x041e;&#x0447;&#x0438;&#x0441;&#x0442;&#x0438;&#x0442;&#x044c;</button>
       <button class="btn b-blue" id="descModalSave">&#x0421;&#x043e;&#x0445;&#x0440;&#x0430;&#x043d;&#x0438;&#x0442;&#x044c;</button>
     </div>
   </div>
 </div>
 <script>
 let currentDescTarget = null;
+function handleCopyPaste(type, key, e) {
+    if (!e) return false;
+    if (e.altKey) {
+        e.preventDefault(); e.stopPropagation();
+        const text = (descriptions[type] && descriptions[type][key]) || '';
+        if (text) {
+            window.copiedDesc = text;
+            alert('\u0422\u0435\u043a\u0441\u0442 \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d!');
+        } else {
+            alert('\u0422\u0435\u043a\u0441\u0442 \u043f\u0443\u0441\u0442, \u043d\u0435\u0447\u0435\u0433\u043e \u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c.');
+        }
+        return true;
+    }
+    if (e.shiftKey) {
+        e.preventDefault(); e.stopPropagation();
+        if (window.copiedDesc !== undefined) {
+            if (!descriptions[type]) descriptions[type] = {};
+            if (window.copiedDesc) descriptions[type][key] = window.copiedDesc;
+            else delete descriptions[type][key];
+            saveActionsToStorage();
+            if (typeof renderTables === 'function') renderTables();
+            else if (typeof renderTable === 'function') renderTable();
+        } else {
+            alert('\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u0441\u043a\u043e\u043f\u0438\u0440\u0443\u0439\u0442\u0435 \u0442\u0435\u043a\u0441\u0442 (Alt + \u041a\u043b\u0438\u043a)!');
+        }
+        return true;
+    }
+    return false;
+}
 function editGrpDesc(groupId) {
     currentDescTarget = { type: 'group', id: groupId };
     document.getElementById('descModalTitle').innerHTML = '&#x0421;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x044f; &#x0434;&#x043b;&#x044f; &#x0433;&#x0440;&#x0443;&#x043f;&#x043f;&#x044b;: ' + groupId;
     document.getElementById('descModalText').innerHTML = descriptions.groups[groupId] || '';
     document.getElementById('descModal').style.display = 'flex';
 }
-function editCellDesc(key) {
+function editColDesc(key, e) {
+    if (handleCopyPaste('columns', key, e)) return;
+    currentDescTarget = { type: 'column', id: key };
+    document.getElementById('descModalTitle').innerHTML = 'РћРїРёСЃР°РЅРёРµ РєРѕР»РѕРЅРєРё: ' + key.replace('|', ' / ');
+    document.getElementById('descModalText').innerHTML = (descriptions.columns && descriptions.columns[currentDescTarget.id]) || '';
+    document.getElementById('descModal').style.display = 'flex';
+}
+
+function editCellDesc(key, e) {
+    if (handleCopyPaste('cells', key, e)) return;
     currentDescTarget = { type: 'cell', id: key };
     document.getElementById('descModalTitle').innerHTML = '&#x0421;&#x0442;&#x0440;&#x0430;&#x0442;&#x0435;&#x0433;&#x0438;&#x044f;: ' + key.replace('|', ' / ');
     document.getElementById('descModalText').innerHTML = descriptions.cells[currentDescTarget.id] || '';
     document.getElementById('descModal').style.display = 'flex';
 }
+
+document.getElementById('descModalClear').onclick = () => {
+    document.getElementById('descModalText').innerHTML = '';
+    document.getElementById('descModalSave').click();
+};
+
 document.getElementById('descModalSave').onclick = () => {
     if (currentDescTarget) {
-        const text = document.getElementById('descModalText').innerHTML.trim();
+        let text = document.getElementById('descModalText').innerHTML.trim();
+        if (text === '<br>' || text === '<div><br></div>' || text === '<p><br></p>') text = '';
         if (currentDescTarget.type === 'group') {
             if (text) descriptions.groups[currentDescTarget.id] = text;
             else delete descriptions.groups[currentDescTarget.id];
+        } else if (currentDescTarget.type === 'column') {
+            if (!descriptions.columns) descriptions.columns = {};
+            if (text) descriptions.columns[currentDescTarget.id] = text;
+            else delete descriptions.columns[currentDescTarget.id];
         } else {
             if (text) descriptions.cells[currentDescTarget.id] = text;
             else delete descriptions.cells[currentDescTarget.id];
@@ -1489,6 +1539,13 @@ document.getElementById('descModalSave').onclick = () => {
 </script>
 </body>
 </html>
+
+
+
+
+
+
+
 
 
 
