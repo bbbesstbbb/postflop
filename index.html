@@ -714,12 +714,15 @@ rp.innerHTML=`<h3 style="color:#ff3d57;margin-top:0;">&#x0420;&#x0443;&#x043a;&#
 function buildActBtns(item){
           const c=document.getElementById('actBtns');c.innerHTML='';
       if (item.isGuessFlop) {
-          const allGroups = appData.flopA.groups || [];
-          const rows = [[], [], [], [], []];
+                    let allGroups = appData.flopA.groups || [];
+          if (item.lesson && item.lesson.config && Array.isArray(item.lesson.config.selectedGroups) && item.lesson.config.selectedGroups.length > 0) {
+              allGroups = allGroups.filter(g => item.lesson.config.selectedGroups.includes(g.id));
+          }
+          const rows = Array.from({length: 10}, () => []);
           allGroups.forEach(g => {
               const gc = colorMap[g.id] || {};
               let r = parseInt(gc.row) - 1;
-              if (isNaN(r) || r < 0 || r > 4) {
+              if (isNaN(r) || r < 0 || r > 9) {
                   const n = g.name.toLowerCase();
                   if (n === '\u0433\u043e\u0442\u043e\u0432\u0430\u044f' || n === '\u043c\u043e\u043a\u0440\u0430\u044f') r = 0;
                   else if (n.indexOf('\u0441\u0443\u0445\u0430\u044f') === 0) r = 1;
@@ -1241,6 +1244,8 @@ window.customConfirm = function(msg) {
 </div>
 </body>
 </html>
+
+
 
 
 

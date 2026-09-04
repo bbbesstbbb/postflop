@@ -43,12 +43,14 @@
       "cbetSizePercent": 50,
       "postflopSecondAction": "fold",
       "selectedGroups": [
-        "c_orange",
+        "c_1788439075457",
         "c_yellow",
         "c_green",
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
         "c_red",
         "c_1787852906628",
@@ -70,7 +72,8 @@
         "river": []
       },
       "blockName": "0",
-      "specialMode": "guess_flop_groups"
+      "specialMode": "guess_flop_groups",
+      "alwaysUnlocked": false
     }
   },
   {
@@ -119,6 +122,8 @@
       "selectedGroups": [
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152"
       ],
       "selectedCategories": [],
@@ -185,8 +190,11 @@
       "postflopSecondAction": "fold",
       "selectedGroups": [
         "c_red",
+        "c_1788457050644",
+        "c_1788461897283",
         "c_1787852906628",
         "c_purple",
+        "c_1788461644908",
         "c_1787843291880"
       ],
       "selectedCategories": [],
@@ -205,7 +213,7 @@
       },
       "blockName": "0",
       "specialMode": "guess_flop_groups",
-      "alwaysUnlocked": true
+      "alwaysUnlocked": false
     }
   },
   {
@@ -258,6 +266,8 @@
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
         "c_red",
         "c_1787852906628",
@@ -267,16 +277,7 @@
       "selectedCategories": [
         "Мусор",
         "Гатшот",
-        "Дро",
-        "TX3",
-        "TX2",
-        "TX1",
-        "Гатшот TX3",
-        "Гатшот TX2",
-        "Гатшот TX1",
-        "Дро TX3",
-        "Дро TX2",
-        "Дро TX1"
+        "Дро"
       ],
       "selectedTurnTypes": [],
       "selectedRiverTypes": [],
@@ -300,11 +301,183 @@
         "turn": [],
         "river": []
       },
-      "blockName": "1"
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   },
   {
     "id": "lesson_1788124290892",
+    "name": "HU SB CB Flop TP основа",
+    "config": {
+      "playersCount": 2,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "SB",
+      "heroStack": 25,
+      "villainPosition": "BB",
+      "villainStack": 25,
+      "preflopAggressor": "hero",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "texture",
+      "flopCards": [
+        {
+          "rank": "4",
+          "suit": "h"
+        },
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "Q",
+          "suit": "c"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_1788439075457",
+        "c_yellow",
+        "c_green",
+        "c_blue",
+        "c_1787843692874",
+        "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
+        "c_1787843026152",
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [
+        "Топ"
+      ],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
+    }
+  },
+  {
+    "id": "lesson_1788525296772",
+    "name": "HU SB CB Flop TP исключения",
+    "config": {
+      "playersCount": 2,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "SB",
+      "heroStack": 25,
+      "villainPosition": "BB",
+      "villainStack": 25,
+      "preflopAggressor": "hero",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "texture",
+      "flopCards": [
+        {
+          "rank": "4",
+          "suit": "h"
+        },
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "Q",
+          "suit": "c"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_1788439235797",
+        "c_1788456718143",
+        "c_1788438552920",
+        "c_1788456265678",
+        "c_1788457050644",
+        "c_1788461897283",
+        "c_1788461644908"
+      ],
+      "selectedCategories": [
+        "Топ"
+      ],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
+    }
+  },
+  {
+    "id": "lesson_1788525650543",
     "name": "HU SB CB Flop TP",
     "config": {
       "playersCount": 2,
@@ -347,25 +520,30 @@
       "cbetSizePercent": 50,
       "postflopSecondAction": "fold",
       "selectedGroups": [
-        "c_orange",
+        "c_1788439235797",
+        "c_1788439075457",
+        "c_1788439473244",
         "c_yellow",
+        "c_1788456718143",
+        "c_1788438552920",
         "c_green",
+        "c_1788456265678",
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
+        "c_1788457050644",
         "c_red",
+        "c_1788461897283",
         "c_1787852906628",
+        "c_1788461644908",
         "c_purple",
         "c_1787843291880"
       ],
       "selectedCategories": [
-        "Топ",
-        "ТП топ5",
-        "ТП топ4",
-        "ТП топ3",
-        "ТП топ2",
-        "ТП топ1"
+        "Топ"
       ],
       "selectedTurnTypes": [],
       "selectedRiverTypes": [],
@@ -389,7 +567,9 @@
         "turn": [],
         "river": []
       },
-      "blockName": "1"
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   },
   {
@@ -442,6 +622,8 @@
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
         "c_red",
         "c_1787852906628",
@@ -449,11 +631,7 @@
         "c_1787843291880"
       ],
       "selectedCategories": [
-        "Мидл",
-        "Мидл топ4",
-        "Мидл топ3",
-        "Мидл топ2",
-        "Мидл топ1"
+        "Мидл"
       ],
       "selectedTurnTypes": [],
       "selectedRiverTypes": [],
@@ -477,7 +655,9 @@
         "turn": [],
         "river": []
       },
-      "blockName": "1"
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   },
   {
@@ -530,6 +710,8 @@
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
         "c_red",
         "c_1787852906628",
@@ -537,11 +719,7 @@
         "c_1787843291880"
       ],
       "selectedCategories": [
-        "Лоу",
-        "Лоу топ4",
-        "Лоу топ3",
-        "Лоу топ2",
-        "Лоу топ1"
+        "Лоу"
       ],
       "selectedTurnTypes": [],
       "selectedRiverTypes": [],
@@ -565,7 +743,9 @@
         "turn": [],
         "river": []
       },
-      "blockName": "1"
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   },
   {
@@ -618,6 +798,8 @@
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
         "c_red",
         "c_1787852906628",
@@ -628,14 +810,6 @@
         "Лоу",
         "Мидл",
         "Топ",
-        "Лоу топ4",
-        "Лоу топ3",
-        "Лоу топ2",
-        "Лоу топ1",
-        "Мидл топ4",
-        "Мидл топ3",
-        "Мидл топ2",
-        "Мидл топ1",
         "ТП топ5",
         "ТП топ4",
         "ТП топ3",
@@ -664,7 +838,9 @@
         "turn": [],
         "river": []
       },
-      "blockName": "1"
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   },
   {
@@ -717,6 +893,8 @@
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
         "c_red",
         "c_1787852906628",
@@ -724,19 +902,7 @@
         "c_1787843291880"
       ],
       "selectedCategories": [
-        "Овер",
-        "Андер к ЛК",
-        "Андер 66-",
-        "Андер к МК",
-        "Андер 77+",
-        "Андер к ТК",
-        "Андер к ТК топ4",
-        "Андер к ТК топ3",
-        "Андер к ТК топ2",
-        "Андер к ТК топ1",
-        "Овер топ3",
-        "Овер топ2",
-        "Овер топ1"
+        "Овер"
       ],
       "selectedTurnTypes": [],
       "selectedRiverTypes": [],
@@ -760,7 +926,9 @@
         "turn": [],
         "river": []
       },
-      "blockName": "1"
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   },
   {
@@ -813,19 +981,15 @@
         "c_blue",
         "c_1787843692874",
         "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
         "c_1787843026152",
         "c_red",
         "c_1787852906628",
         "c_purple",
         "c_1787843291880"
       ],
-      "selectedCategories": [
-        "Две пары",
-        "Тройка",
-        "Стрит",
-        "Флеш",
-        "Фулл-Хаус+"
-      ],
+      "selectedCategories": [],
       "selectedTurnTypes": [],
       "selectedRiverTypes": [],
       "selectedTurnCategories": [],
@@ -848,253 +1012,9 @@
         "turn": [],
         "river": []
       },
-      "blockName": "1"
-    }
-  },
-  {
-    "id": "lesson_1787920551767",
-    "name": "HU SB CB Flop Pair+",
-    "config": {
-      "playersCount": 2,
-      "sb": 0.5,
-      "bb": 1,
-      "ante": 0,
-      "heroPosition": "SB",
-      "heroStack": 25,
-      "villainPosition": "BB",
-      "villainStack": 25,
-      "preflopAggressor": "hero",
-      "preflopFirstAction": "raise",
-      "preflopRaiseSize": 2,
-      "heroPreflopResponse": "call",
-      "hero3betSize": 8,
-      "preflopRaises": 1,
-      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
-      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
-      "flopType": "texture",
-      "flopCards": [
-        {
-          "rank": "4",
-          "suit": "h"
-        },
-        {
-          "rank": "A",
-          "suit": "s"
-        },
-        {
-          "rank": "Q",
-          "suit": "c"
-        }
-      ],
-      "textureHighCard": "8",
-      "textureConnectedness": "disconnected",
-      "textureSuitedness": "rainbow",
-      "postflopFirstActor": "hero",
-      "betSizePercent": 33,
-      "postflopFirstAction": "check",
-      "cbetSizePercent": 50,
-      "postflopSecondAction": "fold",
-      "selectedGroups": [
-        "c_orange",
-        "c_yellow",
-        "c_green",
-        "c_blue",
-        "c_1787843692874",
-        "c_pink",
-        "c_1787843026152",
-        "c_red",
-        "c_1787852906628",
-        "c_purple",
-        "c_1787843291880"
-      ],
-      "selectedCategories": [
-        "Лоу",
-        "Мидл",
-        "Топ",
-        "Овер",
-        "Две пары",
-        "Тройка",
-        "Стрит",
-        "Флеш",
-        "Фулл-Хаус+",
-        "Андер к ЛК",
-        "Андер 66-",
-        "Лоу топ4",
-        "Лоу топ3",
-        "Лоу топ2",
-        "Лоу топ1",
-        "Андер к МК",
-        "Андер 77+",
-        "Мидл топ4",
-        "Мидл топ3",
-        "Мидл топ2",
-        "Мидл топ1",
-        "Андер к ТК",
-        "Андер к ТК топ4",
-        "Андер к ТК топ3",
-        "Андер к ТК топ2",
-        "Андер к ТК топ1",
-        "ТП топ5",
-        "ТП топ4",
-        "ТП топ3",
-        "ТП топ2",
-        "ТП топ1",
-        "Овер топ3",
-        "Овер топ2",
-        "Овер топ1"
-      ],
-      "selectedTurnTypes": [],
-      "selectedRiverTypes": [],
-      "selectedTurnCategories": [],
-      "selectedRiverCategories": [],
-      "selectedRiverLine": [
-        "bbb"
-      ],
-      "actionTree": {
-        "preflop": [
-          {
-            "actor": "hero",
-            "action": "L"
-          },
-          {
-            "actor": "villain",
-            "action": "X"
-          }
-        ],
-        "flop": [],
-        "turn": [],
-        "river": []
-      },
-      "blockName": "1"
-    }
-  },
-  {
-    "id": "lesson_1787922300729",
-    "name": "HU SB CB Flop",
-    "config": {
-      "playersCount": 2,
-      "sb": 0.5,
-      "bb": 1,
-      "ante": 0,
-      "heroPosition": "SB",
-      "heroStack": 25,
-      "villainPosition": "BB",
-      "villainStack": 25,
-      "preflopAggressor": "hero",
-      "preflopFirstAction": "raise",
-      "preflopRaiseSize": 2,
-      "heroPreflopResponse": "call",
-      "hero3betSize": 8,
-      "preflopRaises": 1,
-      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
-      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
-      "flopType": "texture",
-      "flopCards": [
-        {
-          "rank": "4",
-          "suit": "h"
-        },
-        {
-          "rank": "A",
-          "suit": "s"
-        },
-        {
-          "rank": "Q",
-          "suit": "c"
-        }
-      ],
-      "textureHighCard": "8",
-      "textureConnectedness": "disconnected",
-      "textureSuitedness": "rainbow",
-      "postflopFirstActor": "hero",
-      "betSizePercent": 33,
-      "postflopFirstAction": "check",
-      "cbetSizePercent": 50,
-      "postflopSecondAction": "fold",
-      "selectedGroups": [
-        "c_orange",
-        "c_yellow",
-        "c_green",
-        "c_blue",
-        "c_1787843692874",
-        "c_pink",
-        "c_1787843026152",
-        "c_red",
-        "c_1787852906628",
-        "c_purple",
-        "c_1787843291880"
-      ],
-      "selectedCategories": [
-        "Мусор",
-        "Гатшот",
-        "Дро",
-        "Лоу",
-        "Мидл",
-        "Топ",
-        "Овер",
-        "Две пары",
-        "Тройка",
-        "Стрит",
-        "Флеш",
-        "Фулл-Хаус+",
-        "TX3",
-        "TX2",
-        "TX1",
-        "Гатшот TX3",
-        "Гатшот TX2",
-        "Гатшот TX1",
-        "Дро TX3",
-        "Дро TX2",
-        "Дро TX1",
-        "Андер к ЛК",
-        "Андер 66-",
-        "Лоу топ4",
-        "Лоу топ3",
-        "Лоу топ2",
-        "Лоу топ1",
-        "Андер к МК",
-        "Андер 77+",
-        "Мидл топ4",
-        "Мидл топ3",
-        "Мидл топ2",
-        "Мидл топ1",
-        "Андер к ТК",
-        "Андер к ТК топ4",
-        "Андер к ТК топ3",
-        "Андер к ТК топ2",
-        "Андер к ТК топ1",
-        "ТП топ5",
-        "ТП топ4",
-        "ТП топ3",
-        "ТП топ2",
-        "ТП топ1",
-        "Овер топ3",
-        "Овер топ2",
-        "Овер топ1"
-      ],
-      "selectedTurnTypes": [],
-      "selectedRiverTypes": [],
-      "selectedTurnCategories": [],
-      "selectedRiverCategories": [],
-      "selectedRiverLine": [
-        "bbb"
-      ],
-      "actionTree": {
-        "preflop": [
-          {
-            "actor": "hero",
-            "action": "L"
-          },
-          {
-            "actor": "villain",
-            "action": "X"
-          }
-        ],
-        "flop": [],
-        "turn": [],
-        "river": []
-      },
-      "blockName": "1"
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   },
   {
@@ -1465,9 +1385,14 @@
       "cbetSizePercent": 50,
       "postflopSecondAction": "fold",
       "selectedGroups": [
-        "c_orange",
+        "c_1788439075457",
+        "c_1788439235797",
+        "c_1788439473244",
         "c_yellow",
+        "c_1788456718143",
+        "c_1788438552920",
         "c_green",
+        "c_1788456265678",
         "c_blue"
       ],
       "selectedCategories": [],
@@ -1486,7 +1411,202 @@
       },
       "blockName": "0",
       "specialMode": "guess_flop_groups",
-      "alwaysUnlocked": true
+      "alwaysUnlocked": false
+    }
+  },
+  {
+    "id": "lesson_1787920551767",
+    "name": "HU SB CB Flop Pair+",
+    "config": {
+      "playersCount": 2,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "SB",
+      "heroStack": 25,
+      "villainPosition": "BB",
+      "villainStack": 25,
+      "preflopAggressor": "hero",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "texture",
+      "flopCards": [
+        {
+          "rank": "4",
+          "suit": "h"
+        },
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "Q",
+          "suit": "c"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_orange",
+        "c_yellow",
+        "c_green",
+        "c_blue",
+        "c_1787843692874",
+        "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
+        "c_1787843026152",
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [
+        "Лоу",
+        "Мидл",
+        "Топ",
+        "Овер",
+        "ТП топ5",
+        "ТП топ4",
+        "ТП топ3",
+        "ТП топ2",
+        "ТП топ1"
+      ],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
+    }
+  },
+  {
+    "id": "lesson_1787922300729",
+    "name": "HU SB CB Flop",
+    "config": {
+      "playersCount": 2,
+      "sb": 0.5,
+      "bb": 1,
+      "ante": 0,
+      "heroPosition": "SB",
+      "heroStack": 25,
+      "villainPosition": "BB",
+      "villainStack": 25,
+      "preflopAggressor": "hero",
+      "preflopFirstAction": "raise",
+      "preflopRaiseSize": 2,
+      "heroPreflopResponse": "call",
+      "hero3betSize": 8,
+      "preflopRaises": 1,
+      "heroRange": "22+, A2s+, KTs+, QTs+, JTs, ATo+, KQo",
+      "villainRange": "66+, A5s+, K9s+, Q9s+, J9s+, T9s, A9o+, KTo+, QTo+",
+      "flopType": "texture",
+      "flopCards": [
+        {
+          "rank": "4",
+          "suit": "h"
+        },
+        {
+          "rank": "A",
+          "suit": "s"
+        },
+        {
+          "rank": "Q",
+          "suit": "c"
+        }
+      ],
+      "textureHighCard": "8",
+      "textureConnectedness": "disconnected",
+      "textureSuitedness": "rainbow",
+      "postflopFirstActor": "hero",
+      "betSizePercent": 33,
+      "postflopFirstAction": "check",
+      "cbetSizePercent": 50,
+      "postflopSecondAction": "fold",
+      "selectedGroups": [
+        "c_orange",
+        "c_yellow",
+        "c_green",
+        "c_blue",
+        "c_1787843692874",
+        "c_pink",
+        "c_1788425889772",
+        "c_1788426027253",
+        "c_1787843026152",
+        "c_red",
+        "c_1787852906628",
+        "c_purple",
+        "c_1787843291880"
+      ],
+      "selectedCategories": [
+        "Мусор",
+        "Гатшот",
+        "Дро",
+        "Лоу",
+        "Мидл",
+        "Топ",
+        "Овер",
+        "ТП топ5",
+        "ТП топ4",
+        "ТП топ3",
+        "ТП топ2",
+        "ТП топ1"
+      ],
+      "selectedTurnTypes": [],
+      "selectedRiverTypes": [],
+      "selectedTurnCategories": [],
+      "selectedRiverCategories": [],
+      "selectedRiverLine": [
+        "bbb"
+      ],
+      "actionTree": {
+        "preflop": [
+          {
+            "actor": "hero",
+            "action": "L"
+          },
+          {
+            "actor": "villain",
+            "action": "X"
+          }
+        ],
+        "flop": [],
+        "turn": [],
+        "river": []
+      },
+      "blockName": "1",
+      "alwaysUnlocked": false,
+      "specialMode": null
     }
   }
 ]
