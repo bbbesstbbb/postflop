@@ -304,14 +304,7 @@ body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--
           <h2 id="repDetTitle" style="margin:0;">&#1054;&#1090;&#1095;&#1077;&#1090;</h2>
           <button class="btn b-muted b-sm" id="repDetCloseBtn">&#10006; &#1047;&#1072;&#1082;&#1088;&#1099;&#1090;&#1100;</button>
       </div>
-      <div style="display:flex; gap:20px; flex-wrap:wrap;">
-          <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;&#1084;</h3><div id="repDetCat"></div></div>
-          <div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1075;&#1088;&#1091;&#1087;&#1087;&#1072;&#1084; &#1088;&#1091;&#1082;</h3><div id="repDetGrp"></div></div>
-      </div>
-      <div id="repDetChartContainer" style="margin-top:30px; display:none;">
-          <h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1044;&#1080;&#1085;&#1072;&#1084;&#1080;&#1082;&#1072; &#1089;&#1082;&#1086;&#1088;&#1086;&#1089;&#1090;&#1080; (&#1089;&#1077;&#1082;/&#1086;&#1090;&#1074;)</h3>
-          <div id="repDetChart" style="height:120px; display:flex; align-items:flex-end; gap:6px; padding-top:20px; border-bottom:1px solid var(--border); overflow-x:auto;"></div>
-      </div>
+      <div style="display:flex; gap:20px; flex-wrap:nowrap; max-width:100%;"><div id="repDetChartContainer" style="width:140px; display:none; flex-shrink:0;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:11px;line-height:1.2;">&#1044;&#1080;&#1085;&#1072;&#1084;&#1080;&#1082;&#1072;<br>&#1089;&#1082;&#1086;&#1088;&#1086;&#1089;&#1090;&#1080;</h3><div id="repDetChart" style="display:flex; flex-direction:column; gap:8px; padding-right:15px; border-right:1px solid var(--border); max-height:500px; overflow-y:auto; overflow-x:hidden;"></div></div><div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1082;&#1072;&#1090;&#1077;&#1075;&#1086;&#1088;&#1080;&#1103;&#1084;</h3><div id="repDetCat"></div></div><div style="flex:1; min-width:200px;"><h3 style="margin-top:0;color:#a0aabf;text-transform:uppercase;font-size:12px;">&#1055;&#1086; &#1075;&#1088;&#1091;&#1087;&#1087;&#1072;&#1084; &#1088;&#1091;&#1082;</h3><div id="repDetGrp"></div></div></div>
     </div>
   </div>
 </div>
@@ -1168,37 +1161,40 @@ function showRepDet(name, st) {
           chartDiv.innerHTML = '';
           const maxTime = Math.max(...st.timeHistory.map(x => x.time));
           st.timeHistory.forEach(th => {
-              const hPct = Math.max(5, (th.time / (maxTime || 1)) * 100);
+              const wPct = Math.max(5, (th.time / (maxTime || 1)) * 100);
               const col = th.pct >= 80 ? '#00c97a' : (th.pct >= 60 ? '#f59d00' : '#ff3d57');
               
               const barWrap = document.createElement('div');
-              barWrap.style.flex = '0 0 35px';
               barWrap.style.display = 'flex';
-              barWrap.style.flexDirection = 'column';
-              barWrap.style.justifyContent = 'flex-end';
               barWrap.style.alignItems = 'center';
-              barWrap.style.height = '100%';
-              barWrap.title = `${th.time} \u0441\u0435\u043a (${th.pct}% \u0432\u0435\u0440\u043d\u044b\u0445)`;
+              barWrap.style.gap = '6px';
+              barWrap.style.width = '100%';
+              barWrap.title = ` \u0441\u0435\u043a (% \u0432\u0435\u0440\u043d\u044b\u0445)`;
               
               const lbl = document.createElement('div');
               lbl.style.fontSize = '10px';
               lbl.style.color = '#a0aabf';
-              lbl.style.marginBottom = '4px';
+              lbl.style.width = '24px';
+              lbl.style.textAlign = 'right';
               lbl.textContent = th.time;
               
+              const barContainer = document.createElement('div');
+              barContainer.style.flex = '1';
+              barContainer.style.height = '14px';
+              
               const bar = document.createElement('div');
-              bar.style.width = '100%';
-              bar.style.maxWidth = '30px';
+              bar.style.height = '100%';
               bar.style.background = col;
-              bar.style.height = hPct + '%';
-              bar.style.borderRadius = '3px 3px 0 0';
+              bar.style.width = wPct + '%';
+              bar.style.borderRadius = '3px';
               bar.style.opacity = '0.8';
               bar.style.transition = 'opacity 0.2s';
               bar.onmouseover = () => bar.style.opacity = '1';
               bar.onmouseout = () => bar.style.opacity = '0.8';
               
+              barContainer.appendChild(bar);
               barWrap.appendChild(lbl);
-              barWrap.appendChild(bar);
+              barWrap.appendChild(barContainer);
               chartDiv.appendChild(barWrap);
           });
       } else if (chartContainer) {
@@ -1244,6 +1240,8 @@ window.customConfirm = function(msg) {
 </div>
 </body>
 </html>
+
+
 
 
 
